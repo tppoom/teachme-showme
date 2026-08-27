@@ -1,0 +1,139 @@
+{
+  "_contract": {
+    "note": "Every theme sets the same token set. assemble.py appends a multi-script font fallback to each font stack, so stacks here only name the faces that carry the look.",
+    "tokens": ["pagebg","bg","surface","ink","ink-2","ink-3","line","accent","accent-2","accent-ink",
+               "code-bg","code-ink","c1","c2","c3","c4","c5","c6",
+               "font-display","font-body","font-mono","w-display","track-display","radius"],
+    "motifs": ["none","rule","block","corner","grid","dots","glow"]
+  },
+
+  "keynote-dark": {
+    "use": "Product launches, tech keynotes, anything that should feel like a stage. High contrast, one electric accent, lots of black.",
+    "motif": "glow",
+    "tokens": {"pagebg":"#000","bg":"#08080b","surface":"#141419","ink":"#f7f7fa","ink-2":"#b6b6c4",
+      "ink-3":"#74748a","line":"#26262f","accent":"#5b8cff","accent-2":"#a06bff","accent-ink":"#050508",
+      "code-bg":"#0e0e14","code-ink":"#dfe4f0",
+      "c1":"#5b8cff","c2":"#a06bff","c3":"#38d9c0","c4":"#ffb63d","c5":"#ff6b8a","c6":"#7ee081",
+      "font-display":"\"Avenir Next\",\"Segoe UI\",ui-sans-serif,system-ui,sans-serif",
+      "font-body":"\"Avenir Next\",\"Segoe UI\",ui-sans-serif,system-ui,sans-serif",
+      "font-mono":"ui-monospace,\"SF Mono\",Menlo,Consolas,monospace",
+      "w-display":"700","track-display":"-.028em","radius":"14px"}
+  },
+
+  "swiss": {
+    "use": "Strategy, design, anything that should read as rigorous and unfussy. White, black, one red. Tight tracking, hard rules, no ornament.",
+    "motif": "rule",
+    "tokens": {"pagebg":"#1b1b1b","bg":"#fff","surface":"#f4f4f4","ink":"#0a0a0a","ink-2":"#4a4a4a",
+      "ink-3":"#8a8a8a","line":"#dcdcdc","accent":"#e2231a","accent-2":"#0a0a0a","accent-ink":"#fff",
+      "code-bg":"#111","code-ink":"#eee",
+      "c1":"#e2231a","c2":"#0a0a0a","c3":"#767676","c4":"#b8b8b8","c5":"#f0a500","c6":"#005b9f",
+      "font-display":"\"Helvetica Neue\",Helvetica,Arial,ui-sans-serif,sans-serif",
+      "font-body":"\"Helvetica Neue\",Helvetica,Arial,ui-sans-serif,sans-serif",
+      "font-mono":"ui-monospace,\"SF Mono\",Menlo,monospace",
+      "w-display":"700","track-display":"-.035em","radius":"0px"}
+  },
+
+  "startup-pitch": {
+    "use": "Investor and sales decks. Confident, bright, generous whitespace, one saturated brand colour doing all the work.",
+    "motif": "block",
+    "tokens": {"pagebg":"#141225","bg":"#fff","surface":"#f6f5ff","ink":"#12102a","ink-2":"#4b4870",
+      "ink-3":"#8d8ab0","line":"#e5e3f5","accent":"#5b34e8","accent-2":"#ff5c8a","accent-ink":"#fff",
+      "code-bg":"#12102a","code-ink":"#e8e6ff",
+      "c1":"#5b34e8","c2":"#ff5c8a","c3":"#00b8a9","c4":"#ffa62b","c5":"#3d8bfd","c6":"#7ec97e",
+      "font-display":"\"Avenir Next\",\"Segoe UI\",ui-sans-serif,system-ui,sans-serif",
+      "font-body":"ui-sans-serif,system-ui,-apple-system,\"Segoe UI\",Roboto,sans-serif",
+      "font-mono":"ui-monospace,\"SF Mono\",Menlo,monospace",
+      "w-display":"800","track-display":"-.03em","radius":"16px"}
+  },
+
+  "corporate-clean": {
+    "use": "Board updates, client reports, quarterly reviews. Calm, credible, navy and blue, nothing that could be called flashy.",
+    "motif": "rule",
+    "tokens": {"pagebg":"#0f1c2e","bg":"#fff","surface":"#f2f6fa","ink":"#0f1c2e","ink-2":"#42566e",
+      "ink-3":"#8296ac","line":"#dde5ee","accent":"#0d6efd","accent-2":"#0f1c2e","accent-ink":"#fff",
+      "code-bg":"#0f1c2e","code-ink":"#e6eef7",
+      "c1":"#0d6efd","c2":"#0f1c2e","c3":"#2fa8a0","c4":"#f0a202","c5":"#8f9db0","c6":"#c14953",
+      "font-display":"ui-sans-serif,system-ui,-apple-system,\"Segoe UI\",Roboto,sans-serif",
+      "font-body":"ui-sans-serif,system-ui,-apple-system,\"Segoe UI\",Roboto,sans-serif",
+      "font-mono":"ui-monospace,\"SF Mono\",Menlo,monospace",
+      "w-display":"700","track-display":"-.022em","radius":"10px"}
+  },
+
+  "editorial": {
+    "use": "Talks with a point of view, brand storytelling, culture decks. Warm paper, serif display, generous line length.",
+    "motif": "none",
+    "tokens": {"pagebg":"#221e1a","bg":"#faf7f2","surface":"#f1ece3","ink":"#1c1a17","ink-2":"#57514a",
+      "ink-3":"#8e867b","line":"#e0d9cd","accent":"#b4432c","accent-2":"#2c5f5a","accent-ink":"#fff",
+      "code-bg":"#1c1a17","code-ink":"#f0ece5",
+      "c1":"#b4432c","c2":"#2c5f5a","c3":"#c99700","c4":"#6b7a8f","c5":"#8a5a44","c6":"#4a7c59",
+      "font-display":"\"Playfair Display\",Didot,\"Bodoni MT\",Georgia,\"Times New Roman\",serif",
+      "font-body":"Georgia,\"Iowan Old Style\",\"Times New Roman\",serif",
+      "font-mono":"ui-monospace,\"SF Mono\",Menlo,monospace",
+      "w-display":"700","track-display":"-.012em","radius":"8px"}
+  },
+
+  "academic": {
+    "use": "Conference talks, thesis defences, lectures. Restrained, serif, dense enough for evidence, no decoration competing with the data.",
+    "motif": "none",
+    "tokens": {"pagebg":"#22222a","bg":"#fff","surface":"#f5f5f7","ink":"#151519","ink-2":"#4a4a55",
+      "ink-3":"#85858f","line":"#dededf","accent":"#7d1128","accent-2":"#1f4e79","accent-ink":"#fff",
+      "code-bg":"#151519","code-ink":"#eaeaef",
+      "c1":"#7d1128","c2":"#1f4e79","c3":"#3f7d20","c4":"#c47f00","c5":"#5b5b66","c6":"#00707a",
+      "font-display":"\"Iowan Old Style\",Georgia,\"Times New Roman\",serif",
+      "font-body":"Georgia,\"Iowan Old Style\",\"Times New Roman\",serif",
+      "font-mono":"ui-monospace,\"SF Mono\",Menlo,monospace",
+      "w-display":"700","track-display":"-.008em","radius":"6px"}
+  },
+
+  "brutalist": {
+    "use": "Manifestos, provocations, internal decks that want to wake the room up. Flat colour, zero radius, huge type, no apologies.",
+    "motif": "corner",
+    "tokens": {"pagebg":"#111","bg":"#f5f200","surface":"#111","ink":"#111","ink-2":"#333",
+      "ink-3":"#5a5a4a","line":"#111","accent":"#111","accent-2":"#ff3b1f","accent-ink":"#f5f200",
+      "code-bg":"#111","code-ink":"#f5f200",
+      "c1":"#111","c2":"#ff3b1f","c3":"#0047ff","c4":"#00b34a","c5":"#7a4bff","c6":"#5a5a4a",
+      "font-display":"\"Helvetica Neue\",Impact,Haettenschweiler,Arial,sans-serif",
+      "font-body":"\"Helvetica Neue\",Helvetica,Arial,sans-serif",
+      "font-mono":"ui-monospace,\"SF Mono\",Menlo,monospace",
+      "w-display":"800","track-display":"-.045em","radius":"0px"}
+  },
+
+  "midnight-data": {
+    "use": "Analytics reviews, metrics deep-dives, anything where charts are the point. Dark navy so colour-coded series carry the slide.",
+    "motif": "grid",
+    "tokens": {"pagebg":"#04070f","bg":"#0a1020","surface":"#131c33","ink":"#eaf0ff","ink-2":"#9fb0d0",
+      "ink-3":"#6b7fa3","line":"#1e2a45","accent":"#22d3ee","accent-2":"#818cf8","accent-ink":"#04070f",
+      "code-bg":"#060b16","code-ink":"#dbe6ff",
+      "c1":"#22d3ee","c2":"#818cf8","c3":"#4ade80","c4":"#fbbf24","c5":"#f472b6","c6":"#fb923c",
+      "font-display":"ui-sans-serif,system-ui,-apple-system,\"Segoe UI\",Roboto,sans-serif",
+      "font-body":"ui-sans-serif,system-ui,-apple-system,\"Segoe UI\",Roboto,sans-serif",
+      "font-mono":"ui-monospace,\"SF Mono\",Menlo,\"JetBrains Mono\",monospace",
+      "w-display":"750","track-display":"-.026em","radius":"12px"}
+  },
+
+  "terminal": {
+    "use": "Engineering deep-dives, security briefings, developer talks. Monospace throughout, phosphor accent, code looks native.",
+    "motif": "dots",
+    "tokens": {"pagebg":"#000","bg":"#0b0f0b","surface":"#111811","ink":"#d6f5d6","ink-2":"#8fbf8f",
+      "ink-3":"#5c7a5c","line":"#1e2a1e","accent":"#4ade80","accent-2":"#fbbf24","accent-ink":"#04120a",
+      "code-bg":"#040804","code-ink":"#d6f5d6",
+      "c1":"#4ade80","c2":"#fbbf24","c3":"#38bdf8","c4":"#f472b6","c5":"#a78bfa","c6":"#fb7185",
+      "font-display":"ui-monospace,\"SF Mono\",Menlo,\"JetBrains Mono\",Consolas,monospace",
+      "font-body":"ui-monospace,\"SF Mono\",Menlo,\"JetBrains Mono\",Consolas,monospace",
+      "font-mono":"ui-monospace,\"SF Mono\",Menlo,\"JetBrains Mono\",Consolas,monospace",
+      "w-display":"700","track-display":"-.02em","radius":"4px"}
+  },
+
+  "soft-pastel": {
+    "use": "Workshops, education, internal culture, anything for a non-expert audience that should feel approachable rather than corporate.",
+    "motif": "none",
+    "tokens": {"pagebg":"#2b2833","bg":"#fdf7f4","surface":"#f6ecf5","ink":"#2f2a3d","ink-2":"#5f5872",
+      "ink-3":"#948da6","line":"#ece1ea","accent":"#e0679b","accent-2":"#6ac0c8","accent-ink":"#fff",
+      "code-bg":"#2f2a3d","code-ink":"#f6ecf5",
+      "c1":"#e0679b","c2":"#6ac0c8","c3":"#f2b366","c4":"#9b8ce0","c5":"#78c98a","c6":"#f08a7c",
+      "font-display":"\"Avenir Next\",\"Nunito\",\"Segoe UI\",ui-rounded,ui-sans-serif,system-ui,sans-serif",
+      "font-body":"\"Avenir Next\",\"Nunito\",\"Segoe UI\",ui-sans-serif,system-ui,sans-serif",
+      "font-mono":"ui-monospace,\"SF Mono\",Menlo,monospace",
+      "w-display":"700","track-display":"-.018em","radius":"20px"}
+  }
+}

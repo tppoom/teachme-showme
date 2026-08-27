@@ -1,0 +1,26 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "tppoom-skills",
+  "description": "Skills that turn a request into one self-contained HTML file: TeachMe builds a complete course you study from, ShowMe builds a deck you present from.",
+  "owner": { "name": "tppoom" },
+  "plugins": [
+    {
+      "name": "teachme",
+      "description": "Teach any subject end to end as one self-contained HTML course — prerequisites, mechanisms, worked examples, diagrams, exercises and checkpoint quizzes, with progress tracking, search and offline reading. Use when someone wants to genuinely learn something rather than get an answer, when a chat reply would be too short or skip prerequisites, or when turning slides, documents or a codebase into study material.",
+      "author": { "name": "tppoom" },
+      "source": "./plugins/teachme",
+      "category": "productivity",
+      "keywords": ["course", "learning", "teaching", "study", "documentation", "html"],
+      "homepage": "https://github.com/tppoom/claude-skills/tree/main/plugins/teachme"
+    },
+    {
+      "name": "showme",
+      "description": "Build a presentation as one self-contained HTML deck — fullscreen slides, progressive builds, speaker notes with a timer, overview grid, read mode and print-to-PDF, in a theme chosen to match the look you describe. Use whenever someone has to present to an audience, or wants a document, report or project turned into slides.",
+      "author": { "name": "tppoom" },
+      "source": "./plugins/showme",
+      "category": "productivity",
+      "keywords": ["slides", "presentation", "deck", "pitch", "html"],
+      "homepage": "https://github.com/tppoom/claude-skills/tree/main/plugins/showme"
+    }
+  ]
+}

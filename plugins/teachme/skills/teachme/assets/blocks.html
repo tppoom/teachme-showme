@@ -1,0 +1,505 @@
+<!--
+  ============================================================
+  TeachMe BLOCK LIBRARY — the complete markup contract.
+  The shell's CSS/JS knows ONLY these class names.
+  Do not invent new ones; compose these instead.
+
+  §1 chapter skeleton   §2 content   §3 visuals   §4 interactive   §5 practice
+  ============================================================
+
+
+  ══ §1 · CHAPTER SKELETON — one per file in parts/ ══
+
+  <section class="chapter" id="ch-3" data-title="Goroutines" data-min="18">
+    <header class="ch-head">
+      <div class="ch-label"></div>            <- leave empty; JS fills "Chapter 03"
+      <h1 class="ch-title">Goroutines</h1>
+      <p class="ch-desc">One sentence: what this chapter makes you able to do.</p>
+      <div class="ch-meta"><span class="tag intermediate">Intermediate</span></div>
+    </header>
+    <div class="ch-body">
+      <div class="objective">…</div>
+      … content, at least one visual …
+      <div class="recap">…</div>
+      <div class="quiz">…</div>
+    </div>
+  </section>
+
+  id MUST be "ch-N" matching SYLLABUS.md. data-title drives the sidebar.
+  tag classes: beginner | intermediate | advanced | core
+  A chapter with genuinely nothing to draw must say so on the section:
+  data-novisual="pure prose: naming conventions" — verify.py fails silently-missing visuals.
+-->
+
+
+<!-- ═══════════════════ §2 · CONTENT ═══════════════════ -->
+
+<!-- 2.1 OBJECTIVE — required, first block of every chapter -->
+<div class="objective">
+  <div class="ob-h">After this chapter you can</div>
+  <ul>
+    <li>Start a goroutine and predict when it will and won't run</li>
+    <li>Explain why a program can exit before its goroutines finish</li>
+  </ul>
+</div>
+
+<!-- 2.2 HEADINGS + PROSE -->
+<h2>Why goroutines exist</h2>
+<p>Prose. <code>inline code</code> for identifiers, <strong>bold</strong> for a term the
+   first time it is defined.</p>
+<h3>A sub-point</h3>
+<h4>A minor label</h4>
+
+<!-- 2.3 CALLOUTS
+     note = context · tip = do this · warn = careful
+     pitfall = the mistake people actually make · key = must remember -->
+<div class="callout key"><div class="ic">🔑</div><div class="co">
+  <div class="ct">The one thing to remember</div>
+  <p>A goroutine is not a thread. The runtime multiplexes many onto few OS threads.</p></div></div>
+<div class="callout note"><div class="ic">📌</div><div class="co"><div class="ct">Context</div><p>…</p></div></div>
+<div class="callout tip"><div class="ic">💡</div><div class="co"><div class="ct">Tip</div><p>…</p></div></div>
+<div class="callout warn"><div class="ic">⚠️</div><div class="co"><div class="ct">Careful</div><p>…</p></div></div>
+<div class="callout pitfall"><div class="ic">🚫</div><div class="co"><div class="ct">Common mistake</div>
+  <p>Shown with the literal error message the learner will see.</p></div></div>
+
+<!-- 2.4 CONCEPT CARDS — 2–4 parallel ideas -->
+<div class="grid">
+  <div class="card"><div class="c-ic">⚡</div><div class="c-t">Cheap</div>
+       <div class="c-d">~2 KB stack, grows on demand.</div></div>
+  <div class="card"><div class="c-ic">🔀</div><div class="c-t">Multiplexed</div>
+       <div class="c-d">M goroutines run on N OS threads.</div></div>
+</div>
+
+<!-- 2.5 CODE
+     data-file  → filename in the title bar
+     data-lines → show line numbers
+     data-hl    → permanently highlight lines: "4", "4-6", "4-6,11" -->
+<div class="code" data-file="main.go" data-lines data-hl="6-8">
+<pre><code class="lang-go">package main
+
+import "fmt"
+
+func main() {
+    ch := make(chan int)
+    go func() { ch &lt;- 42 }()   // runs concurrently
+    fmt.Println(&lt;-ch)          // blocks until the value arrives
+}</code></pre>
+<div class="code-out">42</div>
+</div>
+<!-- plain rendering (no keyword colouring): lang-text lang-output lang-json lang-log lang-diff -->
+
+<!-- 2.6 TABLE — always wrapped in .tw -->
+<div class="tw"><table>
+  <thead><tr><th>Form</th><th>Blocks?</th><th>Use when</th></tr></thead>
+  <tbody>
+    <tr><td><code>ch &lt;- v</code></td><td>Yes</td><td>Handing off a value</td></tr>
+    <tr><td><code>close(ch)</code></td><td>No</td><td>Signalling "no more values"</td></tr>
+  </tbody>
+</table></div>
+
+<!-- 2.7 STEPS — an ordered procedure -->
+<ol class="steps">
+  <li><b>Install the toolchain</b>Download from go.dev/dl, verify with <code>go version</code>.</li>
+  <li><b>Create a module</b>Run <code>go mod init example.com/app</code>.</li>
+</ol>
+
+<!-- 2.8 BAD vs GOOD -->
+<div class="cmp">
+  <div class="bad"><h5>✕ Don't</h5>
+    <div class="code"><pre><code class="lang-go">for _, v := range xs {
+    go func() { use(v) }()   // v is shared
+}</code></pre></div></div>
+  <div class="good"><h5>✓ Do</h5>
+    <div class="code"><pre><code class="lang-go">for _, v := range xs {
+    go func(v item) { use(v) }(v)
+}</code></pre></div></div>
+</div>
+
+
+<!-- ═══════════════════ §3 · VISUALS ═══════════════════
+     Every visual lives in <figure class="viz">. JS auto-numbers the caption
+     ("Fig. 3.2 — …"), so write the caption without a number.
+     Optional heading above the drawing: <div class="viz-t">LABEL</div>
+     ═══════════════════════════════════════════════════ -->
+
+<!-- 3.1 FLOW — pipelines, request paths, lifecycles. Add class "v" for vertical.
+     node modifiers: hi (accent) · ok · bad · dim (dashed) · round (pill, for states)
+     arrow modifiers: back (↩) · dim -->
+<figure class="viz">
+  <div class="flow">
+    <span class="node">Source<small>.go files</small></span>
+    <span class="arrow"><b>compile</b></span>
+    <span class="node hi">Binary</span>
+    <span class="arrow"><b>exec</b></span>
+    <span class="node">Process<small>goroutine 1</small></span>
+  </div>
+  <figcaption>What <code>go build</code> actually produces, and when.</figcaption>
+</figure>
+
+<!-- 3.2 STACK — layered architecture. layer modifiers: hi · dim -->
+<figure class="viz">
+  <div class="stack">
+    <div class="layer">Your handlers<small>app/api/*/route.ts</small></div>
+    <div class="layer hi">Framework router<small>Next.js App Router</small></div>
+    <div class="layer">Node HTTP server</div>
+    <div class="layer dim">OS sockets</div>
+  </div>
+  <figcaption>Where your code sits in the request stack.</figcaption>
+</figure>
+
+<!-- 3.3 CELLS — arrays, buffers, memory, bit patterns.
+     <i> = label above (index)   <b> = label below (pointer/annotation)
+     cell modifiers: hi · ok · bad · free (hatched) -->
+<figure class="viz">
+  <div class="cells">
+    <div class="cell"><i>0</i>7</div>
+    <div class="cell"><i>1</i>3</div>
+    <div class="cell hi"><i>2</i>9<b>▲ head</b></div>
+    <div class="cell free"><i>3</i></div>
+    <div class="cell free"><i>4</i></div>
+  </div>
+  <figcaption>A slice of len 3, cap 5 — the free cells are allocated but unused.</figcaption>
+</figure>
+
+<!-- 3.4 TREE — file layouts, hierarchies, ASTs. Preformatted; whitespace is preserved.
+     <b> highlights a name · <u> marks the important one · <i> is a trailing comment -->
+<figure class="viz">
+<div class="tree">app/
+├── <b>api/</b>
+│   ├── lessons/       <i>CRUD + streaming generation</i>
+│   └── <u>chat/</u>   <i>← the tutor endpoint you will edit</i>
+└── (app)/
+    └── lessons/[id]/  <i>course viewer</i></div>
+  <figcaption>Only the directories that matter for this chapter.</figcaption>
+</figure>
+
+<!-- 3.5 SEQ — sequence / protocol diagrams. Actors are numbered 1..n left to right.
+     data-from / data-to pick the columns; class "dashed" = a response.
+     .seq-note spans the full width for a phase label. -->
+<figure class="viz">
+  <div class="seq">
+    <div class="seq-actor">Browser</div>
+    <div class="seq-actor hi">Server</div>
+    <div class="seq-actor">DB</div>
+    <div class="seq-msg" data-from="1" data-to="2">POST /login</div>
+    <div class="seq-msg" data-from="2" data-to="3">SELECT user</div>
+    <div class="seq-msg dashed" data-from="3" data-to="2">row</div>
+    <div class="seq-note">— password verified —</div>
+    <div class="seq-msg dashed" data-from="2" data-to="1">Set-Cookie: session</div>
+  </div>
+  <figcaption>The full login round trip. Dashed arrows are responses.</figcaption>
+</figure>
+
+<!-- 3.6 LANES — parallel timelines: concurrency, async, pipeline stages, request timing.
+     data-n on .lanes = number of time slots (default 12)
+     --s = start slot (0-based), --w = width in slots
+     seg modifiers: wait (dashed grey) · block (red) · ok (green) -->
+<figure class="viz">
+  <div class="lanes" data-n="12">
+    <div class="lane"><b>main</b>
+      <span class="seg" style="--s:0;--w:2">start</span>
+      <span class="seg wait" style="--s:2;--w:7">wg.Wait()</span>
+      <span class="seg ok" style="--s:9;--w:3">exit</span></div>
+    <div class="lane"><b>worker 1</b>
+      <span class="seg" style="--s:2;--w:4">fetch()</span></div>
+    <div class="lane"><b>worker 2</b>
+      <span class="seg" style="--s:2;--w:7">fetch() slow</span></div>
+    <div class="lanes-axis"></div>
+  </div>
+  <figcaption>Why the program takes as long as its slowest worker, not the sum.</figcaption>
+</figure>
+
+<!-- 3.7 BARS — quantitative comparison. --p is the percentage width. bar modifiers: g · r -->
+<figure class="viz">
+  <div class="bars">
+    <div class="b"><span>Goroutine</span><div class="bar g"><i style="--p:2%"></i></div><span class="v">~2 KB</span></div>
+    <div class="b"><span>OS thread</span><div class="bar r"><i style="--p:100%"></i></div><span class="v">~1 MB</span></div>
+  </div>
+  <div class="legend"><span><i class="g"></i>runtime-managed</span><span><i class="r"></i>kernel-managed</span></div>
+  <figcaption>Initial stack size — the reason you can start a million of one and not the other.</figcaption>
+</figure>
+
+<!-- 3.8 INLINE SVG — for anything genuinely geometric that the blocks above can't express.
+     Use the d-* classes so both themes work; never hard-code colours.
+     .d-box (+.hi/.dim) · .d-line · .d-arrow (+.dim, arrowheads are predefined) ·
+     .d-dim (muted text) · .d-accent (accent fill) · .d-mono (monospace text)
+     Always give role="img" and aria-label. viewBox width ~700 fills the column. -->
+<figure class="viz">
+  <svg viewBox="0 0 640 190" role="img" aria-label="Two goroutines sharing one variable">
+    <rect class="d-box" x="20" y="20" width="150" height="54" rx="9"/>
+    <text x="95" y="52" text-anchor="middle">goroutine A</text>
+    <rect class="d-box" x="20" y="116" width="150" height="54" rx="9"/>
+    <text x="95" y="148" text-anchor="middle">goroutine B</text>
+    <rect class="d-box hi" x="430" y="68" width="180" height="54" rx="9"/>
+    <text x="520" y="100" text-anchor="middle">counter = 0</text>
+    <path class="d-arrow" d="M175 47 H400 L425 88"/>
+    <path class="d-arrow" d="M175 143 H400 L425 102"/>
+    <text class="d-dim" x="290" y="38" text-anchor="middle">counter++</text>
+    <text class="d-dim" x="290" y="170" text-anchor="middle">counter++</text>
+  </svg>
+  <figcaption>Both writes read the same old value — this is the data race.</figcaption>
+</figure>
+
+<!-- 3.9 SCREENSHOT / real image — must be inlined as a data: URI, never a file path.
+     Generate the whole block with:  python3 scripts/embed-image.py shot.png "caption" -->
+
+
+<!-- ═══════════════════ §4 · INTERACTIVE ═══════════════════ -->
+
+<!-- 4.1 WALK — step through a mechanism. The single most valuable block in this library:
+     each step highlights the lines it is talking about, so the learner sees
+     explanation and code move together.
+     Put ONE .code inside; data-hl on each step highlights lines in it.
+     Arrow keys work when the walk is focused. -->
+<div class="walk" data-title="What happens when this program runs">
+  <div class="code" data-file="main.go" data-lines>
+<pre><code class="lang-go">func main() {
+    ch := make(chan int)
+    go worker(ch)
+    v := &lt;-ch
+    fmt.Println(v)
+}</code></pre>
+  </div>
+  <div class="walk-steps">
+    <div class="walk-step" data-hl="2">
+      <div class="wt">The channel is created</div>
+      <p>Unbuffered, so a send blocks until a receiver is ready. Nothing runs concurrently yet.</p>
+    </div>
+    <div class="walk-step" data-hl="3">
+      <div class="wt">The goroutine is scheduled</div>
+      <p><code>go</code> returns immediately. <code>worker</code> has not necessarily started —
+         the scheduler decides. This is the line people misread.</p>
+    </div>
+    <div class="walk-step" data-hl="4">
+      <div class="wt">main blocks on the receive</div>
+      <p>The runtime parks <code>main</code> and runs <code>worker</code> on the freed thread.</p>
+    </div>
+  </div>
+</div>
+
+<!-- 4.2 TABS — the same idea in several languages, or several ways to do one thing.
+     data-title labels the tab; the first pane opens by default. -->
+<div class="tabs">
+  <div class="tab" data-title="WaitGroup">
+    <div class="code"><pre><code class="lang-go">var wg sync.WaitGroup</code></pre></div>
+    <p>Best when you only need to know that everyone finished.</p>
+  </div>
+  <div class="tab" data-title="errgroup">
+    <div class="code"><pre><code class="lang-go">g, ctx := errgroup.WithContext(ctx)</code></pre></div>
+    <p>Best when any worker can fail and you want the first error.</p>
+  </div>
+</div>
+
+
+<!-- ═══════════════════ §5 · PRACTICE ═══════════════════ -->
+
+<!-- 5.1 EXERCISE — hands-on, with a revealable solution AND an explanation.
+     Also the right block for predict-then-check: ask what the code prints,
+     hide the answer behind the summary. -->
+<div class="ex">
+  <div class="ex-h"><span class="ic">✍️</span><b>Try it yourself</b></div>
+  <div class="ex-b">
+    <p>Start three goroutines that print 1, 2, 3 and make <code>main</code> wait for all of them.</p>
+    <details>
+      <summary>Show the solution</summary>
+      <div>
+        <div class="code"><pre><code class="lang-go">var wg sync.WaitGroup
+for i := 1; i &lt;= 3; i++ {
+    wg.Add(1)
+    go func(n int) { defer wg.Done(); fmt.Println(n) }(i)
+}
+wg.Wait()</code></pre></div>
+        <p><strong>Why:</strong> <code>wg.Add</code> runs before the <code>go</code> statement so the
+           counter can never reach zero early. The numbers print in any order — that is correct.</p>
+      </div>
+    </details>
+  </div>
+</div>
+
+<!-- 5.2 RECAP — required, last prose block -->
+<div class="recap">
+  <h4>Recap</h4>
+  <ul>
+    <li>A goroutine is a runtime-scheduled function, not an OS thread.</li>
+    <li><code>main</code> returning kills every goroutine still running.</li>
+  </ul>
+</div>
+
+<!-- 5.3 QUIZ — required, 2–4 questions, closes every chapter.
+     Exactly one .opt per question has data-correct="true".
+     .fb explains why the right answer is right AND why the tempting one is tempting. -->
+<div class="quiz">
+  <div class="quiz-h"><span>Checkpoint</span></div>
+  <div class="q">
+    <p class="q-t">What happens to running goroutines when <code>main</code> returns?</p>
+    <ul class="opts">
+      <li><button class="opt">They finish first, then the process exits</button></li>
+      <li><button class="opt" data-correct="true">They are killed immediately</button></li>
+      <li><button class="opt">The runtime panics</button></li>
+    </ul>
+    <div class="fb"><b>Why:</b> the process exits when <code>main</code> returns; nothing waits.
+      The first option is tempting because that <em>is</em> how thread joins work in most
+      languages — Go makes you ask for it with <code>sync.WaitGroup</code> or a channel.</div>
+  </div>
+</div>
+
+
+
+<!-- ═══════════════════ §6 · MORE BLOCKS ═══════════════════
+     Nothing below is tied to a subject — reach for a block when the idea has
+     that shape. Formulas turn up in finance and physics; vocabulary tables in
+     languages and in any field with its own terminology; timelines in history,
+     in a project status, and in a disease course.
+     Which shape needs what: references/teaching.md
+     ═════════════════════════════════════════════════════════ -->
+
+<!-- ---------- 6.1 MATHEMATICS, PHYSICS, CHEMISTRY, FINANCE, STATISTICS ----------
+     Formulas use native MathML — no library, works offline, scales, and is
+     readable by screen readers. Add data-eq to number the equation (1.1, 1.2 …). -->
+<div class="math" data-eq>
+<math display="block"><mrow><mi>a</mi><mo>=</mo>
+  <mfrac><mrow><mi>v</mi><mo>&#x2212;</mo><msub><mi>v</mi><mn>0</mn></msub></mrow><mi>t</mi></mfrac>
+</mrow></math>
+</div>
+
+<!-- Every symbol you introduce gets a legend. Never leave a letter unexplained. -->
+<div class="where">
+  <div class="wh">where</div>
+  <div class="w"><b>a</b><span>acceleration, in m/s²</span></div>
+  <div class="w"><b>v₀</b><span>initial velocity, in m/s</span></div>
+  <div class="w"><b>t</b><span>elapsed time, in seconds</span></div>
+</div>
+
+<!-- Inline fraction for running prose, no MathML needed:
+     one in <span class="frac"><i>2</i><i>3</i></span> of cases -->
+
+<!-- A derivation: expression on the left, the REASON for the step on the right.
+     Never show a chain of equations without saying why each step is allowed. -->
+<div class="derive">
+  <div class="dv"><div class="dx"><math><mrow><mi>v</mi><mo>=</mo><msub><mi>v</mi><mn>0</mn></msub><mo>+</mo><mi>a</mi><mi>t</mi></mrow></math></div>
+    <div class="dr">start from the definition of constant acceleration</div></div>
+  <div class="dv"><div class="dx"><math><mrow><mi>v</mi><mo>&#x2212;</mo><msub><mi>v</mi><mn>0</mn></msub><mo>=</mo><mi>a</mi><mi>t</mi></mrow></math></div>
+    <div class="dr">subtract v₀ from both sides</div></div>
+  <div class="dv"><div class="dx"><math><mrow><mi>a</mi><mo>=</mo><mfrac><mrow><mi>v</mi><mo>&#x2212;</mo><msub><mi>v</mi><mn>0</mn></msub></mrow><mi>t</mi></mfrac></mrow></math></div>
+    <div class="dr">divide by t, valid because t ≠ 0</div></div>
+</div>
+
+<!-- Formal statements. Variants: defn (blue) · law (amber) · proof (muted, auto ∎) ·
+     no variant = theorem/proposition (accent). The <em> is the name. -->
+<div class="formal defn"><div class="fl">Definition<em>Acceleration</em></div>
+  <p>The rate of change of velocity with respect to time.</p></div>
+<div class="formal"><div class="fl">Theorem<em>Conservation of momentum</em></div>
+  <p>In a system with no external force, total momentum is constant.</p></div>
+<div class="formal law"><div class="fl">Law<em>Newton's second law</em></div><p>F = ma.</p></div>
+<div class="formal proof"><div class="fl">Proof</div>
+  <p>Internal forces cancel pairwise by the third law, so the net force is zero.</p></div>
+
+<!-- ---------- 6.2 HUMAN LANGUAGES ----------
+     Phonetic/reading annotation uses native <ruby> — furigana, pinyin, IPA, any script. -->
+<p>Ruby in prose: <ruby>勉強<rt>べんきょう</rt></ruby> · <ruby>中文<rt>zhōngwén</rt></ruby></p>
+
+<div class="vocab">
+  <div class="vr hd"><div>Word</div><div>Reading</div><div>Meaning &amp; example</div></div>
+  <div class="vr">
+    <div class="vt"><ruby>勉強<rt>べんきょう</rt></ruby></div>
+    <div class="vp">benkyō</div>
+    <div class="vm">study, learning
+      <span class="vx">毎日日本語を勉強します。— I study Japanese every day.</span></div>
+  </div>
+</div>
+
+<!-- Break a real sentence into labelled parts. Also works for chemical equations,
+     formula anatomy, legal clauses, or any structure with named pieces.
+     Colour variants: (none) accent · a2 green · a3 amber · a4 cyan -->
+<div class="annot">
+  <span class="pc" data-l="subject">わたしは</span>
+  <span class="pc a2" data-l="object">本を</span>
+  <span class="pc a3" data-l="verb">読みます</span>
+</div>
+
+<!-- Example dialogue. Add class "b" to a turn to tint the other speaker. -->
+<div class="dlg">
+  <div class="turn"><b>A</b><div class="say"><p>すみません、駅はどこですか。</p>
+    <span class="gloss">Excuse me, where is the station?</span></div></div>
+  <div class="turn b"><b>B</b><div class="say"><p>まっすぐ行って、右です。</p>
+    <span class="gloss">Go straight, then it's on the right.</span></div></div>
+</div>
+
+<!-- ---------- 6.3 HISTORY, LAW, HUMANITIES, RESEARCH ----------
+     A primary source, quoted exactly, with an optional translation and a real citation. -->
+<blockquote class="quote">
+  <p>Governments are instituted among Men, deriving their just powers from the consent of the governed.</p>
+  <span class="tr">Optional translation or paraphrase for the learner.</span>
+  <cite>Declaration of Independence, 1776, para. 2</cite>
+</blockquote>
+
+<!-- Chronology. Add class "hi" to the turning point. Wrap in figure.viz — it counts
+     as the chapter's visual and gets a figure number. -->
+<figure class="viz"><ol class="timeline">
+  <li><span class="when">1765</span><b>Stamp Act</b>
+      <p>Direct taxation of the colonies; "no taxation without representation" takes hold.</p></li>
+  <li class="hi"><span class="when">1773</span><b>Boston Tea Party</b>
+      <p>The point where the dispute turns from petition to action.</p></li>
+</ol><figcaption>How a tax dispute became a war — the three events that mattered.</figcaption></figure>
+
+<!-- ---------- 6.4 PRACTICAL SKILLS, PROCEDURES, LABS ----------
+     Steps carry a time badge with <em class="t">. -->
+<ol class="steps">
+  <li><b>Bring to room temperature</b>Cold butter will not emulsify.<em class="t">10 min</em></li>
+  <li><b>Fold, do not stir</b>Stirring knocks the air out.<em class="t">2 min</em></li>
+</ol>
+
+<!-- A checklist the reader can tick; state persists in their browser.
+     data-id must be unique within the course. -->
+<ul class="check" data-id="ch4-prep">
+  <li>All ingredients weighed and at room temperature</li>
+  <li>Pan preheated to 180 °C</li>
+  <li>Timer set before the butter goes in</li>
+</ul>
+
+<!-- ---------- 6.5 MEMORISATION — any subject ----------
+     A flashcard deck: click to flip, then "I knew it" (retires the card) or
+     "Show again" (sends it to the back). Progress persists per deck.
+     data-id must be unique within the course. -->
+<div class="cards" data-id="ch4-terms" data-title="Key terms">
+  <div class="fc"><div class="fc-f">Acceleration</div>
+       <div class="fc-b">Rate of change of velocity · m/s²</div></div>
+  <div class="fc"><div class="fc-f">Momentum</div>
+       <div class="fc-b">mass × velocity · kg·m/s</div></div>
+</div>
+
+<!-- ---------- 6.6 TYPED-ANSWER QUIZ QUESTION ----------
+     Put data-answer on the .q — the input and submit button are generated.
+     Separate accepted answers with |. Matching ignores case, extra spaces and
+     trailing punctuation. Use it for vocabulary, numbers, terms, spellings;
+     a true/false question is just a two-option multiple choice. -->
+<div class="quiz">
+  <div class="quiz-h"><span>Checkpoint</span></div>
+  <div class="q" data-answer="9.8|9.81|9,8">
+    <p class="q-t">What is g at sea level, in m/s² (to one decimal place)?</p>
+    <div class="fb"><b>Why:</b> it varies from 9.78 at the equator to 9.83 at the poles;
+      9.8 is the standard teaching value.</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════ §7 · APPENDIX — once, after the last chapter ═══════════════════ -->
+<section class="chapter appendix" id="ch-appendix" data-title="Glossary &amp; cheat sheet">
+  <header class="ch-head">
+    <div class="ch-label"></div>
+    <h1 class="ch-title">Glossary &amp; cheat sheet</h1>
+    <p class="ch-desc">Every term used in this course, plus the one-page reference.</p>
+    <div class="ch-meta"><span class="tag core">Reference</span></div>
+  </header>
+  <div class="ch-body">
+    <h2>Glossary</h2>
+    <dl class="gl">
+      <div class="gl-i"><dt>Goroutine</dt><dd>A function scheduled by the Go runtime …</dd></div>
+      <div class="gl-i"><dt>Channel</dt><dd>A typed conduit …</dd></div>
+    </dl>
+    <h2>Cheat sheet</h2>
+    <div class="tw"><table>…</table></div>
+    <h2>What to learn next</h2>
+    <ul><li><strong>context package</strong> — cancellation across goroutine trees.</li></ul>
+  </div>
+</section>
