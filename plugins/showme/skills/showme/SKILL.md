@@ -51,6 +51,36 @@ both directions: word ceilings on slides, and a word floor on notes.
 **Do NOT use for:** teaching material meant to be studied alone (that is `teachme`), a written
 document, or a question answerable in the chat. This skill produces a file to stand in front of.
 
+## Before you build
+
+Three decisions, made in your first message rather than discovered by correction later.
+
+**Where it goes.** The user named a place → use it. Otherwise `./<slug>/` in the current
+working directory — **except** when the cwd is a repo you were not asked to modify; use the
+parent or `~/Desktop/` and say which. State the path up front.
+
+Scaffold it rather than hand-building the shape:
+```bash
+python3 $SKILL/scripts/new.py <dir> --title "…" --lang th --theme swiss --minutes 20
+```
+
+**How long.** Roughly 1–2 minutes per main slide, and the gate checks it against `minutes`.
+
+| Slot | Main slides |
+|---|---|
+| 5 min, lightning | 5–8 |
+| 10 min | 8–14 |
+| 20 min | 12–22 |
+| 45 min lecture or workshop | 25–45, with a section divider every 6–8 |
+| No slot — sent to be read | 10–20; the notes carry proportionally more |
+
+Backup slides do not count against the slot. When the material genuinely needs more than the
+slot allows, the answer is the appendix, not a faster delivery — say which slides you moved
+there and why.
+
+**New or existing.** If a deck directory already exists, you are editing — jump to
+*Restyling and changing a deck*.
+
 ## Workflow
 
 Announce it, then run all five stages. One TodoWrite item per stage, plus one per slide batch
@@ -105,9 +135,72 @@ python3 $SKILL/scripts/assemble.py <deck-dir>
 python3 $SKILL/scripts/verify.py  <deck-dir> --wip   # after each batch
 python3 $SKILL/scripts/verify.py  <deck-dir>         # final gate
 ```
-Then open `index.html`, screenshot a few slides, press `O` for the overview and look at the
-deck as a whole — that view is where a monotonous deck becomes obvious. Only then send it.
-Tell them the shortcuts: `←/→` navigate, `O` overview, `N` notes, `F` fullscreen, `P` PDF.
+A FAIL means move content into the notes or the appendix, split the slide, or cut it — never
+loosen the check. What "done" means is in *Handing it over* below; a passing gate is only the
+first of its five steps.
+
+## Surviving a long build
+
+A deck is less text than a course but more design decisions, and it fails the same way: the
+first six slides are considered, the last six are bullet lists because the model is trying to
+finish. Beat it with process.
+
+- **Write slides straight to their part files**, four to six per turn. Never draft slides in
+  your reply and then save them.
+- **`STORYLINE.md` is the source of truth.** Re-read it for the next claim instead of
+  remembering the plan.
+- **Checkpoint after every batch** with assemble + `verify.py --wip`.
+- **If your context is compacted mid-build**, recovery is mechanical: read `STORYLINE.md`,
+  `ls <dir>/parts/`, resume at the first slide id with no file.
+- **Look at the overview grid before you call it done.** Press `O`. A deck that reads fine
+  slide by slide and looks monotonous as a grid is monotonous — the grid is the only view that
+  shows you what the audience experiences over twenty minutes.
+- **If you catch yourself reaching for bullets to finish faster, stop** and say how many slides
+  are done. Half a considered deck plus an honest outline beats a whole generic one.
+
+## Restyling and changing a deck
+
+- **`parts/` exists** → for a restyle, change the `theme` block in `meta.json` and re-assemble.
+  That is the entire job: slides are theme-independent by construction, which is why the theme
+  lives in one place. For a content change, edit the one part file.
+- **Only `index.html` exists** — built by hand, or by someone else, or by an earlier session
+  whose parts are gone → you can re-theme by replacing the token block, but say plainly what
+  you can and cannot preserve before touching it, and offer to reconstruct `parts/` from it so
+  future edits are cheap.
+- **A .pptx, .key or .pdf** → this skill builds a new deck from the content; it does not
+  convert files and will not preserve their layout. Extract the content, run the normal
+  workflow, and say that is what you did rather than implying a conversion.
+- **Never hand-edit `index.html`** — it is generated and the next assemble overwrites it.
+  Keep `deck_id` stable so "resume where you were" survives.
+
+## Handing it over
+
+Done means all of this, in order — not "the files exist".
+
+1. `verify.py` passes **without** `--wip`
+2. You opened `index.html`, pressed `O`, and looked at the whole deck as a grid
+3. You stepped through two or three slides in present mode and checked a chart rendered
+4. You sent the file with `SendUserFile`, or gave the exact path if you cannot
+5. You reported the real shape — slides, appendix slides, estimated minutes, theme — and named
+   anything you moved to the appendix or left out, with the reason
+
+Then one line of controls: `←/→` navigate, `O` overview, `N` speaker notes and timer, `F`
+fullscreen, `P` to save a PDF. Do not narrate the build.
+
+## What a run looks like
+
+> **User:** ทำสไลด์เสนอโปรเจกต์ให้อาจารย์หน่อย 15 นาที เอาแบบสะอาดๆ ไม่ต้องหวือหวา
+
+1. **Brief** — audience is one advisor who knows the field; spine is "the pipeline is the
+   contribution, not the UI"; 15 minutes → about 12 main slides; "สะอาดๆ ไม่หวือหวา" → `swiss`,
+   rule motif. Say all of that back in two lines and start.
+2. **Storyline** — 12 claims + 3 appendix slides for the questions an advisor always asks
+   (dataset size, evaluation, what is novel). Show the claim list.
+3. **Design** — scaffold with `--theme swiss --minutes 15`.
+4. **Build** — `parts/01-open.html` … four to six slides per turn, `--wip` after each batch.
+5. **Final gate** — clean, press `O`, fix the two bullet slides sitting next to each other.
+6. **Hand over** — `SendUserFile` + *"12 สไลด์ + ภาคผนวก 3 · ธีม swiss · ~15 นาที · กด N ดูโน้ต
+   ผู้พูดพร้อมจับเวลา"*
 
 ## What each stage refuses to do
 
@@ -144,6 +237,7 @@ Tell them the shortcuts: `←/→` navigate, `O` overview, `N` notes, `F` fullsc
 | Every layout and diagram, copy-paste ready | `assets/layouts.html` |
 | Ten complete looks + the token contract | `assets/themes.json` |
 | Deck chrome in 14 languages (RTL handled) | `assets/i18n.json` |
+| Scaffold a deck directory | `scripts/new.py <dir> --title … --theme … --minutes …` |
 | Build / gate | `scripts/assemble.py`, `scripts/verify.py` |
 | Inline a real image as a data URI | `scripts/embed-image.py <img> "alt"` |
 

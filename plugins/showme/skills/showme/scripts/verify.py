@@ -39,6 +39,10 @@ def wc(t):
     a = len(re.findall(f"[{CJK}]", t)); b = len(re.findall(f"[{NOSP}]", t))
     return len(re.sub(f"[{CJK}{NOSP}]", " ", t).split()) + round(a / 2.5) + round(b / 5)
 
+def cut(chunk):
+    end = chunk.find("</section>")
+    return chunk if end < 0 else chunk[:end + len("</section>")]
+
 def layout_of(cls):
     known = ["title", "section", "statement", "quote", "closing", "bignum", "imgfull", "code", "appendix"]
     for k in known:
@@ -78,7 +82,9 @@ def main():
     # ---- 3. slides -----------------------------------------------------------
     # authors write the attributes in whatever order feels natural — match either
     SL = r'<section\b[^>]*\bclass="[^"]*\bslide\b'
-    chunks = [c for c in re.split(f"(?={SL})", doc) if re.match(SL, c)]
+    # cut each chunk at its own </section>; otherwise the last slide swallows the
+    # page chrome and the script, and gets measured against words it does not contain
+    chunks = [cut(c) for c in re.split(f"(?={SL})", doc) if re.match(SL, c)]
     if not chunks: fail("no slides found")
     layouts, ids, main_n, apx_n = [], [], 0, 0
     prev_sig, run = None, 0

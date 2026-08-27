@@ -81,8 +81,14 @@ def main():
             (warn if wip else fail)(f"coverage ledger item still unchecked: {u.strip()[:90]}")
 
     # ---- 3. chapters ---------------------------------------------------------
-    chunks = re.split(r'(?=<section class="chapter)', doc)
-    chaps = [c for c in chunks if c.startswith('<section class="chapter')]
+    # attribute order is the author's choice, and each chunk must stop at its own
+    # </section> — otherwise the last chapter absorbs the page chrome and the script,
+    # which would let a thin final chapter pass the word floor on borrowed words
+    CH = r'<section\b[^>]*\bclass="[^"]*\bchapter\b'
+    def cut(c):
+        e = c.find("</section>")
+        return c if e < 0 else c[:e + len("</section>")]
+    chaps = [cut(c) for c in re.split(f"(?={CH})", doc) if re.match(CH, c)]
     if not chaps: fail("no chapters found in index.html")
     seen = []
     for c in chaps:
