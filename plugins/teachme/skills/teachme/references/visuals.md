@@ -96,13 +96,28 @@ paraphrase of the line.
 Reach for SVG only when no block above fits. Then:
 
 - `viewBox="0 0 640 H"` — 640 fills the column at every width; pick `H` to fit the content.
-- Classes, never inline colours: `.d-box` (`.hi`, `.dim`), `.d-line`, `.d-arrow` (`.dim`),
-  `.d-dim` for muted text, `.d-accent`, `.d-mono`.
+- Classes, never inline colours: `.d-box` (`.hi`, `.ok`, `.bad`, `.dim`), `.d-line` (`.dim`),
+  `.d-arrow` (`.dim`), `.d-fill`, `.d-dim` for muted text, `.d-accent`, `.d-ok`, `.d-bad`,
+  `.d-mono`, `.d-sm`. These are what make the drawing survive the dark theme; a hard-coded
+  `fill="#333"` is invisible on half the page views your course will ever get.
 - Arrowheads are already defined document-wide — `.d-arrow` picks them up, no `<defs>` needed.
 - Text: `text-anchor="middle"`, centre it on the box (`y` = box centre + ~5).
 - Boxes: `rx="9"` to match the page's radius.
 - Build paths from straight segments (`M x y H x2 V y2`) rather than curves; they are easier
   to get right and read cleanly at any size.
+
+**Two failure modes that produce no error and no visible symptom while you are writing:**
+
+- **Anything outside the viewBox is clipped.** The SVG does not grow to contain a stray label,
+  so a caption at `x="700"` in a 640-wide viewBox simply is not there. Keep every `x`, `y`,
+  `cx` and `cy` inside the box, and leave a margin for text that extends past its anchor.
+  `verify.py` warns on coordinates it can see outside the box.
+- **Every `id` you define is document-wide.** Chapters are concatenated into one file, so a
+  `<clipPath id="tail">` in chapter 3 captures every `url(#tail)` in chapter 11 as well.
+  Prefix them with the chapter: `id="ch3-tail"`. `verify.py` fails on duplicates.
+
+A worked figure using both rules — a clipped region reusing the same path rather than a second
+hand-drawn one — is in `assets/examples/concept-chapter.html`.
 
 ## Where visuals go in a chapter
 

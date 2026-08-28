@@ -127,6 +127,12 @@ prevents the collapse into summary that the user is trying to escape. One file, 
 the next. Markup contract: `assets/blocks.html`. Depth floor and prose standards:
 `references/authoring.md`.
 
+**Before your first chapter, read one whole worked example** — `assets/blocks.html` gives you
+the vocabulary, but two files show the standard end to end:
+`assets/examples/concept-chapter.html` (explaining an idea) and
+`assets/examples/status-chapter.html` (codebase mode's "where the project stands", the chapter
+most often written as vague reassurance instead of evidence). Both pass the gate as written.
+
 Every chapter carries: objective → why it exists → **mental-model figure** → the full
 explanation → worked example with output → variations and edge cases → common mistakes with
 the real error message → exercise with revealed solution → recap → checkpoint quiz with
@@ -271,6 +277,7 @@ chapter as you finish it, `/` searches. Do not narrate the build; they want the 
 | When to draw, which visual form, SVG conventions | `references/visuals.md` |
 | How people understand things; shapes of knowledge; accuracy | `references/teaching.md` |
 | Every allowed HTML block, copy-paste ready | `assets/blocks.html` |
+| Two complete chapters at the required depth | `assets/examples/` |
 | The page itself (CSS/JS, placeholders) | `assets/shell.html` |
 | Scaffold a course directory | `scripts/new.py <dir> --title … --lang …` |
 | Build / gate | `scripts/assemble.py`, `scripts/verify.py` |
@@ -296,6 +303,11 @@ progress, and typed-answer quiz questions.
   real screenshots go through `scripts/embed-image.py`.
 - **Decorative diagrams.** A boxed bullet list teaches nothing and costs attention. A visual
   must show a mechanism, a shape, or a relationship — otherwise cut it.
+- **SVG that silently disappears.** Anything outside the `viewBox` is clipped with no error,
+  and an `id` defined in one chapter captures every `url(#…)` in the whole document. Prefix
+  ids with the chapter; keep coordinates inside the box. `verify.py` catches both.
+- **Hard-coded colours in a diagram.** Use the `.d-*` classes. A `fill="#333"` is invisible in
+  dark mode, which is half the page views your course will get.
 - **Placeholder content.** `TODO`, `…`, "coming soon" — `verify.py` fails the build on these.
 - **Teaching the syllabus instead of the subject.** Chapter titles are not chapters.
 - **Writing every subject like a programming course.** Ask what shape each idea is, then pick

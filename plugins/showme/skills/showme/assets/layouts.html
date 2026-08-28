@@ -2,7 +2,12 @@
   ══════════════════════════════════════════════════════════════
   ShowMe LAYOUT LIBRARY — the complete markup contract.
   The runtime knows ONLY these class names. Compose them; don't invent.
-  No inline styles except the ones marked below (--w on funnel, chart data).
+  No inline styles except the three CSS variables marked below:
+    --w on a .funnel stage · --p on a .prog bar · nothing else, ever.
+
+  Every block below is a working slide, not a sketch: copy one, replace the content,
+  keep the structure. The claims and notes are written out in full so you can see the
+  standard they are held to, not just the tags.
 
   EVERY slide:
     <section id="s-7" class="slide LAYOUT" data-claim="One sentence, with a verb,
@@ -120,6 +125,7 @@
     </table>
   </div>
   <div class="take">Every incremental dollar this year came from customers we already had.</div>
+  <p class="src">Billing system, Q1–Q4 2025. New logos counted at first invoice.</p>
   <div class="notes"><p>If asked about acquisition cost: CAC was flat at $1,340 all year, which is exactly the problem — we spent the same and got the same. The channel breakdown is in the appendix if anyone wants to see it, but do not go there unprompted; it is a detour from the argument.</p></div>
 </section>
 
@@ -134,6 +140,7 @@
     </table>
   </div>
   <div class="take">We are getting better at growing accounts and worse at keeping them.</div>
+  <p class="src">Quarterly cohort analysis, trailing twelve months.</p>
   <div class="notes"><p>This is the hinge of the whole deck, so say it slowly and let the two diverging lines do the work. Big accounts are getting bigger and small ones are leaving. Everything before this slide was setup and everything after it is consequence.</p></div>
 </section>
 
@@ -152,7 +159,42 @@
     </ul></div>
   </div>
   <div class="take">The accounts we stopped calling are the ones our growth depends on.</div>
+  <p class="src">Churned ARR by account size, 2025. Excludes accounts that downgraded but stayed.</p>
   <div class="notes"><p>The donut is deliberately blunt. If you get "small accounts don't matter", the answer is that they are 72% of churned ARR and they are the top of the expansion funnel we just credited for all of our growth. Losing them is a delayed hit to the number we opened on.</p></div>
+</section>
+
+<!-- stacked bars: how each column is composed. The axis reaches the tallest COLUMN,
+     and each segment is labelled when it is tall enough to hold a number.
+     Use it only when the total means something; otherwise use grouped bars. -->
+<section id="s-10b" class="slide" data-claim="The revenue mix inverted: expansion overtook new business inside four quarters.">
+  <div class="s-head"><h2>The mix inverted inside four quarters</h2></div>
+  <div class="chart" data-type="stack" data-unit="k">
+    <table>
+      <tr><th></th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th></tr>
+      <tr><th>Expansion</th><td>180</td><td>240</td><td>330</td><td>470</td></tr>
+      <tr><th>New logos</th><td>150</td><td>160</td><td>155</td><td>162</td></tr>
+    </table>
+  </div>
+  <div class="take">Same total shape, completely different engine underneath.</div>
+  <p class="src">Billing system, Q1–Q4 2025. Excludes one-off services revenue.</p>
+  <div class="notes"><p>Point at the growing red band rather than the totals. The totals are the number everyone already knows; the composition is the news. If someone asks why services are excluded, it is because they are booked once and would flatter Q4 by about forty thousand.</p></div>
+</section>
+
+<!-- horizontal bars: one series, many categories, or category names too long to sit
+     under a vertical axis. The first data row is the series that gets drawn.
+     data-hi="0" (comma-separated indices) greys every other bar — use it whenever one
+     bar is the point, which is most of the time. -->
+<section id="s-10c" class="slide" data-claim="Every churn reason we can name is a relationship failure, not a product failure.">
+  <div class="s-head"><h2>Why they said they left</h2></div>
+  <div class="chart" data-type="hbar" data-unit="%" data-hi="0">
+    <table>
+      <tr><th></th><th>Nobody followed up</th><th>Price</th><th>Missing feature</th><th>Switched vendor</th><th>Company closed</th></tr>
+      <tr><th>Share of exits</th><td>44</td><td>21</td><td>17</td><td>12</td><td>6</td></tr>
+    </table>
+  </div>
+  <div class="take">The largest single reason is one we control and do not staff.</div>
+  <p class="src">61 exit interviews, Jan–Dec 2025. Self-reported primary reason.</p>
+  <div class="notes"><p>Self-reported reasons are soft evidence and you should say so before someone else does — people rationalise. The reason to trust this one is that it agrees with the month-four timing in the data, which nobody was reporting on. Two independent signals, one story.</p></div>
 </section>
 
 <!-- ══════════ 10 · CARDS — parallel options of equal weight ══════════
@@ -203,31 +245,89 @@
   <div class="notes"><p>Point at the highlighted box and stop talking for a second. That ninety-day gap is the whole proposal — everything on the next three slides is about who owns it. If someone asks why onboarding cannot simply be longer, that is option one, coming up.</p></div>
 </section>
 
-<!-- layers: things stacked on things · matrix: two axes of choice
-     tline: events across time (.mi.dim for not-yet) · funnel: narrowing stages (--w sets width)
-<div class="layers">
-  <div class="ly hi">Your team<small>where the change lands</small></div>
-  <div class="ly">Platform</div><div class="ly">Infrastructure</div></div>
+<!-- layers: things stacked on things. Mark the layer the argument is about with "hi". -->
+<section id="s-13b" class="slide" data-claim="The fix belongs in the customer-facing layer, not in the product.">
+  <div class="s-head"><h2>Which layer this actually lives in</h2></div>
+  <div class="body"><div class="layers">
+    <div class="ly hi">Customer team<small>where the ninety-day gap sits</small></div>
+    <div class="ly">Product<small>onboarding sequence, in-app prompts</small></div>
+    <div class="ly">Billing<small>renewal notices, invoicing</small></div>
+  </div></div>
+  <div class="take">Nothing below the top layer is broken, so nothing below it needs fixing.</div>
+  <div class="notes"><p>Engineering will assume this is their problem because churn usually is. Say early that it is not — the product does what it is supposed to; there is simply no human attached to the account after day thirty. That distinction is what keeps this out of the engineering queue where it would sit for two quarters.</p></div>
+</section>
 
-<div class="matrix">
-  <div class="ax"></div><div class="ax">Low effort</div><div class="ax">High effort</div>
-  <div class="ax y">High impact</div>
-  <div class="q hi"><b>Pooled CSM</b><p>Two hires, addresses the cause.</p></div>
-  <div class="q"><b>In-product nudges</b><p>Six weeks of engineering.</p></div>
-  <div class="ax y">Low impact</div>
-  <div class="q"><b>Longer onboarding</b><p>Cheap, partial.</p></div>
-  <div class="q"><b>Renewal outreach</b><p>Too late by definition.</p></div></div>
+<!-- matrix: two axes of choice. Three .ax cells across the top (blank, then the two column
+     labels), then a .ax.y row label before each row of quadrants. -->
+<section id="s-13c" class="slide" data-claim="Only one option is both high impact and affordable this quarter.">
+  <div class="s-head"><h2>Impact against effort</h2></div>
+  <div class="matrix">
+    <div class="ax"></div><div class="ax">Low effort</div><div class="ax">High effort</div>
+    <div class="ax y">High impact</div>
+    <div class="q hi"><b>Pooled CSM</b><p>Two hires, addresses the cause.</p></div>
+    <div class="q"><b>In-product nudges</b><p>Six engineering weeks we do not have.</p></div>
+    <div class="ax y">Low impact</div>
+    <div class="q"><b>Longer onboarding</b><p>Cheap, partial, do it anyway.</p></div>
+    <div class="q"><b>Renewal outreach</b><p>Too late by definition.</p></div>
+  </div>
+  <div class="notes"><p>The top-left quadrant is the proposal and the bottom-left is the thing we do regardless. Do not defend the other two — putting them on the slide is what shows the room you looked at them, and arguing for options you are not recommending wastes the minutes you need for the ask.</p></div>
+</section>
 
-<div class="tline">
-  <div class="mi"><span class="w">Jan</span><b>Decision</b><p>Fund or don't.</p></div>
-  <div class="mi"><span class="w">Mar</span><b>Team in seat</b><p>Two CSMs hired.</p></div>
-  <div class="mi dim"><span class="w">Jun</span><b>First cohort</b><p>Month-four retention measurable.</p></div></div>
+<!-- tline: events across time. .mi.dim for what has not happened yet. -->
+<section id="s-13d" class="slide" data-claim="A decision in January is measurable by June, which is inside this fiscal year.">
+  <div class="s-head"><h2>What happens after today</h2></div>
+  <div class="body"><div class="tline">
+    <div class="mi"><span class="w">Jan</span><b>Decision</b><p>Fund, or stop selling small.</p></div>
+    <div class="mi"><span class="w">Mar</span><b>Team in seat</b><p>Two CSMs, one book.</p></div>
+    <div class="mi dim"><span class="w">Jun</span><b>First cohort</b><p>Retention measurable.</p></div>
+    <div class="mi dim"><span class="w">Sep</span><b>Go or no-go</b><p>Renew, or unwind.</p></div>
+  </div></div>
+  <div class="take">Nine months from decision to evidence — one fiscal year, not two.</div>
+  <div class="notes"><p>The September gate matters more than the January one, because it is what makes this reversible. Say it explicitly: we are not asking for a permanent function, we are asking for two people and a date to check whether it worked.</p></div>
+</section>
 
-<div class="funnel">
-  <div class="fs" style="--w:100%"><b>12,400</b><span>signups</span></div>
-  <div class="fs" style="--w:74%"><b>9,180</b><span>activated</span></div>
-  <div class="fs" style="--w:41%"><b>5,090</b><span>still active at month 4</span></div></div>
--->
+<!-- funnel: narrowing stages. --w sets each stage's width; make it proportional to the
+     number, or the picture argues something the data doesn't. -->
+<section id="s-13e" class="slide" data-claim="Six in ten accounts are gone before month four, and almost all of the loss is after activation.">
+  <div class="s-head"><h2>Where the cohort goes</h2></div>
+  <div class="funnel">
+    <div class="fs" style="--w:100%"><b>12,400</b><span>signups</span></div>
+    <div class="fs" style="--w:74%"><b>9,180</b><span>activated</span></div>
+    <div class="fs" style="--w:41%"><b>5,090</b><span>still active at month four</span></div>
+  </div>
+  <p class="src">2025 signup cohorts, measured at day 120.</p>
+  <div class="notes"><p>The drop from signup to activation is normal for self-serve and not what we are here about. The second drop is the one that costs money, and it happens entirely after the customer has already succeeded once — which is why it reads as a relationship failure rather than a product one.</p></div>
+</section>
+
+<!-- ══════════ 12b · STATUS BLOCKS — for a readout rather than a pitch ══════════
+     .prog for how far along something is, .checks for shipped / not shipped.
+     These are what a project update needs and a sales deck never uses. -->
+<section id="s-13f" class="slide appendix" data-claim="Two of the four workstreams are behind, and both are behind for the same reason.">
+  <div class="s-head"><span class="eyebrow">Appendix</span><h2>Where each workstream stands</h2></div>
+  <div class="body"><div class="prog">
+    <div class="pr done"><b>Churn analysis</b><span class="pv">100%</span>
+      <div class="track"><i style="--p:100%"></i></div></div>
+    <div class="pr"><b>Onboarding rewrite</b><span class="pv">70%</span>
+      <div class="track"><i style="--p:70%"></i></div></div>
+    <div class="pr risk"><b>CSM tooling</b><span class="pv">25%</span>
+      <div class="track"><i style="--p:25%"></i></div></div>
+    <div class="pr risk"><b>Account ownership rules</b><span class="pv">10%</span>
+      <div class="track"><i style="--p:10%"></i></div></div>
+  </div></div>
+  <div class="notes"><p>Both red bars are blocked on the same missing decision — who owns an account under twenty seats. That is deliberate framing: it turns two separate slippages into one question the room can actually answer today rather than two status problems for somebody else.</p></div>
+</section>
+
+<section id="s-13g" class="slide appendix" data-claim="Of the five things we committed to in Q3, three shipped and the two that did not are the ones that needed a person.">
+  <div class="s-head"><span class="eyebrow">Appendix</span><h2>Q3 commitments</h2></div>
+  <div class="body"><ul class="checks">
+    <li>Exit-interview programme<span>61 interviews, running monthly since March.</span></li>
+    <li>Churn dashboard<span>Live, refreshed nightly.</span></li>
+    <li class="part">Onboarding rewrite<span>Copy done, sequence not yet switched over.</span></li>
+    <li class="no">Assign owners below 20 seats<span>Blocked on this decision.</span></li>
+    <li class="no">Month-four health check<span>Needs an owner before it can be built.</span></li>
+  </ul></div>
+  <div class="notes"><p>Only surface this if someone asks what we have already tried. The pattern is the useful part and it is worth naming out loud: everything that needed only engineering shipped, and everything that needed a named human did not.</p></div>
+</section>
 
 <!-- ══════════ 13 · QUOTE — someone's actual words ══════════ -->
 <section id="s-14" class="slide quote" data-claim="The customer described the failure better than any of our metrics did.">
@@ -250,7 +350,23 @@
   <div class="notes"><p>This is the artefact the argument rests on: the last thing a new customer hears from us, signed by nobody, with no reply-to and no next step. Give the room five seconds to read it before you say anything. Then say that this is day thirty, and the next contact is the renewal notice.</p></div>
 </section>
 
-<!-- side by side, and the placeholder:
+<!-- split: a half-bleed image with the argument beside it. The image runs to the slide
+     edge, so it needs no caption furniture. Add class "flip" to put it on the other side.
+     No .s-head here — the headline lives inside .sp-txt. -->
+<section id="s-15b" class="slide split" data-claim="The product a small account sees on day thirty is an empty dashboard nobody explained.">
+  <div class="sp-img">
+    <div class="ph"><div class="t">Screenshot needed</div>
+      <div class="d">The dashboard as a twenty-seat account sees it on day thirty. Full bleed, 900×1200 or larger.</div></div>
+  </div>
+  <div class="sp-txt">
+    <span class="eyebrow">Day thirty</span>
+    <h2>This is the whole product, to them.</h2>
+    <p class="lead">One chart, no data in it, and no way to tell whether that is normal.</p>
+  </div>
+  <div class="notes"><p>Hold on this one. Everyone in the room has seen the populated version of this screen a thousand times and none of them has seen the empty one since their first week. That gap between how we experience the product and how a new small account experiences it is the entire argument, and it lands better as a picture than as a number.</p></div>
+</section>
+
+<!-- side by side inside a normal slide, and the honest placeholder:
 <div class="cols c2">
   <figure class="fig"><img src="…" alt="…"><figcaption>What the customer sees</figcaption></figure>
   <div>…</div></div>
@@ -258,6 +374,34 @@
 <div class="ph"><div class="t">Screenshot needed</div>
   <div class="d">The onboarding email as received, full width, 1200×675 or larger.</div></div>
 -->
+
+<!-- ══════════ 14b · CHIPS and KEY-VALUE — scope, terms, the shape of an ask ══════════
+     .chips for short labels you want scanned, not read. .kv for a spec sheet: the
+     numbers that define a proposal, where a paragraph would bury them. -->
+<section id="s-15c" class="slide" data-claim="The proposal is deliberately small: two people, one quarter, one number to judge it by.">
+  <div class="s-head"><h2>The shape of the ask</h2></div>
+  <div class="body">
+    <dl class="kv">
+      <dt>Headcount</dt><dd>2 CSMs<small>pooled, no named accounts</small></dd>
+      <dt>Cost</dt><dd>$310k<small>fully loaded, first twelve months</small></dd>
+      <dt>Starts</dt><dd>March<small>six weeks to hire</small></dd>
+      <dt>Judged on</dt><dd>Month-four retention<small>measured June, decided September</small></dd>
+    </dl>
+  </div>
+  <div class="notes"><p>Read the last row out loud even though it is on the slide. A proposal with a stated failure condition gets approved far more often than one without, because it turns an open-ended commitment into a bounded experiment — and because it tells the room you expect to be held to it.</p></div>
+</section>
+
+<section id="s-15d" class="slide" data-claim="This proposal touches four teams, and only one of them has to change how it works.">
+  <div class="s-head"><h2>Who this touches</h2></div>
+  <div class="body">
+    <div class="chips">
+      <span class="hi">Customer Success</span><span>Sales</span><span>Data</span>
+      <span>Product</span><span class="dim">Engineering</span><span class="dim">Finance</span>
+    </div>
+  </div>
+  <div class="take">One team changes how it works. Everyone else changes a handoff.</div>
+  <div class="notes"><p>Say the grey ones out loud so nobody in the room spends the next five minutes wondering whether they are being volunteered. Engineering in particular will assume they are on the hook, and telling them early buys their attention back for the rest of the deck.</p></div>
+</section>
 
 <!-- ══════════ 15 · CODE / TABLE — exact things people will check ══════════
      data-hl highlights lines: "3", "3-5", "3-5,9". Tables: sparse, round numbers. -->
@@ -279,6 +423,7 @@
     <tr><td class="hi">Pooled CSM</td><td class="hi">$310k</td><td class="hi">~$840k</td><td class="hi">2 quarters</td></tr>
     <tr><td>In-product nudges</td><td>6 eng-weeks</td><td>~$260k</td><td>3 quarters</td></tr>
   </table></div>
+  <p class="src">Finance model v4, January 2026. Churn averted assumes month-four retention returns to the 2024 level.</p>
   <div class="notes"><p>The churn-averted figures assume month-four retention returns to the 2024 level, which is the most optimistic defensible assumption — say that before someone else says it. The model and a pessimistic case are both in the appendix. Payback still lands inside four quarters at the low end.</p></div>
 </section>
 
@@ -301,5 +446,6 @@
     <tr><th>Paid</th><td>1780</td><td>1810</td><td>1840</td><td>1795</td></tr>
     <tr><th>Organic</th><td>640</td><td>620</td><td>655</td><td>630</td></tr></table>
   </div>
+  <p class="src">Marketing spend over new logos by channel, Q1–Q4 2025.</p>
   <div class="notes"><p>Only go here if asked. The point of the slide is that nothing moved across any channel all year — this is the evidence behind "we spent the same and got the same". Do not walk through the bars; state the conclusion and go back.</p></div>
 </section>

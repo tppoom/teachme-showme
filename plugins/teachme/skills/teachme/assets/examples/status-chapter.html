@@ -1,0 +1,254 @@
+<!--
+  ============================================================
+  TeachMe WORKED EXAMPLE — the "where the project stands" chapter.
+
+  Codebase mode promises this chapter and it is the one most often written badly:
+  a paragraph of vague reassurance, or a bulleted list of TODOs with no evidence.
+  It is a real chapter. It has an objective, a mechanism, evidence with file paths
+  and line numbers, and a quiz, exactly like every other chapter.
+
+  What makes it different from the concept chapter beside it:
+
+    · Every claim about state cites a file, a test, or a commit. "Auth is done" is
+      an opinion; "auth is done — 14 tests in tests/auth/, last touched in #412" is
+      a fact the reader can check after you are gone.
+    · It separates four states that get conflated: shipped, built-but-unwired,
+      started, and not started. A reader who cannot tell those apart cannot plan.
+    · It says what is BROKEN, by name. A status chapter that lists no problems is
+      not a status chapter — it is a brochure, and the reader will discover the
+      problems anyway, at a worse moment.
+    · The exercise sends the learner into the actual repository, because that is
+      the only way to know whether the chapter was true when they read it.
+
+  Every path, number and issue reference below is invented for this example.
+  In a real course each one must come from reading the repository — that is the
+  entire value of the chapter, and inventing them destroys it.
+  ============================================================
+-->
+
+<section class="chapter" id="ch-9" data-title="Where the project stands" data-min="14">
+  <header class="ch-head">
+    <div class="ch-label"></div>
+    <h1 class="ch-title">Where the project stands</h1>
+    <p class="ch-desc">What is finished, what is half-built, what is broken, and which of those you are allowed to depend on today.</p>
+    <div class="ch-meta"><span class="tag core">Core</span><span class="tag beginner">Orientation</span></div>
+  </header>
+
+  <div class="ch-body">
+
+    <div class="objective">
+      <div class="ob-h">After this chapter you can</div>
+      <ul>
+        <li>Say which subsystems are safe to build on and which will move under you</li>
+        <li>Find the evidence for every status claim here, yourself, in the repository</li>
+        <li>Name the two known-broken paths and what happens when you hit them</li>
+        <li>Pick a first task that will not collide with work already in flight</li>
+      </ul>
+    </div>
+
+    <h2>Why this chapter exists</h2>
+
+    <p>Every other chapter in this course explains how something works. This one explains how
+    much of it is actually <em>true right now</em>. Those are different questions, and the
+    second one is the one that wastes weeks when nobody answers it. A newcomer who reads an
+    architecture document and assumes all of it is built will spend three days integrating with
+    a module that has never run in production.</p>
+
+    <p>So this chapter has one rule: <strong>no status claim without evidence you can check.</strong>
+    Every line below points at a file, a test directory, or a pull request. If you read this in
+    six months and the evidence no longer matches, trust the repository and not this page — and
+    then fix this page.</p>
+
+    <div class="callout warn"><div class="ic">⚠️</div><div class="co">
+      <div class="ct">This chapter has a shelf life</div>
+      <p>Written against commit <code>a3f91c2</code>, 14 January 2026. Architecture ages in
+      years; status ages in weeks. Check the dates on the evidence before you rely on any of it.</p></div></div>
+
+    <h2>The four states, and why three of them look alike</h2>
+
+    <p>"Done" is not one thing, and most confusion on this project comes from collapsing four
+    genuinely different states into it. A module can be fully written and fully tested and still
+    be worthless to you, because nothing calls it.</p>
+
+    <div class="grid">
+      <div class="card"><div class="c-ic">✅</div><div class="c-t">Shipped</div>
+        <div class="c-d">Running in production, covered by tests, handling real traffic. Safe to depend on.</div></div>
+      <div class="card"><div class="c-ic">🔌</div><div class="c-t">Built, unwired</div>
+        <div class="c-d">The code exists and its tests pass, but no caller reaches it. Works in isolation; unproven in the system.</div></div>
+      <div class="card"><div class="c-ic">🚧</div><div class="c-t">Started</div>
+        <div class="c-d">Someone is mid-flight. Interfaces will change without warning. Do not build on it; talk to them.</div></div>
+      <div class="card"><div class="c-ic">⬜</div><div class="c-t">Not started</div>
+        <div class="c-d">Named in the design, no code. Honest and harmless — as long as nobody assumes otherwise.</div></div>
+    </div>
+
+    <p>The dangerous state is the second one. "Built, unwired" reads as finished in every code
+    review, passes CI, and shows up green on any coverage dashboard — and then fails the first
+    time real data touches it, because no real data ever has. Two of the subsystems below are
+    in exactly that state.</p>
+
+    <figure class="viz">
+      <div class="viz-t">What is actually connected to what</div>
+      <div class="flow">
+        <span class="node ok">HTTP API<small>shipped</small></span>
+        <span class="arrow"><b>calls</b></span>
+        <span class="node ok">Job queue<small>shipped</small></span>
+        <span class="arrow"><b>calls</b></span>
+        <span class="node hi">Indexer<small>started</small></span>
+        <span class="arrow dim"><b>not yet</b></span>
+        <span class="node dim">Search API<small>built, unwired</small></span>
+      </div>
+      <div class="legend">
+        <span><i class="g"></i> shipped</span>
+        <span><i class="a"></i> in flight</span>
+        <span><i class="d"></i> built but nothing calls it</span>
+      </div>
+      <figcaption>The chain breaks at the indexer. Search is fully written and fully tested and cannot answer a single real query, because nothing has ever put a document into it.</figcaption>
+    </figure>
+
+    <h2>Subsystem by subsystem, with the evidence</h2>
+
+    <div class="tw"><table>
+      <thead><tr><th>Subsystem</th><th>State</th><th>Evidence</th></tr></thead>
+      <tbody>
+        <tr><td><code>api/</code> — HTTP layer</td><td>Shipped</td>
+            <td>68 tests in <code>tests/api/</code>; serving production since #204</td></tr>
+        <tr><td><code>auth/</code> — sessions, tokens</td><td>Shipped</td>
+            <td>31 tests in <code>tests/auth/</code>; last substantive change #412, Nov 2025</td></tr>
+        <tr><td><code>queue/</code> — background jobs</td><td>Shipped</td>
+            <td>Live; retry path exercised in <code>tests/queue/test_retry.py</code></td></tr>
+        <tr><td><code>indexer/</code> — document ingest</td><td>Started</td>
+            <td>Branch <code>feat/indexer-v2</code>, 40 commits, open PR #518</td></tr>
+        <tr><td><code>search/</code> — query API</td><td>Built, unwired</td>
+            <td>22 passing tests, all against fixtures; zero callers — <code>grep -r "search\." --include=*.py</code> returns only its own tests</td></tr>
+        <tr><td><code>billing/</code></td><td>Not started</td>
+            <td>Named in <code>docs/design.md</code>; no directory exists</td></tr>
+      </tbody>
+    </table></div>
+
+    <p>The <code>grep</code> in the search row is worth running yourself rather than believing.
+    It is the cheapest possible test of whether something is wired in, it takes two seconds, and
+    it is how the "built, unwired" state was discovered in the first place — the module looked
+    complete in every other respect.</p>
+
+    <h2>What is known broken</h2>
+
+    <p>Two paths fail in ways that will cost you an afternoon if you meet them without warning.
+    Both are known, both have issues open, and neither has an owner.</p>
+
+    <div class="callout pitfall"><div class="ic">🚫</div><div class="co">
+      <div class="ct">Token refresh drops the request body</div>
+      <p>A POST that arrives with an expired token gets refreshed and retried — with an empty
+      body. Silent: you get a <code>422</code> about missing required fields and go looking in
+      entirely the wrong place.</p>
+      <p><code>auth/middleware.py:88</code> — issue #497. Workaround: refresh explicitly before
+      any POST in a long-lived client.</p></div></div>
+
+    <div class="callout pitfall"><div class="ic">🚫</div><div class="co">
+      <div class="ct">The queue loses jobs on redeploy</div>
+      <p>In-flight jobs are not drained before shutdown. Roughly one job per deploy vanishes with
+      no error anywhere — it simply never completes, and nothing logs it.</p>
+      <p><code>queue/worker.py:141</code> — issue #501, open since August. Anything that must not
+      be lost has to be idempotent and re-driven from its own source of truth.</p></div></div>
+
+    <p>Both bugs share a shape worth internalising: they fail <em>silently</em>. Neither raises,
+    neither logs an error, and both look like your own mistake when you hit them. That is why
+    they belong in a chapter rather than an issue tracker nobody reads on day one.</p>
+
+    <h2>Where the work is going next</h2>
+
+    <ol class="timeline">
+      <li><span class="when">Now</span><b>Indexer v2</b>
+        <p>PR #518, one engineer. Until it merges, search cannot be tested against anything real.</p></li>
+      <li><span class="when">After #518</span><b>Wire up search</b>
+        <p>Unblocked the day the indexer lands. Nobody assigned yet — this is the obvious first task for a newcomer.</p></li>
+      <li class="hi"><span class="when">Unscheduled</span><b>Issues #497 and #501</b>
+        <p>Both known, both silent, neither owned. They will keep costing afternoons until someone takes them.</p></li>
+      <li><span class="when">Not started</span><b>Billing</b>
+        <p>Design only. No code, no branch, no date.</p></li>
+    </ol>
+
+    <div class="ex">
+      <div class="ex-h"><div class="ic">✎</div><b>Exercise · Verify this chapter yourself</b></div>
+      <div class="ex-b">
+        <p>Do not take any of the above on trust. In a clean checkout, establish three things:</p>
+        <ol>
+          <li>Whether <code>search/</code> really has no callers.</li>
+          <li>How many tests <code>tests/auth/</code> actually contains today.</li>
+          <li>Whether PR #518 is still open.</li>
+        </ol>
+        <details>
+          <summary>Solution</summary>
+          <div>
+            <div class="code" data-file="verify-status.sh">
+<pre><code class="lang-bash"># 1 — does anything outside search/ import it?
+grep -rn "from search\|import search" --include=*.py . | grep -v "^./search/\|^./tests/search/"
+
+# 2 — how many auth tests are there really?
+grep -rc "def test_" tests/auth/ | awk -F: '{n+=$2} END {print n}'
+
+# 3 — is the indexer PR still open?
+gh pr view 518 --json state,title,updatedAt</code></pre>
+            </div>
+            <p>The first command returning nothing is the whole "built, unwired" claim, verified
+            in one line. If it now returns something, search has been wired up since this was
+            written and this chapter is out of date — which is exactly the outcome the exercise
+            is designed to catch.</p>
+            <p>The general habit matters more than these three commands: <strong>a status claim
+            you cannot reproduce in under a minute is a rumour.</strong> Every row in the table
+            above was written by running something like this, and every row should be
+            re-checkable the same way.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div class="recap">
+      <h4>Recap</h4>
+      <ul>
+        <li>Four states, not two: shipped, built-but-unwired, started, not started.</li>
+        <li>"Built, unwired" is the trap — green tests, zero callers, never met real data.</li>
+        <li><code>api/</code>, <code>auth/</code> and <code>queue/</code> are safe to depend on. <code>indexer/</code> is moving. <code>search/</code> is unproven. <code>billing/</code> does not exist.</li>
+        <li>Two known silent failures: #497 (refresh drops POST bodies) and #501 (redeploy loses jobs).</li>
+        <li>Every claim here is checkable in one command. Check it, because this page ages faster than the code.</li>
+      </ul>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-h">Checkpoint</div>
+
+      <div class="q">
+        <p class="q-t">A module has 22 passing tests and full coverage. What does that tell you about whether you can depend on it?</p>
+        <ul class="opts">
+          <li><button class="opt">It is production-ready.</button></li>
+          <li><button class="opt" data-correct="true">Almost nothing on its own — it may still have no callers and have never seen real data.</button></li>
+          <li><button class="opt">It is shipped, since tests only exist for shipped code.</button></li>
+          <li><button class="opt">The tests are probably wrong.</button></li>
+        </ul>
+        <div class="fb"><b>The second.</b> That is precisely the state <code>search/</code> is in.
+        Tests written against fixtures prove the module is self-consistent; they say nothing about
+        whether anything calls it or whether real data has the shape the fixtures assumed.</div>
+      </div>
+
+      <div class="q">
+        <p class="q-t">You need to run a job that absolutely must not be lost. What does this chapter tell you to do?</p>
+        <ul class="opts">
+          <li><button class="opt">Use the queue — it is shipped.</button></li>
+          <li><button class="opt">Avoid the queue entirely.</button></li>
+          <li><button class="opt" data-correct="true">Use the queue, but make the job idempotent and re-drivable, because a redeploy can silently drop it.</button></li>
+          <li><button class="opt">Wait for issue #501 to be fixed.</button></li>
+        </ul>
+        <div class="fb"><b>The third.</b> "Shipped" means in production, not flawless. Issue #501
+        is open, unowned and silent, so the defence has to live in your job rather than in a fix
+        you cannot schedule.</div>
+      </div>
+
+      <div class="q" data-answer="grep|grep -r|search for callers|find callers">
+        <p class="q-t">What one-word command distinguishes "built" from "wired in" faster than reading any code?</p>
+        <div class="fb"><b><code>grep</code>.</b> Searching for imports and call sites answers "does
+        anything actually use this?" in seconds. It is the cheapest status check there is, and it
+        is how the <code>search/</code> gap was found.</div>
+      </div>
+    </div>
+
+  </div>
+</section>

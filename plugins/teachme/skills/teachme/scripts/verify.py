@@ -124,6 +124,21 @@ def main():
         for sv in re.findall(r"<svg[^>]*>", c):
             if 'role="img"' not in sv or "aria-label" not in sv:
                 fail(f"{tag} an <svg> is missing role=\"img\" or aria-label")
+        # Anything drawn outside the viewBox is clipped with no error and no visible
+        # symptom on the authoring machine — the SVG does not grow to contain it.
+        for sv in re.findall(r"<svg[^>]*viewBox=\"[^\"]*\"[\s\S]*?</svg>", c):
+            vb = re.search(r'viewBox="\s*([-\d.]+)\s+([-\d.]+)\s+([\d.]+)\s+([\d.]+)', sv)
+            if not vb: continue
+            x0, y0, vw, vh = (float(g) for g in vb.groups())
+            for el in re.findall(r"<(?:text|rect|circle|image|use)\b[^>]*>", sv):
+                cx = re.search(r'\b(?:x|cx)="([-\d.]+)"', el)
+                cy = re.search(r'\b(?:y|cy)="([-\d.]+)"', el)
+                if cx and not (x0 - 1 <= float(cx.group(1)) <= x0 + vw + 1):
+                    warn(f"{tag} an SVG element sits at x={cx.group(1)} but the viewBox is "
+                         f"{x0:g}..{x0+vw:g} wide — it will be clipped, invisibly")
+                if cy and not (y0 - 1 <= float(cy.group(1)) <= y0 + vh + 1):
+                    warn(f"{tag} an SVG element sits at y={cy.group(1)} but the viewBox is "
+                         f"{y0:g}..{y0+vh:g} tall — it will be clipped, invisibly")
         if re.search(r'<svg[^>]*style="[^"]*(?:fill|stroke)\s*:\s*#', c) or re.search(r'<(?:rect|path|circle|line|text)[^>]*(?:fill|stroke)="#', c):
             warn(f"{tag} a diagram hard-codes a colour — use the .d-* classes so both themes work")
         for w in re.findall(r'<div class="walk"[\s\S]*?(?=<div class="walk"|<div class="quiz"|<div class="recap"|</div>\s*</section>|\Z)', c):
@@ -196,6 +211,14 @@ def main():
     ids = re.findall(r'<(?:div class="cards"|ul class="check")[^>]*data-id="([^"]+)"', doc)
     for i in {x for x in ids if ids.count(x) > 1}:
         fail(f'data-id "{i}" is used twice — the two widgets would share saved progress')
+
+    # Every chapter lands in ONE document, so an SVG id defined in chapter 3 silently wins
+    # every url(#…) reference in chapter 11. Prefix them with the chapter id.
+    svg_ids = re.findall(r'<(?:clipPath|linearGradient|radialGradient|marker|mask|pattern|filter|symbol)\b[^>]*\bid="([^"]+)"', doc)
+    for i in sorted({x for x in svg_ids if svg_ids.count(x) > 1}):
+        fail(f'SVG id "{i}" is defined more than once — references resolve to the first '
+             f'definition in the document, so later figures silently pick up the wrong one. '
+             f'Prefix ids with the chapter (id="ch7-{i}")')
 
     # ---- 4. laziness markers -------------------------------------------------
     plain = text_of(doc)

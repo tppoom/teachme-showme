@@ -142,6 +142,15 @@ def main():
             if rows > 7: warn(f"{tag} a chart has {rows-1} series/rows — beyond ~5 it is a table with extra steps")
         if 'class="chart"' in c and 'class="take"' not in c and lay != "appendix":
             warn(f"{tag} has a chart but no .take line — say what the data proves")
+        if ('class="chart"' in c or "<table" in body) and 'class="src"' not in c:
+            warn(f"{tag} shows numbers with no <p class=\"src\"> line — say where they came "
+                 f"from and what they exclude, before someone in the room asks")
+        for pr in re.findall(r'<div class="pr[^"]*"[\s\S]*?</div>\s*</div>', body):
+            if "--p:" not in pr:
+                fail(f"{tag} a .prog bar has no style=\"--p:N%\" — it would render empty")
+        for fs in re.findall(r'<div class="fs"[^>]*>', body):
+            if "--w:" not in fs:
+                fail(f"{tag} a .funnel stage has no style=\"--w:N%\" — it would render full width")
 
         for img in re.findall(r"<img[^>]*>", c):
             if "alt=" not in img: fail(f"{tag} an <img> has no alt text")

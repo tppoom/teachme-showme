@@ -1,0 +1,330 @@
+<!--
+  ============================================================
+  TeachMe WORKED EXAMPLE — one complete chapter, end to end.
+
+  blocks.html shows you every block. This shows you a whole chapter built out of them,
+  at the depth verify.py actually demands: objective → why it exists → mental-model
+  figure → full explanation → worked example with output → variations and edge cases →
+  common mistakes with the real error → exercise with revealed solution → recap →
+  checkpoint quiz with explained answers.
+
+  Read it once before authoring your first chapter, then work from blocks.html.
+
+  The subject here is deliberately NOT programming. The commonest failure in this skill
+  is writing every subject like a code tutorial — a statistics chapter needs .math,
+  .where, .derive and .formal, and it needs the derivation shown rather than the result
+  stated. The .walk block still earns its place, because the order of execution is not
+  the order of the lines.
+
+  ~1,150 words of prose. That is the floor for a chapter, not the target.
+  ============================================================
+-->
+
+<section class="chapter" id="ch-4" data-title="What a p-value actually says" data-min="16">
+  <header class="ch-head">
+    <div class="ch-label"></div>
+    <h1 class="ch-title">What a p-value actually says</h1>
+    <p class="ch-desc">Read a p-value correctly, state what it does and does not license you to conclude, and rebuild it from scratch by simulation.</p>
+    <div class="ch-meta"><span class="tag intermediate">Intermediate</span><span class="tag core">Core</span></div>
+  </header>
+
+  <div class="ch-body">
+
+    <div class="objective">
+      <div class="ob-h">After this chapter you can</div>
+      <ul>
+        <li>State in one sentence what a p-value is the probability of — and what it is not</li>
+        <li>Compute one by simulation, without any distributional formula</li>
+        <li>Explain why <em>p</em> = 0.04 and <em>p</em> = 0.06 are not two different findings</li>
+        <li>Spot the three misreadings that appear in almost every published misuse</li>
+      </ul>
+    </div>
+
+    <h2>Why this concept exists at all</h2>
+
+    <p>You run an experiment and the treatment group does better. Before you believe anything,
+    you have to answer an awkward question: <strong>how often would a difference this large
+    show up even if the treatment did nothing?</strong> Random assignment alone produces
+    uneven groups. Somebody has to be taller, somebody has to recover faster. If plain
+    randomness routinely manufactures the effect you just measured, your measurement is not
+    evidence of anything.</p>
+
+    <p>The p-value is one specific answer to that question, and it is narrower than almost
+    everyone assumes. It does not tell you whether your hypothesis is true. It does not tell
+    you how big the effect is. It tells you one thing only, and the whole chapter rests on
+    getting that one thing exactly right.</p>
+
+    <div class="formal defn">
+      <div class="fl">Definition <em>p-value</em></div>
+      <p>The probability of observing a test statistic <strong>at least as extreme as the one
+      you actually got</strong>, <strong>assuming the null hypothesis is true</strong>.</p>
+    </div>
+
+    <p>Every word in that sentence is load-bearing. "At least as extreme" means you are counting
+    a whole tail of outcomes, not just yours. "Assuming the null is true" means the entire
+    calculation happens inside a world where the treatment does nothing — a world you do not
+    believe in and are not testing.</p>
+
+    <!-- Two things worth copying from this figure:
+         1. Every label sits INSIDE the viewBox. Anything outside it is clipped silently —
+            the SVG does not grow to fit stray text, and you will not notice on your screen.
+         2. The shaded tail is the same bell path, clipped, rather than a second hand-drawn
+            curve. Hand-drawing it guarantees the two edges disagree.
+         The clipPath id must be unique across the whole course — every chapter is
+         concatenated into one document, so prefix ids with the chapter, as below. -->
+    <figure class="viz">
+      <div class="viz-t">The null world, and where your result landed in it</div>
+      <svg viewBox="0 0 600 235" role="img" aria-label="A bell-shaped null distribution centred on no effect, with the region beyond the observed result shaded to show that the p-value is the area of that tail">
+        <defs><clipPath id="ch4-tail"><rect x="440" y="0" width="130" height="190"/></clipPath></defs>
+        <path class="d-fill" d="M70 190 C170 190 160 55 300 55 C440 55 430 190 530 190 Z" opacity=".35"/>
+        <path class="d-accent" d="M70 190 C170 190 160 55 300 55 C440 55 430 190 530 190 Z"
+              clip-path="url(#ch4-tail)" opacity=".8"/>
+        <path class="d-line" d="M70 190 C170 190 160 55 300 55 C440 55 430 190 530 190" stroke-width="2"/>
+        <path class="d-line" d="M50 190 H560"/>
+        <path class="d-line dim" d="M300 190 V70"/>
+        <text class="d-dim" x="300" y="212" text-anchor="middle">no effect (null)</text>
+        <path class="d-line dim" d="M440 190 V128"/>
+        <text class="d-accent" x="440" y="118" text-anchor="middle" font-weight="700">your result</text>
+        <path class="d-line" d="M478 176 L520 152" stroke-width="1.5"/>
+        <text class="d-dim" x="556" y="146" text-anchor="end">p = this area</text>
+        <text class="d-dim" x="52" y="212">← more extreme</text>
+        <text class="d-dim" x="558" y="212" text-anchor="end">more extreme →</text>
+      </svg>
+      <figcaption>The p-value is the area of the tail, not the height of your result. Move the result line slightly right and the tail shrinks smoothly — there is no cliff at any particular value.</figcaption>
+    </figure>
+
+    <h2>Building one from nothing</h2>
+
+    <p>The fastest way to stop mis-stating a p-value is to compute one without a formula. The
+    logic is mechanical: <em>simulate the null world many times, and count how often it hands
+    you something as extreme as what you saw.</em> That count, divided by the number of
+    simulations, is the p-value. No distribution tables, no assumptions about normality.</p>
+
+    <p>Suppose you gave a new onboarding flow to 40 users and the old one to 40 users. 26 of
+    the new group completed setup; 18 of the old group did. A difference of 8. The null world
+    is the world where the flow made no difference at all — where those 44 completions would
+    have happened to whichever 40 people you happened to label "new".</p>
+
+    <div class="walk" data-title="Simulating the null world">
+      <div class="code" data-file="pvalue.py" data-lines>
+<pre><code class="lang-python">import random
+
+observed = 26 - 18
+pool = [1] * 44 + [0] * 36
+extreme = 0
+
+for _ in range(100_000):
+    random.shuffle(pool)
+    diff = sum(pool[:40]) - sum(pool[40:])
+    if abs(diff) &gt;= abs(observed):
+        extreme += 1
+
+print(extreme / 100_000)</code></pre>
+        <div class="code-out">0.0721</div>
+      </div>
+      <div class="walk-steps">
+        <div class="walk-step" data-hl="3">
+          <p class="wt">Record what actually happened</p>
+          <p>Eight more completions in the new group. This number never changes again — every
+          later line is about the null world, not about your data.</p>
+        </div>
+        <div class="walk-step" data-hl="4">
+          <p class="wt">Build the null world</p>
+          <p>44 completions and 36 non-completions, in one undifferentiated pool. This line
+          <em>is</em> the null hypothesis, written as data: the outcomes exist, but nothing
+          about them is attached to which flow a person saw.</p>
+        </div>
+        <div class="walk-step" data-hl="7-9">
+          <p class="wt">Deal the outcomes at random, 100,000 times</p>
+          <p><code>shuffle</code> then split 40/40. Each pass is one alternative universe in
+          which the flow did nothing and only the coin flips differed. Nothing here consults
+          <code>observed</code> — that is the point.</p>
+        </div>
+        <div class="walk-step" data-hl="10-11">
+          <p class="wt">Count the universes at least as extreme as ours</p>
+          <p><code>abs()</code> on both sides is what makes this a two-tailed test: a difference
+          of −8 is just as surprising as +8 if you had no prior direction in mind.</p>
+        </div>
+        <div class="walk-step" data-hl="13">
+          <p class="wt">Divide</p>
+          <p>0.0721. In roughly seven runs in a hundred, pure randomness produces a gap this
+          big. That is the whole answer, and it is a statement about the null world.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout key"><div class="ic">🔑</div><div class="co">
+      <div class="ct">The one thing to remember</div>
+      <p>The p-value is P(data this extreme │ null true). It is <strong>not</strong>
+      P(null true │ data). Those two are different quantities, and swapping them is the single
+      most common error in applied statistics.</p></div></div>
+
+    <h2>Why the direction of the conditional matters</h2>
+
+    <p>Conditional probabilities are not symmetric, and the gap between them can be enormous.
+    Bayes' rule makes the relationship explicit:</p>
+
+    <div class="math" data-eq>
+      <math display="block"><mrow>
+        <mi>P</mi><mo>(</mo><msub><mi>H</mi><mn>0</mn></msub><mo>&#x2223;</mo><mi>D</mi><mo>)</mo>
+        <mo>=</mo>
+        <mfrac>
+          <mrow><mi>P</mi><mo>(</mo><mi>D</mi><mo>&#x2223;</mo><msub><mi>H</mi><mn>0</mn></msub><mo>)</mo>
+                <mo>&#x22C5;</mo><mi>P</mi><mo>(</mo><msub><mi>H</mi><mn>0</mn></msub><mo>)</mo></mrow>
+          <mrow><mi>P</mi><mo>(</mo><mi>D</mi><mo>)</mo></mrow>
+        </mfrac>
+      </mrow></math>
+    </div>
+
+    <div class="where">
+      <div class="wh">Where</div>
+      <div class="w"><b>H₀</b><span>the null hypothesis — the treatment does nothing</span></div>
+      <div class="w"><b>D</b><span>the data you observed, or something more extreme</span></div>
+      <div class="w"><b>P(D│H₀)</b><span>the p-value — what your simulation computed</span></div>
+      <div class="w"><b>P(H₀)</b><span>how plausible the null was <em>before</em> you ran anything</span></div>
+      <div class="w"><b>P(H₀│D)</b><span>what people wrongly think a p-value is</span></div>
+    </div>
+
+    <p>The quantity everyone actually wants is on the left. The quantity a p-value gives you is
+    one factor on the right. Getting from one to the other requires <em>P</em>(H₀), a prior
+    belief that the p-value framework deliberately refuses to supply. That refusal is not an
+    oversight — it is the whole design choice, and it is why a p-value can never, on its own,
+    tell you the probability that your hypothesis is true.</p>
+
+    <div class="derive">
+      <div class="dv"><div class="dx">P(H₀ ∧ D) = P(D │ H₀) · P(H₀)</div>
+        <div class="dr">Definition of conditional probability, written for the joint event.</div></div>
+      <div class="dv"><div class="dx">P(H₀ ∧ D) = P(H₀ │ D) · P(D)</div>
+        <div class="dr">The same joint event, conditioned the other way round.</div></div>
+      <div class="dv"><div class="dx">P(H₀ │ D) · P(D) = P(D │ H₀) · P(H₀)</div>
+        <div class="dr">Both expressions describe one quantity, so they are equal.</div></div>
+      <div class="dv"><div class="dx">P(H₀ │ D) = P(D │ H₀) · P(H₀) / P(D)</div>
+        <div class="dr">Divide through by P(D). The two conditionals differ by exactly the factor P(H₀)/P(D).</div></div>
+    </div>
+
+    <h2>The 0.05 threshold, and what it is not</h2>
+
+    <p>0.05 is a convention, chosen for convenience by Ronald Fisher in the 1920s and never
+    derived from anything. Nothing physical changes between 0.049 and 0.051. Treating the
+    threshold as a boundary between "real" and "not real" turns a continuous measure of
+    surprise into a binary verdict it cannot support.</p>
+
+    <div class="cmp">
+      <div class="bad"><h5>✕ What people say</h5>
+        <p>"p = 0.03, so the treatment works."</p>
+        <p>"p = 0.08, so there is no effect."</p>
+        <p>"p = 0.001, so the effect is large."</p></div>
+      <div class="good"><h5>✓ What is supportable</h5>
+        <p>"Data this extreme arises 3% of the time under the null."</p>
+        <p>"This study could not distinguish the effect from noise."</p>
+        <p>"The effect is precisely estimated — its <em>size</em> is a separate number."</p></div>
+    </div>
+
+    <p>The third row is the one that catches careful people. A very small p-value means the
+    result would be very unusual under the null; with a large enough sample, a trivially small
+    effect produces a tiny p-value. Significance and importance are unrelated quantities, and
+    only the effect size and its confidence interval speak to the second.</p>
+
+    <div class="tw"><table>
+      <thead><tr><th>What you want to know</th><th>What answers it</th></tr></thead>
+      <tbody>
+        <tr><td>Could this plausibly be noise?</td><td>p-value</td></tr>
+        <tr><td>How big is the effect?</td><td>Effect size (difference in means, odds ratio, <em>d</em>)</td></tr>
+        <tr><td>How precisely do we know it?</td><td>Confidence interval</td></tr>
+        <tr><td>How likely is my hypothesis?</td><td>Nothing frequentist — you need a prior and Bayes</td></tr>
+      </tbody>
+    </table></div>
+
+    <h2>The three misreadings, with what to say instead</h2>
+
+    <div class="callout pitfall"><div class="ic">🚫</div><div class="co">
+      <div class="ct">"p = 0.04 means there is a 4% chance the null is true"</div>
+      <p>This is the inverted conditional. It requires <em>P</em>(H₀), which no p-value contains.
+      Say instead: "if the null were true, data this extreme would arise 4% of the time."</p></div></div>
+
+    <div class="callout pitfall"><div class="ic">🚫</div><div class="co">
+      <div class="ct">"p = 0.20 means the treatment has no effect"</div>
+      <p>Failing to reject is not evidence of absence — an underpowered study fails to reject
+      almost regardless of the truth. Say instead: "this study was not able to detect an effect
+      of the size we could realistically expect," and report the interval.</p></div></div>
+
+    <div class="callout pitfall"><div class="ic">🚫</div><div class="co">
+      <div class="ct">"we tested 20 outcomes and one came back at p = 0.03"</div>
+      <p>At a 0.05 threshold, one in twenty null tests clears it by chance alone. Twenty tests
+      make one "finding" the expected outcome, not a surprise. Pre-register which outcome is
+      primary, or correct for the number of comparisons.</p></div></div>
+
+    <div class="ex">
+      <div class="ex-h"><div class="ic">✎</div><b>Exercise · Break the threshold on purpose</b></div>
+      <div class="ex-b">
+        <p>Take the simulation above and change one thing: make the observed difference 6
+        instead of 8, keeping the pool identical. Before running it, predict whether the
+        p-value roughly doubles, roughly halves, or moves a little. Then run it and explain the
+        result in one sentence that does not contain the word "significant".</p>
+        <details>
+          <summary>Solution</summary>
+          <div>
+            <p>Set <code>observed = 6</code>. The p-value rises to roughly 0.20 — it more than
+            doubles, because you are now counting a much wider tail of the null distribution.</p>
+            <p>The sentence: <em>"a gap of six arises about one time in five when the flow makes
+            no difference, so this experiment cannot separate the flow from chance."</em></p>
+            <p>Notice what did <strong>not</strong> happen: nothing about the world changed
+            between a gap of eight and a gap of six. The p-value moved smoothly, the way a
+            continuous measure should. Any procedure that reports the first as a discovery and
+            the second as a null result is inventing a distinction the data does not contain.</p>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <div class="recap">
+      <h4>Recap</h4>
+      <ul>
+        <li>A p-value is P(data at least this extreme │ null true) — a statement about the null world, not about your hypothesis.</li>
+        <li>You can compute one by shuffling, with no formula and no distributional assumption.</li>
+        <li>P(H₀│D) and P(D│H₀) differ by the factor P(H₀)/P(D); the p-value supplies only the second.</li>
+        <li>0.05 is a convention. 0.049 and 0.051 are the same finding.</li>
+        <li>Significance answers "could this be noise?" — never "how big?" or "how likely is my hypothesis?"</li>
+      </ul>
+    </div>
+
+    <div class="quiz">
+      <div class="quiz-h">Checkpoint</div>
+
+      <div class="q">
+        <p class="q-t">A trial reports p = 0.01. Which statement is supportable?</p>
+        <ul class="opts">
+          <li><button class="opt">There is a 1% chance the treatment does nothing.</button></li>
+          <li><button class="opt" data-correct="true">If the treatment did nothing, data this extreme would arise about 1% of the time.</button></li>
+          <li><button class="opt">The treatment has a 99% chance of working.</button></li>
+          <li><button class="opt">The effect is large.</button></li>
+        </ul>
+        <div class="fb"><b>The second.</b> The first and third invert the conditional — they are
+        claims about P(H₀│D), which needs a prior the p-value does not contain. The fourth
+        confuses significance with magnitude: with a large sample, a tiny effect produces a tiny
+        p-value.</div>
+      </div>
+
+      <div class="q">
+        <p class="q-t">A study of 900 people finds p = 0.002 for a 0.3% improvement in completion rate. What should you conclude?</p>
+        <ul class="opts">
+          <li><button class="opt">The improvement is important because p is very small.</button></li>
+          <li><button class="opt">The study is invalid because the effect is tiny.</button></li>
+          <li><button class="opt" data-correct="true">The improvement is precisely measured and almost certainly not zero, and is also probably too small to act on.</button></li>
+          <li><button class="opt">The p-value must be wrong.</button></li>
+        </ul>
+        <div class="fb"><b>The third.</b> A small p-value with a large sample says the effect is
+        distinguishable from zero — nothing more. Whether 0.3% is worth anything is a decision
+        about cost and value, which no statistical test can make for you.</div>
+      </div>
+
+      <div class="q" data-answer="0.05|.05|5%|five percent">
+        <p class="q-t">Across 20 independent tests of true null hypotheses, what fraction do you expect to clear a 0.05 threshold by chance alone?</p>
+        <div class="fb"><b>0.05 — one test in twenty.</b> That is what the threshold means: it is
+        the long-run rate of false positives you have agreed to tolerate. Running twenty tests
+        and reporting the one that cleared it converts a guaranteed artefact into a headline.</div>
+      </div>
+    </div>
+
+  </div>
+</section>

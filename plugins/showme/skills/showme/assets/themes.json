@@ -135,5 +135,69 @@
       "font-body":"\"Avenir Next\",\"Nunito\",\"Segoe UI\",ui-sans-serif,system-ui,sans-serif",
       "font-mono":"ui-monospace,\"SF Mono\",Menlo,monospace",
       "w-display":"700","track-display":"-.018em","radius":"20px"}
+  },
+  "forest": {
+    "use": "Sustainability, health, public sector, research with a human face. Deep green on warm off-white; grounded and calm without going corporate-blue.",
+    "motif": "rule",
+    "tokens": {"pagebg":"#12201a","bg":"#fbfaf6","surface":"#f0efe7","ink":"#12211b","ink-2":"#42544b",
+      "ink-3":"#7d8c84","line":"#dcdcd0","accent":"#1f6f4a","accent-2":"#b8862b","accent-ink":"#fff",
+      "code-bg":"#12211b","code-ink":"#e8ece9",
+      "c1":"#1f6f4a","c2":"#b8862b","c3":"#5b8f7a","c4":"#c9622e","c5":"#3c5c78","c6":"#9aa79f",
+      "font-display":"\"Iowan Old Style\",\"Palatino Linotype\",Palatino,Georgia,ui-serif,serif",
+      "font-body":"ui-sans-serif,system-ui,\"Segoe UI\",Roboto,sans-serif",
+      "font-mono":"ui-monospace,\"SF Mono\",Menlo,monospace",
+      "w-display":"700","track-display":"-.015em","radius":"10px"}
+  },
+
+  "noir": {
+    "use": "Awards, film, fashion, launches that want gravity rather than energy. Near-black with a single warm metallic; almost no colour, so every accent counts.",
+    "motif": "none",
+    "tokens": {"pagebg":"#000","bg":"#0c0c0d","surface":"#18181a","ink":"#f4f2ee","ink-2":"#b3afa7",
+      "ink-3":"#78746c","line":"#2a2a2d","accent":"#c8a253","accent-2":"#e8e2d6","accent-ink":"#0c0c0d",
+      "code-bg":"#000","code-ink":"#e8e2d6",
+      "c1":"#c8a253","c2":"#e8e2d6","c3":"#8a7a58","c4":"#5c5c60","c5":"#a3603a","c6":"#3f5566",
+      "font-display":"Didot,\"Bodoni 72\",\"Playfair Display\",Georgia,ui-serif,serif",
+      "font-body":"ui-sans-serif,system-ui,\"Helvetica Neue\",Helvetica,sans-serif",
+      "font-mono":"ui-monospace,\"SF Mono\",Menlo,monospace",
+      "w-display":"600","track-display":"-.01em","radius":"2px"}
+  },
+
+  "mono-print": {
+    "use": "Handouts, decks that will be read on paper or photocopied, anything that must survive black-and-white printing. Greyscale plus one ink; every distinction survives losing colour.",
+    "motif": "rule",
+    "tokens": {"pagebg":"#3a3a3a","bg":"#fff","surface":"#f2f2f2","ink":"#111","ink-2":"#3d3d3d",
+      "ink-3":"#767676","line":"#ccc","accent":"#111","accent-2":"#767676","accent-ink":"#fff",
+      "code-bg":"#f2f2f2","code-ink":"#111",
+      "c1":"#111","c2":"#6b6b6b","c3":"#a8a8a8","c4":"#d0d0d0","c5":"#474747","c6":"#8c8c8c",
+      "font-display":"\"Times New Roman\",Times,ui-serif,serif",
+      "font-body":"\"Times New Roman\",Times,ui-serif,serif",
+      "font-mono":"ui-monospace,Courier,monospace",
+      "w-display":"700","track-display":"0em","radius":"0px"}
+  },
+
+  "neon-gradient": {
+    "use": "Consumer launches, hackathons, creative pitches, an audience that expects saturation. Loud on purpose — wrong for a board.",
+    "motif": "glow",
+    "tokens": {"pagebg":"#08070f","bg":"#0e0c1a","surface":"#181430","ink":"#f4f2ff","ink-2":"#b9b2e0",
+      "ink-3":"#7d76a8","line":"#2a2450","accent":"#ff2d78","accent-2":"#3ce0ff","accent-ink":"#fff",
+      "code-bg":"#08070f","code-ink":"#e6e2ff",
+      "c1":"#ff2d78","c2":"#3ce0ff","c3":"#a855f7","c4":"#facc15","c5":"#34d399","c6":"#fb7185",
+      "font-display":"\"SF Pro Display\",ui-sans-serif,system-ui,\"Segoe UI\",sans-serif",
+      "font-body":"ui-sans-serif,system-ui,\"Segoe UI\",Roboto,sans-serif",
+      "font-mono":"ui-monospace,\"SF Mono\",Menlo,monospace",
+      "w-display":"800","track-display":"-.03em","radius":"18px"}
+  },
+
+  "clinical": {
+    "use": "Medicine, safety, incident reviews, regulated industries. High-contrast white and a restrained blue, with red held back so that a red number means something.",
+    "motif": "block",
+    "tokens": {"pagebg":"#0f1a24","bg":"#fff","surface":"#f1f5f9","ink":"#0f1a24","ink-2":"#43536a",
+      "ink-3":"#7d8ba0","line":"#d9e0e8","accent":"#0057a8","accent-2":"#c81e2b","accent-ink":"#fff",
+      "code-bg":"#0f1a24","code-ink":"#e6edf5",
+      "c1":"#0057a8","c2":"#c81e2b","c3":"#4c8ec4","c4":"#8fa5bb","c5":"#e08a2e","c6":"#2f7d63",
+      "font-display":"ui-sans-serif,system-ui,\"Segoe UI\",\"Helvetica Neue\",Arial,sans-serif",
+      "font-body":"ui-sans-serif,system-ui,\"Segoe UI\",Roboto,sans-serif",
+      "font-mono":"ui-monospace,\"SF Mono\",Menlo,monospace",
+      "w-display":"750","track-display":"-.02em","radius":"6px"}
   }
 }

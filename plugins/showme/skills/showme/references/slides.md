@@ -53,6 +53,8 @@ when there is one number that matters.
 | Three or four numbers worth comparing | `stats` row |
 | Change over time | `chart` line / area |
 | Ranking or comparison of amounts | `chart` bar |
+| One measure across many or long-named categories | `chart` hbar, with `data-hi` on the one that matters |
+| How each column is composed, when the total means something | `chart` stack |
 | Parts of a whole (3–5 parts, no more) | `chart` donut |
 | Two things in tension | `cmp` (this vs that, before vs after, wrong vs right) |
 | A sequence of steps or a path something takes | `flow`, or `pts.num` |
@@ -60,15 +62,24 @@ when there is one number that matters.
 | Things stacked on things | `layers` |
 | Two axes of choice | `matrix` |
 | Narrowing at each stage | `funnel` |
+| How far along four workstreams are | `prog` |
+| What shipped and what didn't | `checks` |
+| The terms of a proposal — cost, date, who, judged on what | `kv` |
+| Short labels meant to be scanned, not read | `chips` |
 | A claim strong enough to stand alone | `statement` |
 | Someone's actual words | `quote` |
-| Something you have to see to believe | `imgfull` / `fig` |
+| Something you have to see to believe | `imgfull` / `split` / `fig` |
 | Parallel options of equal weight | `cols c3` with `card`s |
 | Exact values people will check | `table` — sparingly |
 | A worked example, code, a formula, a passage | `code` slide |
 | A pause between arguments | `section` |
 
 If the idea doesn't fit any of these, it is usually two ideas. Split it.
+
+Three of these exist for the readout rather than the pitch, and a status update that reaches
+for bullets instead of them is the most common way this skill gets used badly. "Where the
+project stands" is `prog` plus `checks`; "what we are asking for" is `kv`. A room being
+briefed needs to see state, not read about it.
 
 **Vary the layout.** Three bullet slides in a row and the room stops looking up. `verify.py`
 flags runs of the same layout and any single layout used for more than about 40% of the deck —
@@ -91,6 +102,13 @@ thing is being said.
   legend when one series is self-evident from the title.
 - **Round numbers on slides, exact ones in the appendix.** "£1.2m" on the slide; the ledger
   behind it in the backup.
+- **Say where the number came from.** A `.src` line under a chart or table — the system, the
+  date range, and what it excludes — costs one quiet line and is the difference between a
+  number the room accepts and a number the room interrogates. Put it on anything a reasonable
+  person could ask "says who?" about, and put the exclusions in it before someone finds them.
+- **One measure, one colour.** Colouring every bar of a single series differently tells the
+  audience "these are different things", which the labels already told them, and it spends the
+  one signal you have. Grey the field and colour the bar you are talking about (`data-hi`).
 
 ## Images
 

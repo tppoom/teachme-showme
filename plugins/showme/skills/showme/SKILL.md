@@ -110,7 +110,7 @@ narrative moves, and the file format `verify.py` reads.
 Show the user the claim list. It is far cheaper to fix the argument here than in HTML.
 
 ### 3 · Design direction
-Pick the theme and write it into `meta.json` before building. `assets/themes.json` ships ten
+Pick the theme and write it into `meta.json` before building. `assets/themes.json` ships fifteen
 complete looks; `references/design.md` maps style words ("clean", "premium", "punchy", "like an
 Apple keynote") onto concrete tokens, and carries the rules that separate a designed deck from a
 generic one. Say the choice back to the user in one line.
@@ -119,9 +119,10 @@ generic one. Say the choice back to the user in one line.
 ```
 <deck-dir>/parts/01-opening.html, 02-evidence.html, …
 ```
-Markup contract: `assets/layouts.html` — every layout, every diagram, every chart, copy-paste
-ready. Craft rules — headline-as-claim, word ceilings, picking the layout from the shape of the
-idea, builds, images, notes: **`references/slides.md`**.
+Markup contract: `assets/layouts.html` — thirty working slides covering every layout, diagram,
+chart and status block, written to the standard they are held to rather than sketched. Copy one
+and replace the content. Craft rules — headline-as-claim, word ceilings, picking the layout from
+the shape of the idea, builds, images, sourcing a number, notes: **`references/slides.md`**.
 
 Slide `id` must match `STORYLINE.md`. `data-claim` is required. `.notes` is required.
 
@@ -234,18 +235,24 @@ fullscreen, `P` to save a PDF. Do not narrate the build.
 | Finding the argument, the claim ladder, narrative moves | `references/storyline.md` |
 | Slide craft, layout choice, charts, images, builds | `references/slides.md` |
 | Turning a style brief into a theme; anti-generic rules | `references/design.md` |
-| Every layout and diagram, copy-paste ready | `assets/layouts.html` |
-| Ten complete looks + the token contract | `assets/themes.json` |
+| Every layout and diagram, as working slides | `assets/layouts.html` |
+| Fifteen complete looks + the token contract | `assets/themes.json` |
 | Deck chrome in 14 languages (RTL handled) | `assets/i18n.json` |
 | Scaffold a deck directory | `scripts/new.py <dir> --title … --theme … --minutes …` |
 | Build / gate | `scripts/assemble.py`, `scripts/verify.py` |
 | Inline a real image as a data URI | `scripts/embed-image.py <img> "alt"` |
 
-The runtime already provides: fixed-canvas scaling to any screen, `←/→/space` and swipe
-navigation, progressive builds, overview grid, speaker-notes panel with timer and next-slide
-preview, read mode, print-to-PDF at exact slide size, deep links (`#7`), resume where you left
-off, and SVG charts drawn from a real `<table>`. **Do not rebuild these and do not invent class
-names** — compose what is in `layouts.html`.
+The runtime already provides, with no work from you: fixed-canvas scaling to any screen,
+`←/→/space` and swipe navigation, progressive builds, an overview grid, a speaker-notes panel
+with timer and next-slide preview, read mode, print-to-PDF at the exact slide size, deep links
+(`#7`) that work both on load and when the hash is edited, resume where you left off, and SVG
+charts — bar, stacked, horizontal, line, area, donut — drawn from a real `<table>` in the page.
+
+It also **auto-fits any slide whose content would overflow the canvas**, so nothing is ever
+silently clipped. That is a backstop, not a licence: a slide that needs shrinking is a slide
+that needed cutting, and `verify.py` will still fail it.
+
+**Do not rebuild these and do not invent class names** — compose what is in `layouts.html`.
 
 ## Common mistakes
 

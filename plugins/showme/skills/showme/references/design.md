@@ -17,12 +17,36 @@ are making on their behalf, so make it out loud.
 
 ## Presets
 
-`assets/themes.json` ships ten complete looks, each with a `use` line describing the room it
-belongs in. Read that file and pick the nearest one; it is faster and better than inventing a
-palette, and every token is already contrast-checked against its background.
+`assets/themes.json` ships fifteen complete looks, each with a `use` line describing the room
+it belongs in. Read that file and pick the nearest one; it is faster and better than inventing
+a palette, and every token is already contrast-checked against its background.
+
+| Preset | The room it belongs in |
+|---|---|
+| `keynote-dark` | Product launches, tech keynotes, a stage with the lights down |
+| `swiss` | Strategy and design work that should read as rigorous and unfussy |
+| `startup-pitch` | Investors and sales — bright, confident, generous whitespace |
+| `corporate-clean` | Board updates, client reports, quarterly reviews |
+| `editorial` | Talks with a point of view; brand and culture decks |
+| `academic` | Conference talks, thesis defences, lectures |
+| `brutalist` | Manifestos and provocations; internal decks that need to wake the room |
+| `midnight-data` | Analytics reviews where the charts are the argument |
+| `terminal` | Engineering deep-dives, security briefings, developer talks |
+| `soft-pastel` | Workshops, teaching, anything for a non-expert audience |
+| `forest` | Sustainability, health, public sector, research with a human face |
+| `noir` | Awards, film, fashion — gravity rather than energy |
+| `mono-print` | Anything that will be printed, photocopied, or read on paper |
+| `neon-gradient` | Consumer launches, hackathons — loud on purpose, wrong for a board |
+| `clinical` | Medicine, safety, incident reviews, regulated industries |
 
 Start from a preset in almost every case. A preset plus one or two overridden tokens is a
 custom look; a palette invented from scratch is usually four hours of small mistakes.
+
+Two of these are chosen for a constraint rather than a mood, and that makes them easy to
+forget. Reach for `mono-print` the moment someone says the deck will be handed out or
+photocopied — it is the only preset where every distinction survives losing colour. Reach for
+`clinical` when being wrong has consequences: it holds red back so that a red number means
+something, which no other light preset does.
 
 ## Turning words into tokens
 

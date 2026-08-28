@@ -32,6 +32,13 @@ button{font:inherit;cursor:pointer;color:inherit}
   background:var(--bg);color:var(--ink);transform-origin:top left;
   padding:var(--pad) var(--padx) var(--padb);display:flex;flex-direction:column}
 :root{--pad:64px;--padx:88px;--padb:76px}
+/* Auto-fit wrapper. The runtime moves every flow child of a slide into .sfit and, only
+   when the content would overflow the fixed canvas, scales it down so nothing is ever
+   silently clipped. It inherits the slide's own alignment so centred layouts stay centred. */
+.slide>.sfit{flex:1;min-height:0;display:flex;flex-direction:column;
+  justify-content:inherit;align-items:inherit;transform-origin:top left}
+/* long unbroken tokens (URLs, identifiers, hashes) must wrap, never widen the canvas */
+.slide{overflow-wrap:anywhere;word-break:normal}
 
 /* ---------- present mode ---------- */
 body.m-present #stage{overflow:hidden}
@@ -70,13 +77,21 @@ body.m-read .rnotes .rn-h{font-size:10.5px;letter-spacing:.14em;text-transform:u
 body.m-read .rnotes .rn-claim{color:var(--accent);font-weight:650;margin-bottom:12px;
   padding-bottom:12px;border-bottom:1px solid var(--chrome-line)}
 body.m-read .rnotes p{margin:0 0 11px}
+/* below this the slide column is too narrow to read at all — stack instead */
+@media (max-width:900px){
+  body.m-read .rwrap{grid-template-columns:1fr;gap:16px}
+  body.m-grid #deck{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}
+  body.m-grid #stage,body.m-read #stage{padding-inline:14px}
+}
 
 /* ══════════════════ CHROME ══════════════════ */
 #bar{position:fixed;left:0;right:0;bottom:0;height:3px;z-index:40;background:transparent}
 #bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
-#hud{position:fixed;bottom:16px;right:20px;z-index:41;display:flex;gap:7px;align-items:center;
+#hud{position:fixed;bottom:16px;inset-inline-end:20px;z-index:41;display:flex;gap:7px;align-items:center;
   opacity:0;transition:opacity .25s}
 body:hover #hud,#hud:focus-within,body.hud-on #hud{opacity:1}
+/* touch devices never fire :hover, so the only controls would be invisible — pin them on */
+@media (hover:none),(pointer:coarse){#hud{opacity:1}}
 #hud button,#hud .num{border:1px solid var(--chrome-line);background:var(--chrome-bg);
   color:var(--chrome-ink);border-radius:8px;height:32px;min-width:32px;padding:0 9px;font-size:13px;
   display:grid;place-items:center;backdrop-filter:blur(8px)}
@@ -115,6 +130,12 @@ body.notes-on.m-present #stage{inset-inline-end:min(420px,38vw)}
 #nextprev{width:100%;aspect-ratio:var(--W)/var(--H);border-radius:8px;overflow:hidden;position:relative;
   border:1px solid var(--chrome-line)}
 #nextprev .slide{position:absolute;top:0;left:0}
+/* on a phone the 38vw panel is unreadable — take the screen instead */
+@media (max-width:820px){
+  #notes{width:100%;inset-inline-start:0}
+  body.notes-on.m-present #stage{inset-inline-end:0}
+  #notes .n-next{display:none}
+}
 
 /* ---------- help ---------- */
 #help{position:fixed;inset:0;z-index:60;display:none;place-items:center;background:rgba(8,8,12,.78);
@@ -176,9 +197,13 @@ kbd{font-family:var(--font-mono);font-size:11.5px;background:var(--chrome-key);
   background-image:radial-gradient(var(--line) 1.4px,transparent 1.4px);background-size:26px 26px}
 [data-motif="glow"] .slide::before{content:"";position:absolute;inset-inline-end:-14%;top:-28%;width:70%;height:90%;
   pointer-events:none;background:radial-gradient(closest-side,var(--accent),transparent 70%);opacity:.16}
-.slide>*{position:relative;z-index:1}
-.slide>.s-foot{position:absolute;z-index:2}
-.slide::before{z-index:0}
+/* The motif sits between the slide's own background and its content. isolation:isolate
+   keeps that -1 inside the slide instead of letting it fall behind the whole stage —
+   and leaving .sfit unpositioned is what lets absolutely-placed slide furniture
+   (.section .num, .imgfull .cap) keep resolving against the slide itself. */
+.slide{isolation:isolate}
+.slide::before{z-index:-1}
+.slide>.s-foot{z-index:2}
 </style>
 <style>
 /* ══════════════════ LAYOUTS ══════════════════ */
@@ -204,15 +229,17 @@ kbd{font-family:var(--font-mono);font-size:11.5px;background:var(--chrome-key);
 .slide.statement h2{font-size:62px;max-width:20ch;line-height:1.12}
 .slide.statement .attrib{margin-top:30px;font-size:19px;color:var(--ink-3)}
 
-/* bullets */
+/* bullets — the marker is absolute, not a flex item, so a .sub second line stacks
+   under its point instead of sitting beside it */
 .slide .pts{list-style:none;display:flex;flex-direction:column;gap:20px;padding:0}
-.slide .pts li{display:flex;gap:18px;align-items:flex-start;font-size:27px;line-height:1.4;max-width:32ch}
-.slide .pts li::before{content:"";flex:none;width:11px;height:11px;border-radius:3px;background:var(--accent);
-  margin-top:.5em}
+.slide .pts li{position:relative;padding-inline-start:29px;font-size:27px;line-height:1.4;max-width:32ch}
+.slide .pts li::before{content:"";position:absolute;inset-inline-start:0;top:.52em;
+  width:11px;height:11px;border-radius:3px;background:var(--accent)}
 .slide .pts.num{counter-reset:p}
-.slide .pts.num li{counter-increment:p}
-.slide .pts.num li::before{content:counter(p);width:34px;height:34px;border-radius:50%;background:var(--accent);
-  color:var(--accent-ink);font-size:17px;font-weight:800;display:grid;place-items:center;margin-top:0}
+.slide .pts.num li{counter-increment:p;padding-inline-start:52px;min-height:34px}
+.slide .pts.num li::before{content:counter(p);top:0;width:34px;height:34px;border-radius:50%;
+  background:var(--accent);color:var(--accent-ink);font-size:17px;font-weight:800;
+  display:grid;place-items:center}
 .slide .pts li b{font-weight:750}
 .slide .pts li .sub{display:block;font-size:19px;color:var(--ink-2);margin-top:6px;line-height:1.5}
 
@@ -249,6 +276,55 @@ kbd{font-family:var(--font-mono);font-size:11.5px;background:var(--chrome-key);
 .stats .st span{display:block;font-size:18px;color:var(--ink-2);margin-top:12px;line-height:1.45}
 .stats .st .d{font-size:15px;font-weight:750;margin-top:8px}
 .stats .st .d.up{color:var(--ok)} .stats .st .d.down{color:var(--bad)}
+
+/* source line — where a number came from. The one honest answer to "says who?" */
+.src{flex:none;margin-top:14px;font-size:15px;line-height:1.45;color:var(--ink-3)}
+.src::before{content:"Source: ";font-weight:750}
+.src.nolabel::before{content:""}
+
+/* chips — a scannable row of short labels: scope, stack, constraints, names */
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chips span{font-size:18px;font-weight:650;padding:8px 16px;border-radius:99px;
+  border:1.5px solid var(--line);background:var(--surface);color:var(--ink-2)}
+.chips span.hi{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
+.chips span.dim{opacity:.5}
+
+/* key-value — a spec sheet: the ask, the terms, the numbers that define a proposal */
+.kv{display:grid;grid-template-columns:auto 1fr;gap:16px 34px;align-items:baseline}
+.kv dt{font-size:17px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+.kv dd{margin:0;font-size:25px;line-height:1.35;font-weight:650}
+.kv dd small{display:block;font-size:17px;font-weight:400;color:var(--ink-2);margin-top:4px}
+
+/* split — a half-bleed image beside the argument. The image runs to the slide edge. */
+.slide.split{padding:0;flex-direction:row}
+.slide.split>.sfit{flex-direction:row;align-items:stretch;justify-content:stretch}
+.split .sp-img{flex:0 0 44%;position:relative;overflow:hidden;background:var(--surface)}
+.split .sp-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.split .sp-img .ph{position:absolute;inset:0;border:none;border-radius:0}
+.split .sp-txt{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;
+  padding:var(--pad) var(--padx) var(--padb)}
+.split.flip>.sfit{flex-direction:row-reverse}
+
+/* progress — status readouts: what is done, what is not. --p is the percentage. */
+.prog{display:flex;flex-direction:column;gap:22px}
+.prog .pr{display:grid;grid-template-columns:1fr auto;gap:6px 18px;align-items:baseline}
+.prog .pr b{font-size:24px;font-weight:650}
+.prog .pr .pv{font-size:20px;font-variant-numeric:tabular-nums;color:var(--ink-3);font-weight:750}
+.prog .pr .track{grid-column:1/-1;height:12px;border-radius:99px;background:var(--surface);
+  border:1px solid var(--line);overflow:hidden}
+.prog .pr .track i{display:block;height:100%;width:var(--p,0%);background:var(--accent)}
+.prog .pr.done .track i{background:var(--ok)}
+.prog .pr.risk .track i{background:var(--bad)}
+
+/* checks — a shipped/not-shipped list. Modifier on the li, not a separate class. */
+.checks{list-style:none;padding:0;display:flex;flex-direction:column;gap:16px}
+.checks li{display:flex;gap:16px;align-items:flex-start;font-size:25px;line-height:1.4}
+.checks li::before{content:"✓";flex:none;width:32px;height:32px;border-radius:50%;
+  display:grid;place-items:center;font-size:17px;font-weight:800;
+  background:var(--ok);color:#fff;margin-top:.1em}
+.checks li.no::before{content:"✕";background:var(--bad)}
+.checks li.part::before{content:"~";background:var(--warn)}
+.checks li span{display:block;font-size:18px;color:var(--ink-2);margin-top:5px;line-height:1.5}
 
 /* quote */
 .slide.quote{justify-content:center}
@@ -375,9 +451,12 @@ kbd{font-family:var(--font-mono);font-size:11.5px;background:var(--chrome-key);
 .cmp .vs{display:grid;place-items:center;font-size:17px;font-weight:800;color:var(--ink-3);
   letter-spacing:.1em;text-transform:uppercase}
 
-/* charts (SVG rendered by JS) */
-.chart{flex:1;min-height:0;display:flex;flex-direction:column;gap:16px}
-.chart svg{width:100%;height:100%;overflow:visible}
+/* charts (SVG rendered by JS)
+   min-height matters: inside a .cols cell the chart is a grid item, so flex:1 gives it
+   no height at all and the drawing would collapse to nothing. */
+.chart{flex:1;min-height:210px;display:flex;flex-direction:column;gap:16px}
+.cols .chart{min-height:330px;height:100%}
+.chart svg{width:100%;height:100%;overflow:visible;display:block}
 .chart .lg{display:flex;gap:22px;flex-wrap:wrap;font-size:16px;color:var(--ink-2);flex:none}
 .chart .lg span{display:inline-flex;align-items:center;gap:8px}
 .chart .lg i{width:13px;height:13px;border-radius:3px;display:block}
@@ -398,19 +477,25 @@ body.m-grid [data-build],body.m-read [data-build],body.printing [data-build]{opa
   [data-build]{opacity:1!important;transform:none!important}}
 
 /* ══════════════════ PRINT / PDF ══════════════════ */
-@page{size:var(--Wmm) var(--Hmm);margin:0}
+/* @page cannot read custom properties, so the real page size is injected as a literal
+   at boot (see printSetup()). This is only the margin fallback. */
+@page{margin:0}
 @media print{
   html,body{overflow:visible;background:#fff;height:auto}
   #hud,#bar,#top,#notes,#help{display:none!important}
-  #stage{position:static;display:block;padding:0}
-  #deck{display:block;width:auto}
-  .frame{width:100%!important;height:auto!important;position:relative!important;transform:none!important;
+  #stage{position:static;display:block;padding:0;inset:auto}
+  #deck{display:block;width:auto;gap:0}
+  .frame{width:calc(var(--W)*1px)!important;height:calc(var(--H)*1px)!important;
+    position:relative!important;transform:none!important;margin:0!important;
     opacity:1!important;visibility:visible!important;page-break-after:always;break-after:page;
-    aspect-ratio:var(--W)/var(--H);overflow:hidden;box-shadow:none!important;border-radius:0!important;outline:none!important}
+    overflow:hidden;box-shadow:none!important;border-radius:0!important;outline:none!important}
+  .frame:last-child{page-break-after:auto;break-after:auto}
   .frame::after{display:none}
   .rwrap{display:block!important} .rnotes{display:none!important}
-  .rslide{aspect-ratio:auto!important;height:100%!important;border-radius:0!important;box-shadow:none!important}
-  .slide{position:absolute;top:0;left:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .rslide{aspect-ratio:auto!important;width:auto!important;height:auto!important;
+    border-radius:0!important;box-shadow:none!important;overflow:visible!important}
+  .slide{position:relative!important;transform:none!important;
+    -webkit-print-color-adjust:exact;print-color-adjust:exact}
 }
 </style>
 </head>
@@ -485,9 +570,10 @@ var esc=function(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").
 var W=+getComputedStyle(document.documentElement).getPropertyValue("--W").trim()||1280;
 var H=+getComputedStyle(document.documentElement).getPropertyValue("--H").trim()||720;
 var deck=$("#deck"), slides=$$(".slide",deck), i=0, build=0, mode="present";
+var RTL=document.documentElement.dir==="rtl";
 
 /* ---------- wrap slides in frames, number them, lift notes out ---------- */
-var notes=[], claims=[], secIdx=0, mainCount=0;
+var notes=[], claims=[], mainCount=0;
 slides.forEach(function(s,n){
   var f=document.createElement("div"); f.className="frame";
   s.parentNode.insertBefore(f,s); f.appendChild(s);
@@ -495,7 +581,6 @@ slides.forEach(function(s,n){
   claims[n]=s.dataset.claim||"";
   if(!s.classList.contains("appendix"))mainCount++;
   f.dataset.n=n+1;
-  if(s.classList.contains("section"))secIdx++;
   if(!$(".s-foot",s)&&!s.classList.contains("title")&&!s.classList.contains("nofoot")){
     var ft=document.createElement("div"); ft.className="s-foot";
     ft.innerHTML='<span class="fttl">'+esc(document.title)+'</span>'+
@@ -503,6 +588,13 @@ slides.forEach(function(s,n){
       '<span class="fnum">'+(n+1)+'</span>';
     s.appendChild(ft);
   }
+  /* everything except the running footer moves into the auto-fit wrapper */
+  var fitBox=document.createElement("div"); fitBox.className="sfit";
+  [].slice.call(s.childNodes).forEach(function(c){
+    if(c.nodeType===1&&c.classList.contains("s-foot"))return;
+    fitBox.appendChild(c);
+  });
+  s.insertBefore(fitBox,s.firstChild);
 });
 var frames=$$(".frame",deck);
 $("#tot").textContent=slides.length;
@@ -512,9 +604,51 @@ function fit(){
   if(mode!=="present")return;
   var st=$("#stage").getBoundingClientRect();
   var k=Math.min(st.width/W, st.height/H);
-  document.documentElement.style.setProperty("--k",k);
+  document.documentElement.style.setProperty("--k",k>0?k:1);
 }
-addEventListener("resize",fit);
+
+/* ---------- auto-fit: a slide may never clip its own content ----------
+   The canvas is fixed, so a slide that runs long would silently lose its last line.
+   verify.py keeps slides short; this is the runtime backstop for the cases it cannot
+   see — a long word in Thai, a font that renders wider, a translated headline. */
+function fitSlide(s){
+  var w=$(".sfit",s); if(!w)return;
+  w.style.cssText="";                                   /* always measure from clean */
+  var availH=w.clientHeight, availW=w.clientWidth;
+  if(!availH||!availW)return;
+  /* Natural height has to be measured with the wrapper released from flex sizing.
+     A centred .body overflows equally above and below its box, and scrollHeight
+     cannot see the half that sits above the top edge. */
+  function natural(px){
+    w.style.flex="none"; w.style.height="auto"; w.style.width=px+"px"; w.style.transform="none";
+    return w.offsetHeight;
+  }
+  if(natural(availW)<=availH+1){w.style.cssText=""; return}
+  var k=1;
+  for(var pass=0;pass<5;pass++){
+    var nat=natural(availW/k);
+    var need=nat/(availH/k);
+    if(need<=1.004)break;
+    k=Math.max(.5,k/need);
+  }
+  w.style.flex="none";
+  w.style.width=(availW/k)+"px";
+  w.style.height=(availH/k)+"px";
+  w.style.transform="scale("+k+")";
+}
+function fitAll(){slides.forEach(fitSlide)}
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){fitAll();redrawCharts()});
+
+var rsz;
+addEventListener("resize",function(){
+  fit();
+  clearTimeout(rsz);
+  rsz=setTimeout(function(){
+    /* grid and read scale each slide to a column width that just changed */
+    if(mode!=="present")layoutStatic();
+    if(document.body.classList.contains("notes-on"))paintNotes();
+  },120);
+});
 
 /* ---------- build steps: reveal one element at a time ---------- */
 function buildsOf(n){return $$("[data-build]",slides[n]).sort(function(a,b){
@@ -535,7 +669,9 @@ function go(n,fromEnd){
   if(mode==="present"){document.body.classList.add("anim");
     setTimeout(function(){document.body.classList.remove("anim")},360)}
   if(mode!=="present")frames[i].scrollIntoView({block:"center",behavior:"smooth"});
-  history.replaceState(null,"","#"+(i+1));
+  /* file:// documents have a null origin; Chrome throws on replaceState there, and an
+     uncaught throw here would kill navigation for the rest of the deck */
+  try{history.replaceState(null,"","#"+(i+1))}catch(e){}
   try{localStorage.setItem(DID+":at",i)}catch(e){}
 }
 function next(){
@@ -554,27 +690,32 @@ function paintNotes(){
   $("#notes .n-claim").style.display=claims[i]?"":"none";
   $("#notes .txt").innerHTML=notes[i]||'<p style="opacity:.5">—</p>';
   var np=$("#nextprev"); np.innerHTML="";
+  if(!np.clientWidth)return;                 /* panel closed — nothing to preview into */
   if(i<slides.length-1){
     var c=slides[i+1].cloneNode(true);
     $$("[data-build]",c).forEach(function(e){e.classList.add("shown")});
     np.appendChild(c);
-    var k=np.clientWidth/W; c.style.transform="scale("+k+")";
+    c.style.transform="scale("+(np.clientWidth/W)+")";
   }
 }
-addEventListener("resize",function(){if(document.body.classList.contains("notes-on"))paintNotes()});
 
 /* ---------- modes ---------- */
+function unwrapRead(){
+  frames.forEach(function(f){
+    var sl=$(".slide",f); if(!sl)return;
+    sl.style.transform="";
+    var w=$(".rwrap",f); if(w){f.insertBefore(sl,f.firstChild); w.remove()}
+  });
+}
 function setMode(m){
   mode=m;
-  document.body.className=document.body.className.replace(/\bm-\w+/g,"").trim()+" m-"+m;
+  document.body.classList.remove("m-present","m-grid","m-read");
+  document.body.classList.add("m-"+m);
   if(m==="present"){
     /* grid/read scale the .slide itself; present scales the .frame — so undo
        the static scaling and the read wrapper before handing back to the stage */
-    frames.forEach(function(f){
-      var sl=$(".slide",f); sl.style.transform="";
-      var w=$(".rwrap",f); if(w){f.insertBefore(sl,f.firstChild); w.remove()}
-    });
-    requestAnimationFrame(function(){fit(); go(i)});
+    unwrapRead();
+    requestAnimationFrame(function(){fit(); fitAll(); go(i)});
   } else layoutStatic();
 }
 function layoutStatic(){
@@ -596,7 +737,8 @@ function layoutStatic(){
         f.insertBefore($(".slide",f),f.firstChild); $(".rwrap",f).remove();
       }
       var s=$(".slide",f), k=target.clientWidth/W;
-      s.style.transform="scale("+k+")";
+      fitSlide(s);
+      s.style.transform=k>0?"scale("+k+")":"";
       $$("[data-build]",s).forEach(function(e){e.classList.add("shown")});
     });
     frames.forEach(function(f,k){f.classList.toggle("on",k===i)});
@@ -659,24 +801,44 @@ addEventListener("touchstart",function(e){tx=e.touches[0].clientX;ty=e.touches[0
 addEventListener("touchend",function(e){
   if(mode!=="present")return;
   var dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty;
-  if(Math.abs(dx)>52&&Math.abs(dx)>Math.abs(dy)){dx<0?next():prev()}
+  if(Math.abs(dx)>52&&Math.abs(dx)>Math.abs(dy)){
+    var fwd=RTL?dx>0:dx<0;                 /* in RTL, "forward" is a swipe to the right */
+    fwd?next():prev();
+  }
 },{passive:true});
 
-/* ---------- print ---------- */
-function printDeck(){
-  var prev=mode; document.body.classList.add("printing");
-  setMode("present");
-  document.documentElement.style.setProperty("--Wmm",(W/96*25.4).toFixed(1)+"mm");
-  document.documentElement.style.setProperty("--Hmm",(H/96*25.4).toFixed(1)+"mm");
-  $$(".slide").forEach(function(s){s.style.transform="";});
-  setTimeout(function(){
-    print();
-    document.body.classList.remove("printing");
-    setMode(prev);
-  },120);
+/* ---------- print ----------
+   @page cannot read a CSS custom property, so the exact slide size goes in as a literal.
+   96 CSS px = 1 inch, so a 1280×720 canvas prints as one 338.67×190.5 mm page per slide
+   with no scaling and no second blank page. */
+(function(){
+  var st=document.createElement("style");
+  st.textContent="@page{size:"+(W/96*25.4).toFixed(2)+"mm "+(H/96*25.4).toFixed(2)+"mm;margin:0}";
+  document.head.appendChild(st);
+})();
+var wasMode=null;
+function printPrep(){
+  /* Cmd/Ctrl+P from grid or read mode must still emit clean full-bleed slides */
+  if(wasMode===null)wasMode=mode;           /* print() re-fires beforeprint — capture once */
+  document.body.classList.add("printing");
+  if(mode!=="present"){mode="present";
+    document.body.classList.remove("m-grid","m-read");
+    document.body.classList.add("m-present");
+    unwrapRead();
+  }
+  $$(".slide").forEach(function(s){s.style.transform=""});
+  frames.forEach(function(f){f.classList.add("on")});
+  $$("[data-build]").forEach(function(e){e.classList.add("shown")});
 }
-addEventListener("beforeprint",function(){$$(".slide").forEach(function(s){s.style.transform=""})});
-addEventListener("afterprint",function(){setMode(mode)});
+function printDone(){
+  document.body.classList.remove("printing");
+  frames.forEach(function(f,k){f.classList.toggle("on",k===i)});
+  var m=wasMode||"present"; wasMode=null;
+  setMode(m);
+}
+function printDeck(){printPrep(); setTimeout(function(){print()},60)}
+addEventListener("beforeprint",printPrep);
+addEventListener("afterprint",printDone);
 
 /* ---------------- charts: read the <table>, draw the SVG ---------------- */
 var PAL=["--c1","--c2","--c3","--c4","--c5","--c6"].map(function(v){
@@ -695,15 +857,23 @@ function niceScale(lo,hi,ticks){
   return {min:Math.floor(lo/step)*step, max:Math.ceil(hi/step)*step, step:step};
 }
 function readTable(t){
-  var rows=$$("tr",t), head=rows[0], cats=$$("th",head).slice(1).map(function(e){return e.textContent.trim()});
+  var rows=$$("tr",t), head=rows[0];
+  if(!head)return {cats:[],series:[]};
+  var cats=$$("th",head).slice(1).map(function(e){return e.textContent.trim()});
   var series=rows.slice(1).map(function(r){
     return {name:($("th",r)||{textContent:""}).textContent.trim(),
-            vals:$$("td",r).map(function(d){return parseFloat(d.textContent.replace(/[^\d.\-]/g,""))||0})}});
+            vals:$$("td",r).map(function(d){
+              var n=parseFloat(d.textContent.replace(/[^\d.\-]/g,""));
+              return isFinite(n)?n:0})}})
+    .filter(function(s){return s.vals.length});
   return {cats:cats,series:series};
 }
+var CHARTS=[];
 $$(".chart").forEach(function(box){
   var tbl=$("table",box); if(!tbl)return;
-  var d=readTable(tbl); tbl.style.display="none";
+  var d=readTable(tbl);
+  if(!d.cats.length||!d.series.length)return;   /* malformed table: leave it visible */
+  tbl.style.display="none";
   var type=box.dataset.type||"bar", unit=box.dataset.unit||"";
   var lg=$(".lg",box)||(function(){var e=document.createElement("div");e.className="lg";box.appendChild(e);return e})();
   if(d.series.length>1||type==="donut"){
@@ -712,16 +882,30 @@ $$(".chart").forEach(function(box){
   } else lg.remove();
   var host=document.createElement("div"); host.style.cssText="flex:1;min-height:0";
   box.insertBefore(host,box.firstChild);
-  requestAnimationFrame(function(){draw(host,d,type,unit,box)});
+  CHARTS.push({host:host,d:d,type:type,unit:unit,box:box});
 });
+/* Charts are laid out inside a fixed canvas, so they are drawn once — but webfonts land
+   after first paint and change every text width, so we redraw when they are ready. */
+function redrawCharts(){
+  CHARTS.forEach(function(c){
+    var w=c.host.clientWidth, h=c.host.clientHeight;
+    if(!w||!h)return;
+    c.host.innerHTML="";
+    draw(c.host,c.d,c.type,c.unit,c.box);
+  });
+}
+requestAnimationFrame(redrawCharts);
 function draw(host,d,type,unit,box){
   var w=host.clientWidth||900, h=host.clientHeight||380;
-  var svg=svgEl("svg",{viewBox:"0 0 "+w+" "+h}); host.appendChild(svg);
-  var ink3=getComputedStyle(document.documentElement).getPropertyValue("--ink-3").trim();
+  var svg=svgEl("svg",{viewBox:"0 0 "+w+" "+h});
+  svg.setAttribute("role","img");
+  svg.setAttribute("aria-label",box.dataset.alt||d.series.map(function(s){return s.name}).join(", "));
+  host.appendChild(svg);
 
   if(type==="donut"){
-    var vals=d.series[0]?d.series[0].vals:[], tot=vals.reduce(function(a,b){return a+b},0)||1;
-    var r=Math.min(w,h)/2-14, cx=w/2, cy=h/2, sw=r*0.42, off=0;
+    var vals=d.series[0]?d.series[0].vals:[], tot=vals.reduce(function(a,b){return a+Math.max(0,b)},0);
+    if(tot<=0)return;
+    var r=Math.max(30,Math.min(w,h)/2-14), cx=w/2, cy=h/2, sw=r*0.42, off=0;
     vals.forEach(function(v,k){
       var frac=v/tot, c=2*Math.PI*(r-sw/2);
       var arc=svgEl("circle",{cx:cx,cy:cy,r:r-sw/2,fill:"none",stroke:PAL[k%6],"stroke-width":sw,
@@ -740,9 +924,41 @@ function draw(host,d,type,unit,box){
     return;
   }
 
+  /* ---- horizontal bars: one series, many categories, or names too long for an x-axis.
+     One measure means one colour. data-hi="0,2" greys everything else so the eye lands
+     where the argument does — colouring every bar differently just says "these are
+     different things", which the labels already said. ---- */
+  if(type==="hbar"){
+    var hs=d.series[0]||{vals:[]}, hmax=Math.max.apply(null,hs.vals.concat([0]))||1;
+    if(box.dataset.max)hmax=parseFloat(box.dataset.max)||hmax;
+    var hi=(box.dataset.hi||"").split(",").map(function(x){return parseInt(x,10)});
+    var muted=getComputedStyle(document.documentElement).getPropertyValue("--ink-3").trim()||"#999";
+    var lw=Math.min(w*0.36,Math.max.apply(null,d.cats.map(function(c){return c.length*8.4}))+14);
+    var rowH=(h-10)/Math.max(1,d.cats.length), bh=Math.min(34,rowH*0.62);
+    d.cats.forEach(function(c,k){
+      var cy=5+rowH*(k+0.5), bwid=Math.max(2,(hs.vals[k]||0)/hmax*(w-lw-76));
+      var lb3=svgEl("text",{x:lw-12,y:cy+5,"text-anchor":"end",class:"ax-l"});
+      lb3.textContent=c; svg.appendChild(lb3);
+      var on=!box.dataset.hi||hi.indexOf(k)>-1;
+      svg.appendChild(svgEl("rect",{x:lw,y:cy-bh/2,width:bwid,height:bh,
+        fill:on?PAL[0]:muted,opacity:on?1:.42,rx:5}));
+      var v3=svgEl("text",{x:lw+bwid+10,y:cy+5,class:"val"});
+      v3.textContent=nice(hs.vals[k]||0)+unit; svg.appendChild(v3);
+    });
+    return;
+  }
+
+  var stacked=(type==="stack");
   var pl=62, pr=16, pt=26, pb=42;
   var all=[].concat.apply([],d.series.map(function(s){return s.vals}));
+  if(!all.length)return;
   var dmax=Math.max.apply(null,all), dmin=Math.min.apply(null,all);
+  if(stacked){
+    /* the axis has to reach the tallest column, not the tallest single segment */
+    dmax=Math.max.apply(null,d.cats.map(function(_,k){
+      return d.series.reduce(function(a,s){return a+Math.max(0,s.vals[k]||0)},0)}));
+    dmin=0;
+  }
   /* bars must start at zero or they lie; lines may not, so give them a tight frame
      unless the author asks for a zero baseline with data-zero */
   var zeroBase=(type!=="line"&&type!=="area")||box.hasAttribute("data-zero");
@@ -755,8 +971,8 @@ function draw(host,d,type,unit,box){
   for(var gv=min;gv<=max+1e-9;gv+=sc.step){
     var gy=y(gv);
     svg.appendChild(svgEl("line",{x1:pl,x2:w-pr,y1:gy,y2:gy,class:"gl"}));
-    var lb=svgEl("text",{x:pl-12,y:gy+5,"text-anchor":"end",class:"ax-l"});
-    lb.textContent=nice(gv)+unit; svg.appendChild(lb);
+    var lb2=svgEl("text",{x:pl-12,y:gy+5,"text-anchor":"end",class:"ax-l"});
+    lb2.textContent=nice(gv)+unit; svg.appendChild(lb2);
   }
   d.cats.forEach(function(c,k){
     var cx=pl+iw*(k+0.5)/d.cats.length;
@@ -780,15 +996,40 @@ function draw(host,d,type,unit,box){
     return;
   }
 
+  /* ---- stacked bars: parts of each column's whole ---- */
+  if(stacked){
+    var sw2=Math.min(96,(iw/d.cats.length)*0.62);
+    d.cats.forEach(function(c,k){
+      var acc=0, cx=pl+iw*(k+0.5)/d.cats.length-sw2/2;
+      d.series.forEach(function(s,si){
+        var v=Math.max(0,s.vals[k]||0); if(v<=0)return;
+        var y1=y(acc+v), y0=y(acc);
+        svg.appendChild(svgEl("rect",{x:cx,y:y1,width:sw2,height:Math.max(1,y0-y1),
+          fill:PAL[si%6]}));
+        if(y0-y1>19){
+          var st2=svgEl("text",{x:cx+sw2/2,y:(y0+y1)/2+5,"text-anchor":"middle",class:"val",
+            fill:"var(--accent-ink)"});
+          st2.textContent=nice(v)+unit; svg.appendChild(st2);
+        }
+        acc+=v;
+      });
+      var tt=svgEl("text",{x:cx+sw2/2,y:y(acc)-9,"text-anchor":"middle",class:"val"});
+      tt.textContent=nice(acc)+unit; svg.appendChild(tt);
+    });
+    return;
+  }
+
+  /* ---- grouped bars ---- */
   var ns=d.series.length, slot=iw/d.cats.length, bw=Math.min(78,(slot*0.72)/ns);
   d.series.forEach(function(s,si){
     s.vals.forEach(function(v,k){
       var cx=pl+slot*(k+0.5)-(ns*bw)/2+si*bw;
-      var top=y(v), base=y(0);
-      svg.appendChild(svgEl("rect",{x:cx+2,y:Math.min(top,base),width:bw-4,
+      var top=y(v), base=y(Math.max(min,Math.min(0,max)));
+      svg.appendChild(svgEl("rect",{x:cx+2,y:Math.min(top,base),width:Math.max(1,bw-4),
         height:Math.max(2,Math.abs(base-top)),fill:PAL[si%6],rx:4}));
       if(ns<=2){
-        var t=svgEl("text",{x:cx+bw/2,y:top-9,"text-anchor":"middle",class:"val"});
+        /* a negative bar's label belongs under it, or it lands on top of the axis */
+        var t=svgEl("text",{x:cx+bw/2,y:v<0?top+20:top-9,"text-anchor":"middle",class:"val"});
         t.textContent=nice(v)+unit; svg.appendChild(t);
       }
     });
@@ -807,11 +1048,20 @@ $$(".slide.code pre").forEach(function(pre){
 
 /* ---------------- boot ---------------- */
 fit();
+fitAll();
 var start=0;
 if(location.hash&&/^#\d+$/.test(location.hash))start=parseInt(location.hash.slice(1),10)-1;
-else{try{var r=localStorage.getItem(DID+":at"); if(r!==null&&+r<slides.length)start=+r}catch(e){}}
+else{try{var r=localStorage.getItem(DID+":at"); if(r!==null&&+r>=0&&+r<slides.length)start=+r}catch(e){}}
 go(start);
-setTimeout(fit,50);
+/* deep links are advertised, so editing #7 in the address bar has to actually move */
+addEventListener("hashchange",function(){
+  if(!/^#\d+$/.test(location.hash))return;
+  var n=parseInt(location.hash.slice(1),10)-1;
+  if(n>=0&&n<slides.length&&n!==i){if(mode!=="present")setMode("present"); go(n)}
+});
+/* one late pass: images that decode after first paint can change a slide's height */
+addEventListener("load",function(){fit();fitAll();redrawCharts()});
+setTimeout(function(){fit();fitAll()},60);
 })();
 </script>
 </body>

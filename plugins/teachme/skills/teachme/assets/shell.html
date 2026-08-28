@@ -111,7 +111,7 @@ button{font:inherit;cursor:pointer}
 #scrim{display:none;position:fixed;inset:0;background:rgba(2,6,23,.55);z-index:59;backdrop-filter:blur(2px)}
 
 /* ============================ MAIN ============================ */
-#rp{position:fixed;top:0;inset-inline-start:var(--sbw);inset-inline-end:0;height:3px;z-index:50;background:transparent}
+#rp{position:fixed;top:0;inset-inline-start:var(--sbw);inset-inline-end:0;height:3px;z-index:50;background:transparent;pointer-events:none}
 #rp i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2))}
 [dir="rtl"] #rp i{background:linear-gradient(270deg,var(--accent),var(--accent2))}
 main{margin-inline-start:var(--sbw);padding:0 clamp(20px,5vw,72px) 140px;max-width:calc(var(--sbw) + 1180px)}
@@ -353,6 +353,8 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--sunken);border:1px
 #sr .hit{display:block;padding:9px 11px;border-radius:var(--r-sm);margin-bottom:3px}
 #sr .hit:hover{background:var(--sunken);text-decoration:none}
 #sr .hit b{display:block;font-size:13px;color:var(--fg);font-weight:700;line-height:1.4}
+#sr .hit u{font-size:11.8px;color:var(--muted);text-decoration:none;line-height:1.5;margin-top:3px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 #sr .hit i{display:block;font-size:11.5px;color:var(--faint);font-style:normal;margin-top:2px}
 #sr .hit em{background:color-mix(in srgb,var(--accent) 25%,transparent);font-style:normal;border-radius:3px}
 #sr .none{padding:14px 12px;font-size:13px;color:var(--faint);text-align:center}
@@ -471,20 +473,37 @@ figcaption .fign{font-weight:800;color:var(--accent);letter-spacing:.03em}
 .bars .bar.r i{background:linear-gradient(90deg,var(--bad),var(--bad))}
 .bars .v{text-align:right;font-family:var(--mono);font-size:12.3px;color:var(--muted)}
 
-/* ---------- inline SVG helpers ---------- */
+/* ---------- inline SVG helpers ----------
+   These must apply to figure.diagram as well as figure.viz. Scoped to .viz alone, an SVG
+   in a .diagram inherits nothing, so its text falls back to black and disappears entirely
+   in dark mode. Both wrappers are legal per blocks.html, so both get the theme. */
 figure.viz svg,figure.diagram svg{max-width:100%;height:auto;display:block;margin:0 auto}
-figure.viz svg text{fill:var(--fg);font-family:var(--font);font-size:13px}
-figure.viz svg .d-box{fill:var(--bg);stroke:var(--line2);stroke-width:1.5}
-figure.viz svg .d-box.hi{fill:var(--accent-soft);stroke:var(--accent)}
-figure.viz svg .d-box.dim{stroke-dasharray:5 4;stroke:var(--faint)}
-figure.viz svg .d-line{stroke:var(--line2);stroke-width:1.5;fill:none}
-figure.viz svg .d-arrow{stroke:var(--accent);stroke-width:2;fill:none;marker-end:url(#ah)}
-figure.viz svg .d-arrow.dim{stroke:var(--faint);marker-end:url(#ah-dim)}
-figure.viz svg .d-dim{fill:var(--faint);font-size:11.5px}
-figure.viz svg .d-accent{fill:var(--accent)}
-figure.viz svg .d-mono{font-family:var(--mono);font-size:12px}
+figure.viz svg text,figure.diagram svg text{fill:var(--fg);font-family:var(--font);font-size:13px}
+.d-box{fill:var(--bg);stroke:var(--line2);stroke-width:1.5}
+.d-box.hi{fill:var(--accent-soft);stroke:var(--accent)}
+.d-box.ok{fill:var(--ok-soft);stroke:var(--ok)}
+.d-box.bad{fill:var(--bad-soft);stroke:var(--bad)}
+.d-box.dim{stroke-dasharray:5 4;stroke:var(--faint)}
+.d-line{stroke:var(--line2);stroke-width:1.5;fill:none}
+.d-line.dim{stroke:var(--faint);stroke-dasharray:5 4}
+.d-arrow{stroke:var(--accent);stroke-width:2;fill:none;marker-end:url(#ah)}
+.d-arrow.dim{stroke:var(--faint);marker-end:url(#ah-dim)}
+.d-fill{fill:var(--accent-soft)}
+.d-dim{fill:var(--faint);font-size:11.5px}
+.d-accent{fill:var(--accent)}
+.d-ok{fill:var(--ok)} .d-bad{fill:var(--bad)}
+.d-mono{font-family:var(--mono);font-size:12px}
+.d-sm{font-size:11px}
 #ah path{fill:var(--accent)}
 #ah-dim path{fill:var(--faint)}
+
+/* ---------- images in prose ----------
+   Without this a hand-written <img> at its natural pixel size widens the whole column and
+   the page scrolls sideways on every screen narrower than the image. */
+.ch-body img,.cover img{max-width:100%;height:auto}
+figure.viz>img,figure.diagram>img{border-radius:var(--r-sm);border:1px solid var(--line)}
+/* long identifiers, URLs and hashes must wrap rather than widen the page */
+.ch-body p,.ch-body li,.ch-body td,.ch-body dd,.callout,.fb{overflow-wrap:anywhere}
 
 /* ---------- code line highlighting ---------- */
 .code pre{padding:17px 0}
@@ -610,7 +629,7 @@ rt{font-size:.55em;color:var(--muted);font-weight:500}
   border-radius:var(--r);text-align:center;font-size:19px;line-height:2.7;overflow-x:auto}
 .annot .pc{position:relative;display:inline-block;padding:2px 6px;margin:0 3px;
   border-bottom:2px solid var(--accent);white-space:nowrap}
-.annot .pc::after{content:attr(data-l);position:absolute;top:100%;inset-inline-start:50%;
+.annot .pc::after{content:attr(data-l);position:absolute;top:100%;left:50%;
   transform:translateX(-50%);margin-top:5px;font-size:11px;color:var(--accent);font-weight:750;white-space:nowrap}
 .annot .pc.a2{border-bottom-color:var(--ok)}    .annot .pc.a2::after{color:var(--ok)}
 .annot .pc.a3{border-bottom-color:var(--warn)}  .annot .pc.a3::after{color:var(--warn)}
@@ -707,8 +726,14 @@ rt{font-size:.55em;color:var(--muted);font-weight:500}
 }
 @media (max-width:880px){
   #top{display:flex}
-  #rp{left:0;top:56px}
-  main{margin-left:0;padding-top:56px}
+  /* inset-inline-start, not left — in RTL a bare `left` leaves the sidebar inset in place
+     and the bar renders at the wrong width */
+  #rp{inset-inline-start:0;top:56px}
+  main{margin-inline-start:0;padding-top:56px}
+  /* the topbar is fixed and 56px tall, so every in-page anchor has to clear it or the
+     heading you jumped to lands underneath it */
+  html{scroll-padding-top:70px}
+  .chapter,.ch-body h2,.ch-body h3{scroll-margin-top:70px}
   #sb{transform:translateX(-100%);transition:transform .26s cubic-bezier(.4,0,.2,1);width:min(88vw,320px);box-shadow:var(--sh-lg)}
   body.menu #sb{transform:none}
   body.menu #scrim{display:block}
@@ -936,7 +961,9 @@ $$(".quiz").forEach(function(qz){
       inp.placeholder=UI.answerPh; inp.autocomplete="off"; inp.spellcheck=false;
       var go=document.createElement("button"); go.className="ans-go"; go.textContent="↵";
       row.appendChild(inp); row.appendChild(go);
-      (fb||q).parentNode.insertBefore(row, fb||null);
+      /* without a .fb to anchor to, insertBefore(row, null) would append to the QUIZ,
+         dropping the input box outside its own question */
+      if(fb)q.insertBefore(row,fb); else q.appendChild(row);
       var submit=function(){
         if(answered||!inp.value.trim())return;
         answered=true; inp.disabled=true; go.disabled=true;
@@ -998,11 +1025,17 @@ chapters.forEach(function(ch,i){
   if(isDone(id))a.classList.add("done");
   wrapEl.appendChild(a);
   var subs=document.createElement("div"); subs.className="nv-subs";
-  $$(".ch-body h2",ch).forEach(function(h,k){
+  var heads=$$(".ch-body h2",ch);
+  heads.forEach(function(h,k){
     if(!h.id)h.id=id+"-s"+(k+1);
     var sa=document.createElement("a"); sa.className="nv-sub"; sa.href="#"+h.id; sa.textContent=h.textContent;
     subs.appendChild(sa);
-    index.push({t:h.textContent,ch:title,href:"#"+h.id,body:(h.nextElementSibling||{textContent:""}).textContent});
+    /* index everything up to the next h2, not just the first sibling — otherwise most of
+       the course is invisible to search and "/" finds only headings */
+    var body="", n=h.nextElementSibling, stop=heads[k+1];
+    while(n&&n!==stop){body+=" "+n.textContent; n=n.nextElementSibling}
+    index.push({t:h.textContent,ch:title,href:"#"+h.id,body:body,
+                snip:body.replace(/\s+/g," ").trim()});
   });
   if(subs.children.length)wrapEl.appendChild(subs);
   nav.appendChild(wrapEl);
@@ -1105,9 +1138,19 @@ q.addEventListener("input",function(){
     return (it.t+" "+it.body).toLowerCase().indexOf(v)>-1;
   }).slice(0,30);
   if(!hits.length){sr.innerHTML='<div class="none">'+UI.noHit+'</div>';return}
+  var rx=new RegExp("("+v.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","ig");
   sr.innerHTML=hits.map(function(h){
-    var t=esc(h.t).replace(new RegExp("("+v.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")+")","ig"),"<em>$1</em>");
-    return '<a class="hit" href="'+h.href+'"><b>'+t+'</b><i>'+esc(h.ch)+'</i></a>';
+    var t=esc(h.t).replace(rx,"<em>$1</em>");
+    /* show the matched phrase in context — a list of headings does not tell you which one
+       actually contains what you searched for */
+    var snip="", s=h.snip||"";
+    var at=s.toLowerCase().indexOf(v);
+    if(at>-1){
+      var from=Math.max(0,at-38);
+      snip=(from?"…":"")+s.slice(from,at+v.length+62).trim()+(at+v.length+62<s.length?"…":"");
+      snip='<u>'+esc(snip).replace(rx,"<em>$1</em>")+'</u>';
+    }
+    return '<a class="hit" href="'+h.href+'"><b>'+t+'</b>'+snip+'<i>'+esc(h.ch)+'</i></a>';
   }).join("");
 });
 sr.addEventListener("click",function(e){
@@ -1173,7 +1216,12 @@ $$(".seq").forEach(function(sq){
   var ll=document.createElement("div"); ll.className="seq-lifelines";
   for(var i=0;i<n;i++){var d=document.createElement("i"); d.style.left=((i+.5)/n*100)+"%"; ll.appendChild(d)}
   sq.appendChild(ll);
-  requestAnimationFrame(function(){ ll.style.top=(actors[0].offsetHeight+6)+"px" });
+  /* the actor boxes change height when the webfont lands and when the column narrows,
+     and a lifeline pinned to a stale height starts halfway up the actor label */
+  function place(){ll.style.top=(actors[0].offsetHeight+6)+"px"}
+  requestAnimationFrame(place);
+  if(window.ResizeObserver)new ResizeObserver(place).observe(actors[0]);
+  else addEventListener("resize",place);
 });
 
 /* ---------------- lanes: parallel timelines ---------------- */
@@ -1320,6 +1368,7 @@ $$(".cards").forEach(function(dk,di){
     queue.splice(cur,1); if(cur>=queue.length)cur=0; show();
   });
   $(".no",ft).addEventListener("click",function(){
+    if(!queue.length)return;                       /* empty deck: all[undefined] would throw */
     if(queue.length<2){all[queue[0]].classList.remove("flip");return}
     queue.push(queue.splice(cur,1)[0]); if(cur>=queue.length)cur=0; show();
   });

@@ -35,7 +35,7 @@ Updating later:
 claude plugin marketplace update tppoom-skills
 ```
 
-### Without the plugin system
+### Without the plugin system (Claude Code)
 
 Copy either skill folder into `~/.claude/skills/`:
 
@@ -43,9 +43,48 @@ Copy either skill folder into `~/.claude/skills/`:
 cp -R plugins/teachme/skills/teachme plugins/showme/skills/showme ~/.claude/skills/
 ```
 
+## Install in Antigravity (AGY)
+
+### In this workspace / project
+Both skills are already configured in `.agents/` and will be automatically discovered by
+Antigravity whenever you work in this repository. `.agents/` only points at
+`plugins/*/skills/` — there is one copy of each skill in this repo, not two.
+
+### Globally across all projects
+Copy the skills into your global Antigravity / Gemini configuration directory:
+
+```bash
+mkdir -p ~/.gemini/config/skills
+cp -R plugins/teachme/skills/teachme plugins/showme/skills/showme ~/.gemini/config/skills/
+```
+
+Or as plugins:
+
+```bash
+mkdir -p ~/.gemini/config/plugins
+cp -R plugins/teachme plugins/showme ~/.gemini/config/plugins/
+```
+
 ## Requirements
 
 `python3` (already present on macOS and Linux) for the assemble and verify scripts. Nothing else.
+
+## What each skill ships
+
+**TeachMe** — a sidebar with scroll-spy, per-chapter completion saved in `localStorage`, a
+reading-progress bar, full-text search over the whole course, light/dark, copy-and-highlight
+code, step-through `.walk` explanations, interactive quizzes with scoring, flashcard decks,
+persistent checklists, MathML formulas with symbol legends and derivations, and print styles.
+Two complete worked chapters in `assets/examples/` show the depth the gate demands.
+
+**ShowMe** — a fixed canvas that scales to any screen, keyboard and touch navigation,
+progressive builds, an overview grid, a speaker-notes panel with a timer and next-slide
+preview, a read-it-alone mode, print-to-PDF at the exact slide size, and SVG charts — bar,
+stacked, horizontal, line, area, donut — drawn from a real `<table>` in the page. Fifteen
+themes. Thirty working slides in `assets/layouts.html` cover every layout.
+
+Both runtimes auto-fit or wrap anything that would otherwise be clipped, so a long headline in
+Thai or a translated label cannot silently lose its last line.
 
 ## What "self-contained" means
 

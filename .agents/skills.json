@@ -1,0 +1,10 @@
+{
+  "entries": [
+    {
+      "path": "plugins/showme/skills"
+    },
+    {
+      "path": "plugins/teachme/skills"
+    }
+  ]
+}
