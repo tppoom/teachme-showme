@@ -110,6 +110,25 @@ thing is being said.
   audience "these are different things", which the labels already told them, and it spends the
   one signal you have. Grey the field and colour the bar you are talking about (`data-hi`).
 
+## When the numbers come from a file
+
+A spreadsheet export, a CSV from analytics, a TSV pasted into chat — never retype it into a
+`<table>`. Retyping is where 0.47 becomes 47, a row goes missing, and a rounding happens twice.
+
+```bash
+python3 $SKILL/scripts/chart-table.py export.csv --type line --series "NRR,Logo retention" --unit % --src "…"
+python3 $SKILL/scripts/chart-table.py reasons.csv --type hbar --series share --top 5 --hi "Price"
+python3 $SKILL/scripts/chart-table.py revenue.csv --type bar --scale 1000 --unit k --decimals 0
+```
+
+It reads one row per category and one column per series, which is how spreadsheets are laid
+out. It never invents a value: an empty cell stays empty. Read its stderr — it tells you when
+a chart has too many categories to read — and replace both `WRITE:` lines; the gate fails on
+them. When the data is an `.xlsx`, export the one sheet you need to CSV first.
+
+Compute derived numbers (growth rates, shares, averages) with a short script you can show,
+not in your head, and say in the notes how each one was computed.
+
 ## Images
 
 - Use a real one, or use `ph` — the honest placeholder that says what belongs there and what

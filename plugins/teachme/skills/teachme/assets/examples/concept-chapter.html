@@ -294,28 +294,31 @@ print(extreme / 100_000)</code></pre>
       <div class="q">
         <p class="q-t">A trial reports p = 0.01. Which statement is supportable?</p>
         <ul class="opts">
-          <li><button class="opt">There is a 1% chance the treatment does nothing.</button></li>
-          <li><button class="opt" data-correct="true">If the treatment did nothing, data this extreme would arise about 1% of the time.</button></li>
-          <li><button class="opt">The treatment has a 99% chance of working.</button></li>
-          <li><button class="opt">The effect is large.</button></li>
+          <li><button class="opt">Given these results, there is a 1% probability the treatment has no effect.</button></li>
+          <li><button class="opt">Given these results, the treatment has a 99% probability of really working.</button></li>
+          <li><button class="opt" data-correct="true">If the treatment did nothing, data this extreme would turn up about 1% of the time.</button></li>
+          <li><button class="opt">The effect must be large, since only large effects get as low as p = 0.01.</button></li>
         </ul>
-        <div class="fb"><b>The second.</b> The first and third invert the conditional — they are
-        claims about P(H₀│D), which needs a prior the p-value does not contain. The fourth
-        confuses significance with magnitude: with a large sample, a tiny effect produces a tiny
-        p-value.</div>
+        <div class="fb"><b>If the treatment did nothing, data this extreme would turn up about 1% of
+        the time.</b> The first two invert the conditional — they are claims about P(H₀│D), which
+        needs a prior the p-value does not contain. The last confuses significance with magnitude:
+        with a large sample, a tiny effect produces a tiny p-value.</div>
       </div>
 
       <div class="q">
-        <p class="q-t">A study of 900 people finds p = 0.002 for a 0.3% improvement in completion rate. What should you conclude?</p>
+        <p class="q-t">An A/B test on 1.2 million users finds p = 0.001 for a 0.3-percentage-point rise in completion rate. What should you conclude?</p>
         <ul class="opts">
-          <li><button class="opt">The improvement is important because p is very small.</button></li>
-          <li><button class="opt">The study is invalid because the effect is tiny.</button></li>
-          <li><button class="opt" data-correct="true">The improvement is precisely measured and almost certainly not zero, and is also probably too small to act on.</button></li>
-          <li><button class="opt">The p-value must be wrong.</button></li>
+          <li><button class="opt">It matters and should ship, because a p-value this small rules out chance.</button></li>
+          <li><button class="opt" data-correct="true">The rise is almost certainly real, and may still be too small to act on.</button></li>
+          <li><button class="opt">The test is flawed, because an effect this tiny cannot be this significant.</button></li>
+          <li><button class="opt">Nothing yet, because p-values under 0.01 need a replication to count.</button></li>
         </ul>
-        <div class="fb"><b>The third.</b> A small p-value with a large sample says the effect is
-        distinguishable from zero — nothing more. Whether 0.3% is worth anything is a decision
-        about cost and value, which no statistical test can make for you.</div>
+        <div class="fb"><b>Almost certainly real, and maybe not worth acting on.</b> With 600,000
+        users per arm the standard error of the difference is about 0.09 points, so 0.3 points
+        sits more than three standard errors from zero — distinguishable, nothing more. The third
+        option is tempting because the effect feels too small to detect; at this sample size it
+        is not. Whether 0.3 points is worth anything is a decision about cost and value, which no
+        statistical test can make for you.</div>
       </div>
 
       <div class="q" data-answer="0.05|.05|5%|five percent">

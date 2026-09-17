@@ -52,6 +52,38 @@ not genres.
 
 A deck that is just "topic, topic, topic" is the failure these prevent.
 
+## Occasions
+
+The moves are shapes of reasoning. An occasion adds what the room *expects*: questions it
+always asks, a structure it will be disoriented without, and a trap that catches most decks
+made for it. Find the row, take the spine it suggests unless the brief argues otherwise, and
+put the questions it lists straight into the appendix.
+
+| Occasion | Spine | The room will ask — build these into the appendix | The trap |
+|---|---|---|---|
+| **Investor pitch** | Problem → why now → solution → traction → market → business model → team → the ask | Unit economics, competition, use of funds, why this team | A market-size slide doing the work traction should do. Lead with the strongest real number |
+| **Sales pitch / client proposal** | Their situation → cost of staying put → what changes → proof from someone like them → terms (`kv`) | Price breakdown, implementation timeline, security or compliance, references | Talking about yourself for five slides before their problem appears |
+| **Thesis / proposal defence** | Gap → question → method → results → what it means → limits → contribution | Sample size, validity threats, why not method X, related work you left out | Hiding the limitations. The committee will find them; naming them first is credibility |
+| **Conference talk** | One surprising finding, earned: the belief → the evidence that breaks it → what to do instead | Methodology detail, the dataset, the obvious counter-example | Twenty minutes of background before the one idea. Open on the idea |
+| **Class lecture** | Question the students actually have → build the answer in steps → worked example → check understanding | Derivations, extra examples, the reading list | A lecture deck is not a textbook. If it must be studied alone, that is `teachme` |
+| **Workshop / training** | Why this skill → demo → *they do it* → debrief → next step; alternate tell and do every 10–15 min | Troubleshooting for the exercise, the full reference | No exercise slides. A `statement` slide with the task and the minutes is an exercise slide |
+| **Status update / QBR / board** | What / So what / Now what — state (`prog`, `checks`) → the one risk → the decision needed | Budget detail, per-team breakdowns, the plan B | Burying the ask on slide 14. Put the decision on slide 2 and again at the close |
+| **Post-incident review** | Impact → timeline (`tline`) → cause → why it wasn't caught → fixes with owners and dates | Full timeline, logs, customer comms | Blame. Every claim is about systems and decisions, never about a named person's mistake |
+| **Project proposal to a manager or advisor** | Options → criteria → recommendation, with the losing options shown honestly | Cost, risk, what happens if we do nothing | Presenting one option as though there were no others |
+| **All-hands / town hall** | Where we are → what changed → what it means for *you* → what we need | Team-specific detail, the hard question someone will ask anyway | Ten numbers and no meaning. Pick three and say what each means for the room |
+| **Research findings (UX, market, data)** | What we asked → what we found (one claim per finding) → what we recommend | Method, sample, raw quotes, the full data table | Presenting findings in the order they were collected instead of by importance |
+| **Product launch / demo day** | The moment of pain → the reveal → three things it does → price and availability | Specs, roadmap, comparison with competitors | Feature lists. Show one thing working instead of listing ten |
+| **Job interview / case presentation** | The question → how you framed it → the answer → what you'd do in the first 90 days | The assumptions behind every number, alternatives you rejected | Running over. Interview slots are strict — budget 70% of the time |
+| **Lightning talk / Pecha Kucha** | One idea, one story, one ask. Nothing that needs a second slide to make sense | — | Trying to fit a 20-minute talk. `"advance": 20` enforces the pace honestly |
+| **Sent to be read, not presented** | Same argument; headlines must carry it alone, notes become the paragraphs | Everything, since nobody is there to answer | Relying on speech that will never happen. Read mode shows the notes — write them as prose |
+| **Unattended loop (lobby, booth, screen)** | One message per slide, readable in five seconds from three metres | — | Anything that needs a presenter. `"advance"` + `"loop": true`; big type, few words |
+| **Personal occasion (farewell, wedding, anniversary)** | A story in three beats, then the toast | — | Inside jokes the room doesn't share. Photos go through `embed-image.py`; no placeholders on the night |
+
+**Remote presenting** changes the craft, not the story: the slide is a thumbnail in someone's
+video grid, so push type sizes up, cut builds that depend on your pointing, and assume a third
+of the room is reading your slides instead of watching you — the headline-as-claim rule
+matters twice as much.
+
 ## Where completeness goes
 
 The audience's attention is the constraint, but leaving things out is not an option — so put

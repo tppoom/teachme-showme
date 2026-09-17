@@ -67,6 +67,42 @@ half-written (finish it).
   reader", "see the documentation for the rest". `verify.py` fails the build on these, because
   each one is a piece of the course that silently didn't get written.
 
+## Who is reading
+
+The prose standards above assume an adult learning on purpose. Adjust the register — never the
+completeness — to the actual reader.
+
+| Reader | What changes |
+|---|---|
+| **A child (roughly 8–12)** | Short sentences, one new idea per paragraph, concrete things they can see or hold before any symbol. Analogies from their world, not yours. More visuals, more small exercises, quizzes that are encouraging in their feedback. Chapters of 10–15 minutes. Say it to a parent if the subject needs an adult nearby (chemistry, knives, electricity). |
+| **A teenager / exam student** | Direct, never condescending. Tie every idea to where it turns up in the exam and in something they care about. Worked examples at exam difficulty. |
+| **A professional short on time** | Lead each chapter with the decision or the task it unlocks. Assume competence in adjacent fields, and say which. Denser prose is fine; skipped prerequisites are not. |
+| **A class, or a team you hand it to** | No "you told me" references to the conversation. Everything the requester explained to you in chat goes into the course, because the other readers were not there. |
+| **Someone who struggles with the subject** | Smaller steps, more worked examples before any exercise, and explicit reassurance that the common mistake is common. Never cut the hard part — slow down in front of it. |
+
+Set the chapter tag (`beginner`, `intermediate`, `advanced`) honestly; it is how a mixed class
+finds its place.
+
+## Writing a quiz that tests understanding
+
+A quiz is where a course proves it taught something, and generated quizzes fail in
+recognisable ways. `verify.py` warns on the two it can measure.
+
+- **Vary the position of the right answer.** Put it first, last, and in between across a
+  chapter. A learner who notices "it's usually B" stops reading the options.
+- **Make every option the same length and the same precision.** The correct option is the
+  one you were careful with, so it tends to be the longest and most qualified. Write each
+  distractor with the same care — a specific, confident, wrong claim.
+- **Build distractors from real misconceptions**, the ones named in the chapter. "The
+  runtime panics" is a guess someone would actually make; "the computer explodes" is not
+  an option, it is a joke that turns a four-way choice into a three-way one.
+- **No "all of the above", "none of the above", or negatives** ("which is NOT…") unless
+  the exam being prepared for uses them.
+- **Ask for application, not recall.** "What does this print?", "which change fixes it?",
+  "what would you expect to see if…" — not "what is the name of…".
+- **Feedback names the answer by its content, never by its position** ("the conditional
+  one", not "the second"). Position-based feedback breaks the moment options are reordered.
+
 ## Example standards
 
 - Every code block compiles/runs as shown, or is explicitly marked as a fragment in the prose.
@@ -132,8 +168,8 @@ Fix what it reports before starting the next chapter — thin chapters compound,
 tag at chapter 3 is trivial to find now and miserable at chapter 18.
 
 Before hand-over, run `verify.py` **without** `--wip`, open `index.html` in the browser,
-screenshot it, and click one quiz answer and one mark-complete button. Then `SendUserFile`
-with `display: "render"`.
+screenshot it, and click one quiz answer and one mark-complete button. Then send the file
+(`SendUserFile` with `display: "render"` where that tool exists) or give its absolute path.
 
 ## Editing an existing course
 

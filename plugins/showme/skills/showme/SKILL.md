@@ -1,6 +1,6 @@
 ---
 name: showme
-description: Use whenever someone has to present something to an audience — "make me a deck", "slides for X", "turn this into a presentation", "I'm pitching on Friday", "present this project/report/paper" — and also when they describe a room they must convince, brief, or report to without ever saying the word "slides". Covers any subject and any occasion. Use it too when they want an existing deck restyled to a look they describe.
+description: Use whenever someone has to present something to an audience — "make me a deck", "slides for X", "turn this into a presentation", "I'm pitching on Friday", "present this project/report/paper", a thesis defence, lecture, workshop, board or status update, incident review, lightning talk — and also when they describe a room they must convince, brief, or report to without ever saying the word "slides". Also for decks meant to be emailed and read, or looped unattended on a screen. Covers any subject and any occasion. Use it too when they want an existing deck restyled to a look they describe.
 ---
 
 # ShowMe
@@ -47,9 +47,21 @@ both directions: word ceilings on slides, and a word floor on notes.
 - Turning a document, report, paper, dataset or project into something presentable
 - Restyling or rebuilding an existing deck to a described look
 - Someone describes an audience they must convince or brief, without naming a format
+- A deck that runs by itself: a kiosk or lobby loop, a Pecha Kucha, an event screen
+- A deck meant to be emailed and read instead of presented (read mode carries the notes)
+
+Every occasion — investor pitch, thesis defence, lecture, workshop, board update, incident
+review, launch, job-interview case, lightning talk — has a playbook in
+`references/storyline.md` → *Occasions*. Read that row before writing the spine.
 
 **Do NOT use for:** teaching material meant to be studied alone (that is `teachme`), a written
 document, or a question answerable in the chat. This skill produces a file to stand in front of.
+
+**When they need an editable .pptx / Keynote / Google Slides file** — because a company
+template is mandatory, or colleagues will edit it — this skill is the wrong output format. Say
+so in one line and use the pptx skill if one is available; the storyline method here still
+applies, so write `STORYLINE.md` first either way. Do not hand over HTML to someone who said
+they must upload a .pptx.
 
 ## Before you build
 
@@ -72,6 +84,8 @@ python3 $SKILL/scripts/new.py <dir> --title "…" --lang th --theme swiss --minu
 | 10 min | 8–14 |
 | 20 min | 12–22 |
 | 45 min lecture or workshop | 25–45, with a section divider every 6–8 |
+| Pecha Kucha / Ignite | exactly 20, with `"advance": 20` (or 15) — the format is the constraint |
+| Unattended loop (lobby, booth) | 6–12, `"advance"` 8–15 and `"loop": true`; notes can be short, the slides must stand alone |
 | No slot — sent to be read | 10–20; the notes carry proportionally more |
 
 Backup slides do not count against the slot. When the material genuinely needs more than the
@@ -83,7 +97,7 @@ there and why.
 
 ## Workflow
 
-Announce it, then run all five stages. One TodoWrite item per stage, plus one per slide batch
+Announce it, then run all five stages. One todo item per stage (TodoWrite or your environment's task tool), plus one per slide batch
 at stage 4.
 
 ### 1 · Brief
@@ -94,7 +108,7 @@ says so and by choosing deliberately if it doesn't. State the ones you chose:
 |---|---|
 | **Audience** | who is in the room and what they already believe |
 | **Spine** | the one sentence they repeat tomorrow |
-| **Occasion** | present live, send to read, or both (the deck does all three; it changes the notes) |
+| **Occasion** | live in a room, live over a video call, sent to read, or running unattended — and what kind of event (`storyline.md` → *Occasions*) |
 | **Slot** | minutes — put it in `meta.json` as `"minutes"` |
 | **Look** | what they said about style, or what you chose and why (`references/design.md`) |
 
@@ -110,7 +124,8 @@ narrative moves, and the file format `verify.py` reads.
 Show the user the claim list. It is far cheaper to fix the argument here than in HTML.
 
 ### 3 · Design direction
-Pick the theme and write it into `meta.json` before building. `assets/themes.json` ships fifteen
+Pick the theme and write it into `meta.json` before building. If they gave you a logo, put its
+path in `meta.json` as `"logo"` — it is inlined into every footer and onto the title slide. `assets/themes.json` ships fifteen
 complete looks; `references/design.md` maps style words ("clean", "premium", "punchy", "like an
 Apple keynote") onto concrete tokens, and carries the rules that separate a designed deck from a
 generic one. Say the choice back to the user in one line.
@@ -125,6 +140,13 @@ and replace the content. Craft rules — headline-as-claim, word ceilings, picki
 the shape of the idea, builds, images, sourcing a number, notes: **`references/slides.md`**.
 
 Slide `id` must match `STORYLINE.md`. `data-claim` is required. `.notes` is required.
+
+**Numbers from a file go through the script, never through your typing:**
+```bash
+python3 $SKILL/scripts/chart-table.py data.csv --type hbar --series share --unit % --top 5 --src "…"
+```
+It prints the `.chart` block with the values exactly as they are in the file, aggregates the
+tail into "Other", and leaves a `WRITE:` line for the takeaway that the gate refuses to ship.
 
 ### 5 · Assemble, verify, hand over
 Claude Code prints **the skill's base directory** when it loads this skill — call the
@@ -181,12 +203,14 @@ Done means all of this, in order — not "the files exist".
 1. `verify.py` passes **without** `--wip`
 2. You opened `index.html`, pressed `O`, and looked at the whole deck as a grid
 3. You stepped through two or three slides in present mode and checked a chart rendered
-4. You sent the file with `SendUserFile`, or gave the exact path if you cannot
+4. You sent the file (`SendUserFile` where it exists), or gave the exact absolute path
 5. You reported the real shape — slides, appendix slides, estimated minutes, theme — and named
    anything you moved to the appendix or left out, with the reason
 
-Then one line of controls: `←/→` navigate, `O` overview, `N` speaker notes and timer, `F`
-fullscreen, `P` to save a PDF. Do not narrate the build.
+Then the controls, in one or two lines: `←/→` navigate, `S` opens the **presenter window**
+(notes, next slide, timer and pace on the laptop — drag the original window onto the projector
+and press `F` there), `N` notes in the same window, `B` black screen, `O` overview, `P` save a
+PDF. For a video call, share the audience window only. Do not narrate the build.
 
 ## What a run looks like
 
@@ -200,8 +224,8 @@ fullscreen, `P` to save a PDF. Do not narrate the build.
 3. **Design** — scaffold with `--theme swiss --minutes 15`.
 4. **Build** — `parts/01-open.html` … four to six slides per turn, `--wip` after each batch.
 5. **Final gate** — clean, press `O`, fix the two bullet slides sitting next to each other.
-6. **Hand over** — `SendUserFile` + *"12 สไลด์ + ภาคผนวก 3 · ธีม swiss · ~15 นาที · กด N ดูโน้ต
-   ผู้พูดพร้อมจับเวลา"*
+6. **Hand over** — `SendUserFile` + *"12 สไลด์ + ภาคผนวก 3 · ธีม swiss · ~15 นาที · กด S เปิดหน้าจอผู้นำเสนอ
+   พร้อมโน้ตและนาฬิกาจับเวลา"*
 
 ## What each stage refuses to do
 
@@ -240,6 +264,8 @@ fullscreen, `P` to save a PDF. Do not narrate the build.
 | Deck chrome in 14 languages (RTL handled) | `assets/i18n.json` |
 | Scaffold a deck directory | `scripts/new.py <dir> --title … --theme … --minutes …` |
 | Build / gate | `scripts/assemble.py`, `scripts/verify.py` |
+| A chart from a CSV/TSV, values untouched | `scripts/chart-table.py data.csv --type …` |
+| Playbook per occasion (pitch, defence, lecture, incident review…) | `references/storyline.md` → *Occasions* |
 | Inline a real image as a data URI | `scripts/embed-image.py <img> "alt"` |
 
 The runtime already provides, with no work from you: fixed-canvas scaling to any screen,
@@ -247,6 +273,12 @@ The runtime already provides, with no work from you: fixed-canvas scaling to any
 with timer and next-slide preview, read mode, print-to-PDF at the exact slide size, deep links
 (`#7`) that work both on load and when the hash is edited, resume where you left off, and SVG
 charts — bar, stacked, horizontal, line, area, donut — drawn from a real `<table>` in the page.
+
+Also: a **presenter window** (`S`) that stays in step with the audience window from either
+side; a **pace clock** that says how far ahead or behind the `minutes` plan you are, counting
+only main slides; a black screen (`B`); a logo from `meta.json`; and **auto-advance** —
+`"advance": 20` seconds per slide (with `"loop": true` for a kiosk), overridable per slide
+with `data-advance`, with build steps sharing the slide's time.
 
 It also **auto-fits any slide whose content would overflow the canvas**, so nothing is ever
 silently clipped. That is a backstop, not a licence: a slide that needs shrinking is a slide

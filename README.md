@@ -71,17 +71,19 @@ cp -R plugins/teachme plugins/showme ~/.gemini/config/plugins/
 
 ## What each skill ships
 
-**TeachMe** — a sidebar with scroll-spy, per-chapter completion saved in `localStorage`, a
+**TeachMe** — topic, digest, codebase and exam modes; a sidebar with scroll-spy, per-chapter completion saved in `localStorage`, a
 reading-progress bar, full-text search over the whole course, light/dark, copy-and-highlight
 code, step-through `.walk` explanations, interactive quizzes with scoring, flashcard decks,
 persistent checklists, MathML formulas with symbol legends and derivations, and print styles.
 Two complete worked chapters in `assets/examples/` show the depth the gate demands.
 
 **ShowMe** — a fixed canvas that scales to any screen, keyboard and touch navigation,
-progressive builds, an overview grid, a speaker-notes panel with a timer and next-slide
-preview, a read-it-alone mode, print-to-PDF at the exact slide size, and SVG charts — bar,
-stacked, horizontal, line, area, donut — drawn from a real `<table>` in the page. Fifteen
-themes. Thirty working slides in `assets/layouts.html` cover every layout.
+progressive builds, an overview grid, a presenter window synced to the projector with notes,
+next slide, timer and pace clock, a black screen, a read-it-alone mode, auto-advance and
+looping, print-to-PDF at the exact slide size, and SVG charts — bar, stacked, horizontal,
+line, area, donut — drawn from a real `<table>` in the page, or straight from a CSV. Fifteen
+themes, your own logo, a playbook for every kind of occasion, and thirty working slides in
+`assets/layouts.html` that pass the gate as written.
 
 Both runtimes auto-fit or wrap anything that would otherwise be clipped, so a long headline in
 Thai or a translated label cannot silently lose its last line.

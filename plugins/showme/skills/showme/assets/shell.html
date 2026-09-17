@@ -136,13 +136,31 @@ body.notes-on.m-present #stage{inset-inline-end:min(420px,38vw)}
   body.notes-on.m-present #stage{inset-inline-end:0}
   #notes .n-next{display:none}
 }
+#pace{font-size:12px;font-weight:750;font-variant-numeric:tabular-nums;padding:3px 8px;border-radius:99px;
+  border:1px solid var(--chrome-line);color:var(--chrome-dim);display:none}
+#pace.on{display:inline-block} #pace.ahead{color:#4ade80;border-color:rgba(74,222,128,.4)}
+#pace.behind{color:#fbbf24;border-color:rgba(251,191,36,.45)} #pace.late{color:#f87171;border-color:rgba(248,113,113,.5)}
+/* presenter window: the stage shrinks to leave a wide notes column — this is the laptop
+   screen while the audience window sits on the projector */
+body.presenter #notes{width:min(560px,46vw)}
+body.presenter.notes-on.m-present #stage{inset-inline-end:min(560px,46vw)}
+body.presenter #notes .n-body .txt{font-size:18px}
+body.presenter #hud{opacity:1}
+body.presenter #bPresenter{display:none}
+#black{position:fixed;inset:0;z-index:39;background:#000;display:none}
+body.black #black{display:block}
+body.presenter.black #black{display:none}
+body.presenter.black #stage{opacity:.25}
+.s-foot .flogo{height:22px;width:auto;display:block}
+.slide>.tlogo{position:absolute;top:44px;inset-inline-end:var(--padx);height:36px;width:auto;z-index:2}
 
 /* ---------- help ---------- */
 #help{position:fixed;inset:0;z-index:60;display:none;place-items:center;background:rgba(8,8,12,.78);
   backdrop-filter:blur(6px);font-family:var(--font-body)}
 body.help-on #help{display:grid}
 #help .card{background:var(--chrome-solid);color:var(--chrome-ink);border:1px solid var(--chrome-line);
-  border-radius:16px;padding:28px 32px;min-width:340px;box-shadow:0 24px 70px rgba(0,0,0,.5)}
+  border-radius:16px;padding:28px 32px;min-width:340px;box-shadow:0 24px 70px rgba(0,0,0,.5);
+  height:auto;display:block;justify-content:normal}  /* the slide .card rules must not leak into the overlay */
 #help h3{margin:0 0 18px;font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--chrome-dim)}
 #help dl{display:grid;grid-template-columns:auto 1fr;gap:10px 20px;margin:0;font-size:14px}
 #help dt{text-align:end}
@@ -482,7 +500,7 @@ body.m-grid [data-build],body.m-read [data-build],body.printing [data-build]{opa
 @page{margin:0}
 @media print{
   html,body{overflow:visible;background:#fff;height:auto}
-  #hud,#bar,#top,#notes,#help{display:none!important}
+  #hud,#bar,#top,#notes,#help,#black{display:none!important}
   #stage{position:static;display:block;padding:0;inset:auto}
   #deck{display:block;width:auto;gap:0}
   .frame{width:calc(var(--W)*1px)!important;height:calc(var(--H)*1px)!important;
@@ -525,6 +543,7 @@ body.m-grid [data-build],body.m-read [data-build],body.printing [data-build]{opa
 </div></div>
 
 <div id="bar"><i></i></div>
+<div id="black"></div>
 
 <header id="top">
   <span class="t-title">@@TITLE@@</span>
@@ -534,6 +553,7 @@ body.m-grid [data-build],body.m-read [data-build],body.printing [data-build]{opa
 </header>
 
 <div id="hud">
+  <button id="bPresenter" title="@@T_PRESENTER@@">⧉</button>
   <button id="bNotes" title="@@T_NOTES@@">☰</button>
   <button id="bGrid" title="@@T_OVERVIEW@@">▦</button>
   <button id="bRead" title="@@T_READ@@">≡</button>
@@ -543,7 +563,7 @@ body.m-grid [data-build],body.m-read [data-build],body.printing [data-build]{opa
 </div>
 
 <aside id="notes">
-  <div class="n-h"><b>@@T_NOTES@@</b><span id="timer">00:00</span>
+  <div class="n-h"><b>@@T_NOTES@@</b><span id="pace"></span><span id="timer">00:00</span>
     <button id="tStart">▶</button><button id="tReset">↺</button></div>
   <div class="n-body"><div class="n-claim"></div><div class="txt"></div></div>
   <div class="n-next"><div class="lb">@@T_NEXT@@</div><div id="nextprev"></div></div>
@@ -555,6 +575,8 @@ body.m-grid [data-build],body.m-read [data-build],body.printing [data-build]{opa
   <dt><kbd>O</kbd></dt><dd>@@T_OVERVIEW@@</dd>
   <dt><kbd>R</kbd></dt><dd>@@T_READ@@</dd>
   <dt><kbd>N</kbd></dt><dd>@@T_NOTES@@</dd>
+  <dt><kbd>S</kbd></dt><dd>@@T_PRESENTER@@</dd>
+  <dt><kbd>B</kbd></dt><dd>@@T_BLACK@@</dd>
   <dt><kbd>F</kbd></dt><dd>@@T_FULL@@</dd>
   <dt><kbd>P</kbd></dt><dd>@@T_K_PDF@@</dd>
   <dt><kbd>Esc</kbd></dt><dd>@@T_K_BACK@@</dd>
@@ -564,6 +586,10 @@ body.m-grid [data-build],body.m-read [data-build],body.printing [data-build]{opa
 (function(){
 "use strict";
 var DID="@@DECK_ID@@";
+var MINUTES=+"@@MINUTES@@"||0, ADVANCE=+"@@ADVANCE@@"||0, LOOP="@@LOOP@@"==="true";
+var LOGO='@@LOGO@@';
+/* opened with S from the audience window: this copy is the presenter's screen */
+var PRESENTER=location.hash==="#presenter", booted=false;
 var $=function(s,r){return (r||document).querySelector(s)};
 var $$=function(s,r){return [].slice.call((r||document).querySelectorAll(s))};
 var esc=function(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")};
@@ -583,7 +609,8 @@ slides.forEach(function(s,n){
   f.dataset.n=n+1;
   if(!$(".s-foot",s)&&!s.classList.contains("title")&&!s.classList.contains("nofoot")){
     var ft=document.createElement("div"); ft.className="s-foot";
-    ft.innerHTML='<span class="fttl">'+esc(document.title)+'</span>'+
+    ft.innerHTML=(LOGO?'<img class="flogo" alt="" src="'+LOGO+'">':'')+
+      '<span class="fttl">'+esc(document.title)+'</span>'+
       (s.classList.contains("appendix")?'<span class="apx">@@T_APPENDIX@@</span>':'')+
       '<span class="fnum">'+(n+1)+'</span>';
     s.appendChild(ft);
@@ -595,6 +622,9 @@ slides.forEach(function(s,n){
     fitBox.appendChild(c);
   });
   s.insertBefore(fitBox,s.firstChild);
+  if(LOGO&&s.classList.contains("title")){
+    var tl=document.createElement("img"); tl.className="tlogo"; tl.alt=""; tl.src=LOGO; s.appendChild(tl);
+  }
 });
 var frames=$$(".frame",deck);
 $("#tot").textContent=slides.length;
@@ -671,16 +701,20 @@ function go(n,fromEnd){
   if(mode!=="present")frames[i].scrollIntoView({block:"center",behavior:"smooth"});
   /* file:// documents have a null origin; Chrome throws on replaceState there, and an
      uncaught throw here would kill navigation for the rest of the deck */
-  try{history.replaceState(null,"","#"+(i+1))}catch(e){}
-  try{localStorage.setItem(DID+":at",i)}catch(e){}
+  if(!PRESENTER){
+    try{history.replaceState(null,"","#"+(i+1))}catch(e){}
+    try{localStorage.setItem(DID+":at",i)}catch(e){}
+  }
+  if(booted&&i>0&&!tRun&&!tAcc)startTimer();       /* the clock starts when the talk does */
+  changed();
 }
 function next(){
   var b=buildsOf(i);
-  if(build<b.length){build++;applyBuild(i,build);return}
+  if(build<b.length){build++;applyBuild(i,build);changed();return}
   if(i<slides.length-1)go(i+1);
 }
 function prev(){
-  if(build>0){build--;applyBuild(i,build);return}
+  if(build>0){build--;applyBuild(i,build);changed();return}
   if(i>0)go(i-1,true);
 }
 
@@ -761,16 +795,74 @@ deck.addEventListener("click",function(e){
 });
 
 /* ---------- timer ---------- */
-var t0=0,tRun=false,tAcc=0;
+function clock(s){s=Math.max(0,Math.round(s));
+  return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
 function tick(){
-  var ms=tAcc+(tRun?Date.now()-t0:0), s=Math.floor(ms/1000);
-  $("#timer").textContent=String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0");
+  var sec=(tAcc+(tRun?Date.now()-t0:0))/1000;
+  $("#timer").textContent=clock(sec);
+  /* pace: where the clock says you should be, given "minutes" and how far through the
+     main slides you are. Appendix slides are never part of the plan. */
+  var pc=$("#pace");
+  if(!MINUTES||!mainCount||(!tRun&&!tAcc)){pc.className="";return}
+  var before=0; for(var n=0;n<i;n++)if(!slides[n].classList.contains("appendix"))before++;
+  var diff=sec-before/mainCount*MINUTES*60, a=Math.abs(diff);
+  pc.textContent=(diff>=0?"+":"−")+clock(a)+" / "+MINUTES+"′";
+  pc.className="on "+(a<30?"":diff<0?"ahead":a<120?"behind":"late");
 }
+function startTimer(){t0=Date.now();tRun=true;$("#tStart").textContent="❚❚";tick()}
+var t0=0,tRun=false,tAcc=0;
 setInterval(tick,500);
 $("#tStart").addEventListener("click",function(){
   if(tRun){tAcc+=Date.now()-t0;tRun=false;this.textContent="▶"}
-  else{t0=Date.now();tRun=true;this.textContent="❚❚"} tick()});
+  else startTimer(); tick()});
 $("#tReset").addEventListener("click",function(){tAcc=0;t0=Date.now();tick()});
+
+/* ---------- presenter window + blackout ----------
+   S opens a second copy of this file as the presenter's screen: current slide, notes,
+   next slide, timer and pace. Drag the original onto the projector. The two stay in
+   step over postMessage, which works from file:// where BroadcastChannel and shared
+   storage do not reliably. Either window can drive. */
+var peer=null, remote=false;
+function changed(){
+  if(remote)return;
+  var msg={showme:DID,i:i,build:build,black:document.body.classList.contains("black")};
+  [peer,window.opener].forEach(function(w){if(w&&!w.closed)try{w.postMessage(msg,"*")}catch(e){}});
+  schedule();
+}
+addEventListener("message",function(e){
+  var d=e.data; if(!d||d.showme!==DID)return;
+  peer=e.source;
+  if(d.hello){changed();return}
+  remote=true;
+  try{
+    if(mode!=="present")setMode("present");
+    if(d.i!==i)go(d.i);
+    if(d.build!==build){build=d.build;applyBuild(i,build)}
+    document.body.classList.toggle("black",!!d.black);
+  }finally{remote=false}
+  schedule();
+});
+function openPresenter(){
+  var w=window.open(location.href.split("#")[0]+"#presenter","showme-"+DID,"width=1200,height=760");
+  if(w){peer=w; document.body.classList.remove("notes-on"); fit()}
+}
+$("#bPresenter").addEventListener("click",openPresenter);
+function toggleBlack(){document.body.classList.toggle("black");changed()}
+
+/* ---------- auto-advance: kiosks, loops, Pecha Kucha ----------
+   meta.json "advance": seconds per slide (data-advance on a slide overrides it). Build
+   steps share the slide's time evenly. Any manual navigation restarts the countdown. */
+var adv;
+function schedule(){
+  clearTimeout(adv);
+  if(PRESENTER||mode!=="present")return;
+  var secs=+(slides[i].dataset.advance||ADVANCE); if(!secs)return;
+  var steps=buildsOf(i).length+1;
+  adv=setTimeout(function(){
+    if(build<buildsOf(i).length||i<slides.length-1)next();
+    else if(LOOP)go(0);
+  },secs*1000/steps);
+}
 
 /* ---------- keyboard & touch ---------- */
 addEventListener("keydown",function(e){
@@ -784,6 +876,8 @@ addEventListener("keydown",function(e){
   else if(k==="o"||k==="O"){setMode(mode==="grid"?"present":"grid")}
   else if(k==="r"||k==="R"){setMode(mode==="read"?"present":"read")}
   else if(k==="n"||k==="N"){$("#bNotes").click()}
+  else if((k==="s"||k==="S")&&!PRESENTER){openPresenter()}
+  else if(k==="b"||k==="B"||k==="."){toggleBlack()}
   else if(k==="f"||k==="F"){$("#bFull").click()}
   else if(k==="p"||k==="P"){e.preventDefault();printDeck()}
   else if(k==="?"){$("#bHelp").click()}
@@ -1047,12 +1141,17 @@ $$(".slide.code pre").forEach(function(pre){
 });
 
 /* ---------------- boot ---------------- */
+if(PRESENTER){document.body.classList.add("presenter","notes-on");
+  document.title="▶ "+document.title}
 fit();
 fitAll();
 var start=0;
-if(location.hash&&/^#\d+$/.test(location.hash))start=parseInt(location.hash.slice(1),10)-1;
+if(PRESENTER&&window.opener){try{window.opener.postMessage({showme:DID,hello:1},"*")}catch(e){}}
+else if(location.hash&&/^#\d+$/.test(location.hash))start=parseInt(location.hash.slice(1),10)-1;
 else{try{var r=localStorage.getItem(DID+":at"); if(r!==null&&+r>=0&&+r<slides.length)start=+r}catch(e){}}
-go(start);
+remote=true; go(start); remote=false;     /* booting is not a move — don't drag the other window */
+var booted=true;
+schedule();
 /* deep links are advertised, so editing #7 in the address bar has to actually move */
 addEventListener("hashchange",function(){
   if(!/^#\d+$/.test(location.hash))return;

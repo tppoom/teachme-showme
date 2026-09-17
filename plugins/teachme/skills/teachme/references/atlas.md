@@ -84,6 +84,52 @@ Evidence rule: every factual claim about the codebase names a file, and preferab
 If you did not read it, do not claim it. If something is genuinely unclear, say so in the
 chapter as an open question — an honest unknown is content; a confident guess is damage.
 
+### Exam
+The destination is a score on a specific paper, so the exam — not the subject — sets the
+shape. Get the **official blueprint** (domains, weightings, question types, time, pass mark)
+and name its version in `SYLLABUS.md`. Then:
+
+1. **How this exam works** — format, timing, marking, negative marking, what a pass actually
+   requires, and what the examiners are testing for (recall, application, judgement)
+2. **Prerequisites** — the axis-1 chapters, exactly as in topic mode; an exam course that
+   skips them produces people who memorise answers they cannot adapt
+3. **One chapter per blueprint domain**, and chapter depth proportional to marks. A domain
+   worth 30% of the paper does not get the same space as one worth 5%
+4. **In every chapter, practice in the exam's own format** — if the paper is scenario-based
+   multiple choice, the quiz is scenario-based multiple choice; if it is a written answer
+   against a mark scheme, the `.ex` shows a model answer *and* how it would be marked
+5. **The traps** — the distractor patterns, the commonly confused pairs, the questions that
+   are designed to catch a half-understanding. One `.callout pitfall` per trap, with an
+   example question
+6. **Strategy** — time per question, what to do when stuck, which questions to answer first
+7. **A full mock exam** — a chapter whose quiz is the length and mix of the real paper,
+   every answer explained, with a note of which chapter to revisit for each miss
+8. **The last week** — a revision plan, flashcards (`.cards`) of everything that must be
+   held in memory, and a one-page cheat sheet in the appendix
+
+Never reproduce copyrighted past-paper questions verbatim; write original questions in the
+same style and difficulty, and point to where official practice papers can be obtained. If
+the exam date is close, say what can realistically be covered and order the chapters by
+marks-per-hour rather than by the textbook's order.
+
+## Phases — when the course is too big for one session
+
+The syllabus is always the whole course. What changes is which part of it this session
+promises. Chapters for later phases go under a `## Later` heading; `verify.py` does not
+require them at the final gate, reports them as still owed, and ignores ledger items that
+point at them.
+
+```markdown
+## Later
+
+- `ch-15` — Async Rust — *phase two*
+- `ch-16` — Unsafe and FFI — *phase two*
+```
+
+Put the appendix in phase one — a glossary and a cheat sheet for what is written so far —
+and extend it each phase. Moving a chapter to `## Later` is a scheduling decision, not a
+scope decision: nothing leaves the syllabus that way.
+
 ## SYLLABUS.md format
 
 `verify.py` parses this file. Keep the shape.

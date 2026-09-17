@@ -23,19 +23,24 @@ answer you flip to when someone asks.
 ## The runtime
 
 Fixed 1280×720 canvas scaled to fit any screen, so the layout is identical everywhere.
-Keyboard and touch navigation, progressive builds, an overview grid, a **speaker-notes panel
-with a timer and next-slide preview**, a **read mode** for when the deck gets emailed instead
-of presented, print-to-PDF at exact slide size, deep links, and resume-where-you-were.
+Keyboard and touch navigation, progressive builds, an overview grid, a **presenter window**
+(`S`) that stays in step with the projector — notes, next slide, timer and a **pace clock**
+that says how far ahead or behind your slot you are — a black screen (`B`), a **read mode** for
+when the deck gets emailed instead of presented, print-to-PDF at exact slide size, deep links,
+resume-where-you-were, and **auto-advance** with looping for Pecha Kucha and unattended screens.
 
-Charts are SVG drawn from a real `<table>` in the page — bar, line, area, donut — with axes
-rounded to sensible values and bars that always start at zero. Diagrams: flow, layers, 2×2
+Charts are SVG drawn from a real `<table>` in the page — bar, stacked, horizontal, line, area,
+donut — with axes rounded to sensible values and bars that always start at zero.
+`chart-table.py` turns a CSV straight into that table, so no number is ever retyped. Diagrams: flow, layers, 2×2
 matrix, timeline, funnel, comparison. Sixteen inline SVG icons. Real images inline as data
 URIs; when there is no image, an honest placeholder that says what belongs there.
 
 ## Looks like what you asked for
 
-Ten complete themes — `keynote-dark`, `swiss`, `startup-pitch`, `corporate-clean`, `editorial`,
-`academic`, `brutalist`, `midnight-data`, `terminal`, `soft-pastel` — and a reference that maps
+Fifteen complete themes — `keynote-dark`, `swiss`, `startup-pitch`, `corporate-clean`,
+`editorial`, `academic`, `brutalist`, `midnight-data`, `terminal`, `soft-pastel`, `forest`,
+`noir`, `mono-print`, `neon-gradient`, `clinical` — your own logo inlined into every footer,
+and a reference that maps
 style words ("clean", "premium", "punchy", "like an Apple keynote") onto concrete design
 tokens, plus the rules that keep a deck from looking generated: one accent, one type scale, one
 margin held across the whole deck, and layout that varies while the look never does.
@@ -52,6 +57,15 @@ margin held across the whole deck, and layout that varies while the look never d
 - a chart with more series than a room can read, or a stub image
 - a slide promised in `STORYLINE.md` and never written
 - a deck whose length does not fit the time slot it declares
+- a `WRITE:` placeholder left behind by the chart helper
+
+## Any occasion
+
+Investor and sales pitches, thesis defences, conference talks, lectures, workshops, status
+updates and board meetings, post-incident reviews, all-hands, launches, job-interview cases,
+lightning talks, decks sent to be read, and unattended loops — each with a playbook: the spine
+the room expects, the questions it always asks (built into the appendix), and the trap that
+catches most decks made for it.
 
 ## Layout
 
@@ -59,15 +73,15 @@ margin held across the whole deck, and layout that varies while the look never d
 skills/showme/
 ├── SKILL.md              workflow, the iron law, what it refuses to do
 ├── references/
-│   ├── storyline.md      finding the argument; the claim ladder; narrative moves
+│   ├── storyline.md      finding the argument; the claim ladder; moves; occasions
 │   ├── slides.md         slide craft, layout choice, charts, images, builds
 │   └── design.md         style brief → theme; the anti-generic rules
 ├── assets/
 │   ├── shell.html        the deck runtime
 │   ├── layouts.html      every layout and diagram, copy-paste ready
-│   ├── themes.json       ten looks + the token contract
+│   ├── themes.json       fifteen looks + the token contract
 │   └── i18n.json         14 chrome languages, RTL handled
-└── scripts/              assemble.py · verify.py · embed-image.py
+└── scripts/              new.py · assemble.py · verify.py · embed-image.py · chart-table.py
 ```
 
 MIT

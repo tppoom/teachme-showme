@@ -75,11 +75,10 @@ def main():
     dest = d / "index.html"
     dest.write_text(out, encoding="utf-8")
     n_ch = len(re.findall(r'class="chapter[" ]', out))
-    words = len(re.sub(r"<[^>]+>", " ", out).split())
     print(f"built {dest}")
     print(f"  lang={lang} dir={repl['DIR']}"
           f"{'' if preset else ' (ui from meta.json)'}   "
-          f"{len(parts)} parts -> {n_ch} chapters, {len(out)/1024:.0f} KB, {words:,} words")
+          f"{len(parts)} parts -> {n_ch} chapters, {len(out)/1024:.0f} KB  (verify.py reports the script-aware word count)")
 
 if __name__ == "__main__":
     main()

@@ -6,10 +6,15 @@ Usage:  python3 verify.py <course-dir> [--min-words 600] [--wip]
 --wip = mid-build run: chapters the syllabus promises but that are not written yet
         are warnings instead of failures. NEVER pass --wip on the final check.
 
+A course too big for one session ships in phases: chapter ids listed under a
+"## Later" heading in SYLLABUS.md are planned, not promised — the final gate passes
+without them and reports them, so a phase-one hand-over is honest rather than --wip.
+
 Fails (exit 1) if the course is thin, incomplete, or drifted from SYLLABUS.md.
 Read every FAIL line as "go write the missing content", never as "loosen the check".
 """
 import sys, re, json, pathlib, html
+from collections import Counter
 
 MIN_WORDS = 600
 LAZY = [
@@ -65,18 +70,24 @@ def main():
     syl = d / "SYLLABUS.md"
     if not syl.exists():
         fail("SYLLABUS.md missing — the syllabus is the contract; write it before authoring")
-        syl_ids, ledger_ids, unchecked = [], [], []
+        syl_ids, ledger_ids, unchecked, later_ids = [], [], [], []
     else:
         s = syl.read_text(encoding="utf-8")
-        syl_ids = re.findall(r"^\s*(?:[-*]\s*)?(?:\[[ x]\]\s*)?`?(ch-[\w-]+)`?", s, re.M)
+        later_part = re.split(r"^##\s+Later\b.*$", s, maxsplit=1, flags=re.M | re.I)
+        later_ids = re.findall(r"^\s*[-*]\s*`?(ch-[\w-]+)`?", later_part[1].split("\n## ", 1)[0], re.M) \
+            if len(later_part) > 1 else []
+        syl_ids = [i for i in re.findall(r"^\s*(?:[-*]\s*)?(?:\[[ x]\]\s*)?`?(ch-[\w-]+)`?", s, re.M)
+                   if i not in later_ids]
         ledger = s.split("## Coverage ledger", 1)
         if len(ledger) < 2:
             fail("SYLLABUS.md has no '## Coverage ledger' section "
                  "(every concept in the source material must map to a chapter id)")
             ledger_ids, unchecked = [], []
         else:
-            ledger_ids = re.findall(r"(ch-[\w-]+)", ledger[1])
-            unchecked = re.findall(r"^\s*[-*]\s*\[ \]\s*(.+)$", ledger[1], re.M)
+            ledger_txt = re.split(r"^##\s+(?!Coverage)", ledger[1], maxsplit=1, flags=re.M)[0]
+            ledger_ids = [i for i in re.findall(r"(ch-[\w-]+)", ledger_txt) if i not in later_ids]
+            unchecked = [u for u in re.findall(r"^\s*[-*]\s*\[ \]\s*(.+)$", ledger_txt, re.M)
+                         if not any(l in u for l in later_ids)]
         for u in unchecked:
             (warn if wip else fail)(f"coverage ledger item still unchecked: {u.strip()[:90]}")
 
@@ -197,6 +208,34 @@ def main():
         if w < minw: fail(f"{tag} only {w} words of content (floor is {minw}) — this is a summary, not a lesson")
         if 'class="ex"' not in body: warn(f"{tag} has no .ex exercise")
 
+    # ---- 3b. quiz honesty ------------------------------------------------------
+    # Generated quizzes leak their answers: the correct option lands in the same slot, or is
+    # the longest, most qualified one. A learner who spots the pattern stops thinking.
+    pos, longest, n_mc = Counter(), 0, 0
+    for q in re.findall(r'<div class="q"[^>]*>[\s\S]*?class="fb"', doc):
+        opts = re.findall(r'<button class="opt"([^>]*)>([\s\S]*?)</button>', q)
+        if len(opts) < 2: continue
+        n_mc += 1
+        k = [n for n, (a, _) in enumerate(opts) if 'data-correct="true"' in a]
+        if len(k) != 1: continue
+        pos[k[0]] += 1
+        lens = [len(text_of(t).strip()) for _, t in opts]
+        if lens[k[0]] == max(lens) and lens.count(max(lens)) == 1 and max(lens) > 1.25 * sorted(lens)[-2]:
+            longest += 1
+    if n_mc >= 6:
+        slot, cnt = pos.most_common(1)[0]
+        if cnt / n_mc > 0.5:
+            warn(f"{cnt} of {n_mc} multiple-choice answers are option {slot + 1} — vary the position "
+                 f"of the correct answer, or the quiz teaches the pattern instead of the subject")
+        if longest / n_mc > 0.4:
+            warn(f"in {longest} of {n_mc} questions the correct option is clearly the longest — "
+                 f"make the wrong options as specific and plausible as the right one")
+
+    real = [c for c in chaps if "appendix" not in c.split(">", 1)[0]]
+    if len(real) >= 3 and len(real) == len(chaps):
+        (warn if wip else fail)("no appendix chapter — every course closes with a glossary, a cheat "
+                                "sheet and what to learn next (class=\"chapter appendix\")")
+
     dupes = {i for i in seen if seen.count(i) > 1}
     if dupes: fail("duplicate chapter ids: " + ", ".join(sorted(dupes)))
     for i in syl_ids:
@@ -257,7 +296,11 @@ def main():
     if fails:
         print(f"\n{len(fails)} failure(s). Fix by writing the missing content — not by relaxing the gate.")
         sys.exit(1)
-    print("\nPASS (work in progress)" if wip else "\nPASS — course is complete against its syllabus.")
+    if later_ids:
+        print(f"LATER {len(later_ids)} chapter(s) planned for a later phase: {', '.join(later_ids)}")
+    print("\nPASS (work in progress)" if wip else
+          "\nPASS — " + ("this phase is complete; the Later chapters are still owed." if later_ids
+                        else "course is complete against its syllabus."))
 
 if __name__ == "__main__":
     main()

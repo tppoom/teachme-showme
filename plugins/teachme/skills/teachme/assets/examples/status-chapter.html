@@ -219,12 +219,12 @@ gh pr view 518 --json state,title,updatedAt</code></pre>
       <div class="q">
         <p class="q-t">A module has 22 passing tests and full coverage. What does that tell you about whether you can depend on it?</p>
         <ul class="opts">
-          <li><button class="opt">It is production-ready.</button></li>
-          <li><button class="opt" data-correct="true">Almost nothing on its own — it may still have no callers and have never seen real data.</button></li>
-          <li><button class="opt">It is shipped, since tests only exist for shipped code.</button></li>
-          <li><button class="opt">The tests are probably wrong.</button></li>
+          <li><button class="opt">That it is safe to depend on — the behaviour is pinned down by the tests.</button></li>
+          <li><button class="opt">That it has shipped, because nobody writes 22 tests for unreleased code.</button></li>
+          <li><button class="opt">That the tests are weak, since coverage that high usually asserts nothing.</button></li>
+          <li><button class="opt" data-correct="true">Almost nothing alone: it may have no callers and may never have met real data.</button></li>
         </ul>
-        <div class="fb"><b>The second.</b> That is precisely the state <code>search/</code> is in.
+        <div class="fb"><b>Almost nothing alone.</b> That is precisely the state <code>search/</code> is in.
         Tests written against fixtures prove the module is self-consistent; they say nothing about
         whether anything calls it or whether real data has the shape the fixtures assumed.</div>
       </div>
@@ -232,12 +232,12 @@ gh pr view 518 --json state,title,updatedAt</code></pre>
       <div class="q">
         <p class="q-t">You need to run a job that absolutely must not be lost. What does this chapter tell you to do?</p>
         <ul class="opts">
-          <li><button class="opt">Use the queue — it is shipped.</button></li>
-          <li><button class="opt">Avoid the queue entirely.</button></li>
-          <li><button class="opt" data-correct="true">Use the queue, but make the job idempotent and re-drivable, because a redeploy can silently drop it.</button></li>
-          <li><button class="opt">Wait for issue #501 to be fixed.</button></li>
+          <li><button class="opt" data-correct="true">Use the queue, but make the job idempotent and safe to re-run after a redeploy.</button></li>
+          <li><button class="opt">Use the queue as it is — it is marked shipped, so production has proven it.</button></li>
+          <li><button class="opt">Run the job inline instead, since any open issue makes the queue unsafe.</button></li>
+          <li><button class="opt">Hold the job until issue #501 is fixed, then rely on the queue's guarantee.</button></li>
         </ul>
-        <div class="fb"><b>The third.</b> "Shipped" means in production, not flawless. Issue #501
+        <div class="fb"><b>Use the queue, and defend the job.</b> "Shipped" means in production, not flawless. Issue #501
         is open, unowned and silent, so the defence has to live in your job rather than in a fix
         you cannot schedule.</div>
       </div>

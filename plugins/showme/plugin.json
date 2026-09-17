@@ -1,7 +1,7 @@
 {
   "name": "showme",
   "description": "Build a presentation as one self-contained HTML deck — fullscreen slides, progressive builds, speaker notes with a timer, overview grid, read mode and print-to-PDF, in a theme matched to the look you describe.",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "author": {
     "name": "tppoom"
   },

@@ -1,6 +1,6 @@
 ---
 name: teachme
-description: Use when someone wants to actually learn something end to end rather than get an answer — "teach me X", "explain this codebase and where the project stands", "turn these slides/PDFs into a real course", "I want to understand Y properly", "I don't want to pay for a course" — or when a chat reply would be too short, skip prerequisites, or quietly drop parts of the source material. Also when they want study material they can keep, read offline, and track progress through.
+description: Use when someone wants to actually learn something end to end rather than get an answer — "teach me X", "explain this codebase and where the project stands", "turn these slides/PDFs/lecture notes into a real course", "I want to understand Y properly", "help me prepare for the exam/certification", "onboard me onto this project", "I don't want to pay for a course" — or when a chat reply would be too short, skip prerequisites, or quietly drop parts of the source material. Also when they want study material they can keep, read offline, and track progress through.
 ---
 
 # TeachMe
@@ -42,6 +42,8 @@ It never means loosen the check.
 - Turning lecture slides, PDFs, docs, transcripts or a spec into real study material
 - Onboarding onto a codebase: what it is, how it works, what is done, what is left
 - The user already got a short AI answer and wants the whole thing
+- Preparing for an exam, a certification, or an interview on a defined syllabus
+- A course someone will hand to others — new hires, a class, their team, their child
 
 **Do NOT use for:** a single factual question, a quick how-do-I, a code change, or anything
 the user wants as a conversational reply. This skill produces a document, not a chat turn.
@@ -70,10 +72,18 @@ python3 $SKILL/scripts/new.py <dir> --title "…" --lang th
 | A whole language or field, replacing a paid course | 14–24 |
 | A digest of supplied material | one per source section, plus the gaps the source assumed |
 | A codebase | 7–14, sized to the modules that actually exist |
+| Exam preparation | one per blueprint domain, weighted by marks, plus strategy and a full mock exam |
 
 If the atlas demands materially more than the request implies, **say so before authoring**:
 *"ครบจริงต้องประมาณ 18 บท อ่านราว 3 ชั่วโมง เอาเต็มเลยไหม หรือเอา 8 บทแรกก่อนแล้วค่อยต่อ"*.
 That question costs one message. Eighteen unwanted chapters cost an hour.
+
+**Too big for one session** — a whole language, a 24-chapter field — ships in phases, and the
+phase boundary is written down rather than hoped for. Keep the complete syllabus, move the
+chapters of later phases under `## Later` in `SYLLABUS.md`, and build phase one to the full
+standard. The final gate then passes honestly for what was promised and lists what is still
+owed. Next session: move the next batch up out of `## Later` and continue. Never shrink the
+syllabus to make a phase look like the whole course.
 
 **New or existing.** If a course directory already exists for this topic, you are editing, not
 rebuilding — jump to *Changing it later*.
@@ -87,6 +97,7 @@ rebuilding — jump to *Changing it later*.
 | **Topic** | "teach me Rust / OAuth / linear algebra / Japanese" | The whole practising path: setup, tooling, idioms, debugging, what to learn next |
 | **Digest** | slides, PDFs, notes, transcripts, links | Every section of every source **plus** what the source assumed you already knew |
 | **Codebase** | a repo or directory | Architecture, data flow, every module, conventions, how to run and test it, **current status: done / in progress / TODO / known broken**, and where to make the common changes |
+| **Exam** | an exam or certification name, its official blueprint, past papers | Every blueprint domain in proportion to its marks, questions **in the exam's own format**, the traps examiners set, timing strategy, and a full mock exam with explained answers |
 
 **Shape — what kind of thing each idea is:** a procedure, a concept, a relationship, a
 mechanism, a fact to hold, a skill, a judgment call, a claim about the world. This is asked per
@@ -97,15 +108,20 @@ rules for material someone will trust and keep.
 
 ## Workflow
 
-Announce the mode, then run all five stages. Create a TodoWrite item per stage,
-plus one per chapter at stage 3.
+Announce the mode, then run all five stages. Create a todo item per stage (TodoWrite, or
+whatever task tool your environment has), plus one per chapter at stage 3.
 
 ### 1 · Intake
 Establish, from the request or by reading: the destination, the learner's current level,
-**the output language**, and any hard scope edges.
+**who will read it** (the requester, a child, a class, new hires), **the output language**, any
+hard scope edges, and for an exam, **the exam date** — it decides whether this is a course or
+a cram plan.
 Write in the language the user is writing to you in unless they say otherwise. Read **every** file, URL and directory
 they gave you — completely, not the first 100 lines. For codebase mode, read the entry
-points, the config, the tests, the git log and the TODO/FIXME markers.
+points, the config, the tests, the git log and the TODO/FIXME markers. For exam mode, find the
+current official blueprint and say which version you used; exams change their syllabus, and
+a course against last year's is a trap. A video you cannot access is not a source: ask for
+the transcript or slides rather than teaching from its title.
 
 Ask at most one round of questions, only where the answer changes the syllabus
 (typically: current level, and depth vs. breadth). Otherwise assume and state the assumption.
@@ -204,9 +220,9 @@ Done means all of this, in order — not "the files exist".
 1. `verify.py` passes **without** `--wip`
 2. You opened `index.html` in a browser and actually looked: the cover, one chapter, one visual
 3. You clicked one quiz answer and one Mark-complete, and both behaved
-4. You sent the file with `SendUserFile`, or gave the exact path if you cannot
+4. You sent the file (`SendUserFile` where it exists), or gave the exact absolute path
 5. You reported real numbers — chapters, words, visuals, quiz questions — and named anything
-   you deliberately left out, with the reason
+   you deliberately left out, with the reason, and anything still under `## Later`
 
 Then two lines on how to use it: everything is in the one file and works offline, tick each
 chapter as you finish it, `/` searches. Do not narrate the build; they want the course.
@@ -272,8 +288,8 @@ chapter as you finish it, `/` searches. Do not narrate the build; they want the 
 
 | Need | Where |
 |---|---|
-| Scope expansion, syllabus shapes, coverage ledger | `references/atlas.md` |
-| Chapter anatomy, prose/example standards, language | `references/authoring.md` |
+| Scope expansion, syllabus shapes (incl. exam), coverage ledger, phases | `references/atlas.md` |
+| Chapter anatomy, prose/example standards, language, readers' age, writing quizzes | `references/authoring.md` |
 | When to draw, which visual form, SVG conventions | `references/visuals.md` |
 | How people understand things; shapes of knowledge; accuracy | `references/teaching.md` |
 | Every allowed HTML block, copy-paste ready | `assets/blocks.html` |
@@ -315,5 +331,8 @@ progress, and typed-answer quiz questions.
 - **Wrong language.** Write in the language the user is writing in, unless they say otherwise —
   and set `lang` so the interface matches. Keep code, identifiers, commands and error messages
   in their original form; a translated error message cannot be searched for.
+- **Quizzes that leak their answers.** The correct option always second, or always the longest
+  and most carefully qualified. `verify.py` warns on both; write distractors that are as
+  specific as the answer and built from real misconceptions.
 - **Unsourced claims in a subject that needs sources.** Law, medicine, history, science: cite,
   date, and never invent a reference. See the accuracy rules at the end of `teaching.md`.

@@ -123,6 +123,23 @@ If you must define a theme from nothing, define every token in the contract at t
 darken or lighten until it doesn't. Also check that `c1`–`c6` stay distinguishable in greyscale
 — decks get printed, and some of your audience is colour-blind.
 
+## Their own brand
+
+When they supply a logo, put its path (relative to the deck directory) in `meta.json`:
+
+```json
+"logo": "brand/logo.svg"
+```
+
+assemble inlines it into every running footer and the top corner of the title slide — the
+deck stays one file. Prefer SVG or a small PNG on a transparent background; check it against
+the theme's `bg` in both the grid and present views, and pick a preset whose background the
+logo was designed for rather than recolouring someone's mark. Their brand colours go into
+`tokens.accent` and `accent-2`; verify their accent against `accent-ink` for contrast, since
+brand colours are chosen for logos, not for text on a projector.
+
+Never add a logo they did not give you, and never add another organisation's.
+
 ## Fonts
 
 The deck is one offline file, so the default is system stacks — themes pick faces that are

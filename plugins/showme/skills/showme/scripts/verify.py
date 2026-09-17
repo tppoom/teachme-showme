@@ -22,7 +22,7 @@ MAX_SHARE = 0.42       # share of the deck any one layout may take
 MIN_PER_SLIDE, MAX_PER_SLIDE = 0.6, 3.0   # minutes
 
 LAZY = [r"\bTODO\b", r"\bTBD\b", r"\bFIXME\b", r"\bPLACEHOLDER\b", r"Lorem ipsum",
-        r"\bXX+\b", r"\[insert", r"coming soon", r"\bplaceholder text\b"]
+        r"\bXX+\b", r"\[insert", r"\bWRITE:", r"coming soon", r"\bplaceholder text\b"]
 CJK  = "぀-ヿ㐀-䶿一-鿿豈-﫿ｦ-ﾟ가-힯"
 NOSP = "฀-๿຀-໿က-႟ក-៿"
 
@@ -43,6 +43,25 @@ def cut(chunk):
     end = chunk.find("</section>")
     return chunk if end < 0 else chunk[:end + len("</section>")]
 
+# What the evidence on a content slide LOOKS like. A bar chart, a flow and a 2x2 are all
+# "content" by class, but to the room they are three different shapes — the monotony
+# check has to compare what is drawn, not what the section is called.
+EVIDENCE = [("chart", r'<div class="chart"[^>]*data-type="(\w+)"'), ("stats", r'class="stats"'),
+            ("cmp", r'class="cmp'), ("flow", r'class="flow'), ("tline", r'class="tline'),
+            ("layers", r'class="layers'), ("matrix", r'class="matrix'), ("funnel", r'class="funnel'),
+            ("prog", r'class="prog'), ("checks", r'class="checks'), ("kv", r'class="kv'),
+            ("chips", r'class="chips'), ("agenda", r'class="agenda'), ("cards", r'class="card\b'),
+            ("table", r"<table"), ("image", r'<img\b|class="ph"|class="fig'), ("pts", r'class="pts')]
+
+def shape_of(lay, body):
+    if lay != "content": return lay
+    body = re.sub(r'<div class="chart"[\s\S]*?</table>', lambda m: m.group(0).split("<table")[0], body)
+    kinds = []
+    for name, pat in EVIDENCE:
+        m = re.search(pat, body)
+        if m: kinds.append(name + ("-" + m.group(1) if m.groups() else ""))
+    return "+".join(kinds) or "text"
+
 def layout_of(cls):
     known = ["title", "section", "statement", "quote", "closing", "bignum", "imgfull", "code", "appendix"]
     for k in known:
@@ -55,6 +74,12 @@ def main():
     idx = d / "index.html"
     if not idx.exists(): sys.exit(f"FAIL: {idx} not built — run assemble.py first")
     doc = idx.read_text(encoding="utf-8")
+
+    import json
+    mf = d / "meta.json"
+    meta = json.loads(mf.read_text(encoding="utf-8")) if mf.exists() else {}
+    advance = meta.get("advance") or 0
+    unattended = bool(advance and meta.get("loop"))   # a kiosk loop: nobody is there to speak
 
     # ---- 1. self-contained ---------------------------------------------------
     for pat, msg in [(r"<script[^>]+\bsrc=", "external <script src>"),
@@ -86,7 +111,7 @@ def main():
     # page chrome and the script, and gets measured against words it does not contain
     chunks = [cut(c) for c in re.split(f"(?={SL})", doc) if re.match(SL, c)]
     if not chunks: fail("no slides found")
-    layouts, ids, main_n, apx_n = [], [], 0, 0
+    layouts, shapes, ids, main_n, apx_n = [], [], [], 0, 0
     prev_sig, run = None, 0
 
     for pos, c in enumerate(chunks, 1):
@@ -112,7 +137,7 @@ def main():
         nt = re.search(r'<div class="notes">([\s\S]*?)</div>\s*(?=</section>)', c)
         body = re.sub(r'<div class="notes">[\s\S]*?</div>\s*(?=</section>)', "", c)
         nw = wc(text_of(nt.group(1))) if nt else 0
-        if lay not in ("title",):
+        if lay not in ("title",) and not unattended:
             if not nt: fail(f"{tag} has no speaker notes — that is where the detail is supposed to live")
             elif nw < NOTE_MIN:
                 fail(f"{tag} notes are {nw} words — say what you would actually say (aim {NOTE_MIN}-{NOTE_MAX})")
@@ -164,7 +189,7 @@ def main():
         if len(re.findall(r"data-build", body)) > 5:
             warn(f"{tag} has more than 5 build steps — that is more than one slide")
 
-        sig = lay + ("|pts" if 'class="pts"' in body else "")
+        sig = shape_of(lay, body); shapes.append(sig)
         run = run + 1 if sig == prev_sig else 1
         if run == MAX_RUN + 1 and lay == "content":
             fail(f"{tag} is the {MAX_RUN+1}th slide in a row with the same shape — "
@@ -178,21 +203,24 @@ def main():
         fail("the deck has no closing slide — the last thirty seconds are where the ask goes")
     if main_n > 10 and "section" not in layouts:
         warn(f"{main_n} main slides and no section dividers — the audience has nowhere to breathe")
-    for lay, k in Counter(layouts).most_common(1):
-        if n >= 8 and k / n > MAX_SHARE and lay == "content":
-            warn(f"{int(k/n*100)}% of the deck is the same layout — vary the shape of the evidence")
+    for shp, k in Counter(shapes).most_common(1):
+        if n >= 8 and k / n > MAX_SHARE and shp not in ("title", "section", "appendix"):
+            warn(f"{int(k/n*100)}% of the deck is {shp} slides — vary the shape of the evidence")
     dupes = {i for i in ids if ids.count(i) > 1 and not i.startswith("#")}
     if dupes: fail("duplicate slide ids: " + ", ".join(sorted(dupes)))
     for p in promised:
         if p not in ids:
             (warn if wip else fail)(f"STORYLINE.md promises {p} but it is not in the deck")
 
-    mins = None
-    mf = d / "meta.json"
-    if mf.exists():
-        import json
-        mins = json.loads(mf.read_text(encoding="utf-8")).get("minutes")
-    if mins:
+    mins = meta.get("minutes")
+    if advance and not meta.get("loop"):
+        auto = sum(float(re.search(r'data-advance="([\d.]+)"', c.split(">", 1)[0]).group(1))
+                   if 'data-advance="' in c.split(">", 1)[0] else advance
+                   for c, lay in zip(chunks, layouts) if "appendix" not in c.split(">", 1)[0]) / 60
+        if mins and abs(auto - mins) > max(0.5, mins * 0.1):
+            warn(f"auto-advance runs {auto:.1f} minutes but the slot is {mins} — "
+                 f"change \"advance\" or the slide count")
+    elif mins:
         lo, hi = mins / MAX_PER_SLIDE, mins / MIN_PER_SLIDE
         if not (lo <= main_n <= hi):
             warn(f"{main_n} main slides for a {mins}-minute slot — that slot fits roughly "
@@ -218,7 +246,7 @@ def main():
     print(f"{n} slides ({main_n} main + {apx_n} appendix)   lang={lang}   "
           f"charts: {n_chart}   slides with notes: {n_note}/{n}   size: {len(doc)/1024:.0f} KB")
     if spine: print(f"spine: {spine[:96]}")
-    print("shapes: " + ", ".join(f"{k}×{v}" for k, v in Counter(layouts).most_common()))
+    print("shapes: " + ", ".join(f"{k}×{v}" for k, v in Counter(shapes).most_common()))
     for x in notes: print("NOTE  " + x)
     for x in warns: print("WARN  " + x)
     for x in fails: print("FAIL  " + x)

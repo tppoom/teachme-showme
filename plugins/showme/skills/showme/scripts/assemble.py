@@ -20,7 +20,11 @@ meta.json
         "motif":  "rule",                   // optional override
         "tokens": {"accent": "#ff5a1f"}     // optional per-token overrides
       },
-      "fonts": {"url": "https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"}
+      "fonts": {"url": "https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"},
+      "minutes":  20,                       // the slot — drives the gate and the pace clock
+      "logo":     "brand/logo.svg",         // optional, inlined into the footer and title slide
+      "advance":  20,                       // optional auto-advance seconds per slide (kiosk,
+      "loop":     true                      //   Pecha Kucha); "loop" restarts at the end
     }
 
 `fonts.url` is the ONE thing that can break offline use — the deck will need the network the
@@ -89,6 +93,17 @@ def main():
     if not parts: die(f"no slide parts found in {d/'parts'}")
     body = "\n\n".join(p.read_text(encoding="utf-8").rstrip() for p in parts)
 
+    logo = ""
+    if meta.get("logo"):
+        import base64, mimetypes
+        lp = (d / meta["logo"]).resolve()
+        if not lp.exists(): die(f'logo "{meta["logo"]}" not found (path is relative to the deck directory)')
+        mime = mimetypes.guess_type(lp.name)[0] or "image/png"
+        if not mime.startswith("image/"): die(f"logo is not an image: {mime}")
+        logo = f"data:{mime};base64," + base64.b64encode(lp.read_bytes()).decode()
+        if len(logo) > 200_000: print("assemble: note — the logo is over 150 KB; it is repeated on no "
+                                      "slide but still weighs the file. A small PNG or SVG is plenty.", file=sys.stderr)
+
     fonts = ""
     if meta.get("fonts", {}).get("url"):
         u = meta["fonts"]["url"]
@@ -99,7 +114,9 @@ def main():
     repl = {"LANG": lang, "DIR": meta.get("dir") or ("rtl" if baselang in RTL else "ltr"),
             "TITLE": meta["title"], "SUBTITLE": meta.get("subtitle", ""),
             "DECK_ID": meta.get("deck_id", "showme"), "THEME_CSS": theme_css,
-            "MOTIF": motif, "W": W, "H": H, "FONTS": fonts}
+            "MOTIF": motif, "W": W, "H": H, "FONTS": fonts, "LOGO": logo,
+            "MINUTES": meta.get("minutes") or 0, "ADVANCE": meta.get("advance") or 0,
+            "LOOP": "true" if meta.get("loop") else "false"}
     for k, v in ui.items():
         repl["T_" + re.sub(r"([A-Z])", r"_\1", k).upper()] = v
 
@@ -115,7 +132,8 @@ def main():
     print(f"built {dest}")
     print(f"  theme={preset} motif={motif}  {W}x{H} ({ratio})  lang={lang} dir={repl['DIR']}")
     print(f"  {len(parts)} part files -> {n} slides ({n-apx} main + {apx} appendix), "
-          f"{len(out)/1024:.0f} KB" + ("  [needs network for fonts]" if fonts else ""))
+          f"{len(out)/1024:.0f} KB" + ("  [needs network for fonts]" if fonts else "")
+          + (f"  [auto-advance {meta['advance']}s{' loop' if meta.get('loop') else ''}]" if meta.get("advance") else ""))
 
 if __name__ == "__main__":
     main()

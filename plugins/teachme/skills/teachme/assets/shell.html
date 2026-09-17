@@ -783,7 +783,7 @@ rt{font-size:.55em;color:var(--muted);font-weight:500}
 
 <header id="top">
   <button id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
-  <span class="t-name">…</span>
+  <span class="t-name">@@TITLE@@</span>
   <span class="t-pct">0%</span>
 </header>
 
@@ -1106,6 +1106,8 @@ var cur=null;
 function spy(){
   var y=window.scrollY+130, act=null;
   chapters.forEach(function(c){if(c.offsetTop<=y)act=c});
+  if(!act&&cur){cur=null; $("#top .t-name").textContent=document.title;
+    $$(".nv-a").forEach(function(a){a.classList.remove("on")})}
   if(act&&act!==cur){
     cur=act;
     $$(".nv-a").forEach(function(a){a.classList.toggle("on",a.getAttribute("href")==="#"+act.id)});

@@ -1,7 +1,7 @@
 {
   "name": "teachme",
   "description": "Teach any subject end to end as one self-contained HTML course — prerequisites, mechanisms, worked examples, diagrams, exercises and checkpoint quizzes, with progress tracking, search and offline reading.",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "author": {
     "name": "tppoom"
   },

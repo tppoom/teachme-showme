@@ -51,6 +51,11 @@ Nothing here may still be unchecked at hand-over.
 
 - [ ] … → `ch-1`
 
+## Later
+
+Chapters planned for a later phase, when the course is too big for one session. They stay in
+the syllabus; the final gate reports them as still owed instead of failing on them.
+
 ## Deliberately out of scope
 
 - … — why, and where it is mentioned instead

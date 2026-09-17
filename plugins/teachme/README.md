@@ -40,13 +40,23 @@ missing content rather than relax the check:
 - a quiz answer with no explanation
 - a concept in the source material with no chapter mapped to it
 - the words `TODO`, "similar to the above", "and so on"
+- no glossary-and-cheat-sheet appendix
 
-## Three modes
+It also warns when a quiz leaks its answers — the right option always in the same place, or
+always the longest one.
+
+## Four modes
 
 **Topic** — "teach me Rust from zero, I know Python."
 **Digest** — turn slides, PDFs or notes into a course, *plus the chapters the source skipped*.
 **Codebase** — what a project is, how it works, and **where it actually stands**: done, in
 progress, stubbed, broken, TODO — each with the file path and the evidence.
+**Exam** — built from the official blueprint: chapters weighted by marks, practice in the
+exam's own question format, the traps examiners set, timing strategy, and a full mock exam.
+
+Written for the actual reader — a child, an exam student, a busy professional, a team you hand
+it to. Courses too big for one sitting ship in **phases**: the syllabus stays whole, later
+chapters sit under `## Later`, and the gate passes honestly for what this phase promised.
 
 ## Layout
 
@@ -62,7 +72,7 @@ skills/teachme/
 │   ├── shell.html        the reader app: CSS, JS, every component
 │   ├── blocks.html       every block, copy-paste ready
 │   └── i18n.json         14 interface languages
-└── scripts/              assemble.py · verify.py · embed-image.py
+└── scripts/              new.py · assemble.py · verify.py · embed-image.py
 ```
 
 MIT
