@@ -1,6 +1,6 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "tppoom-skills",
+  "name": "teachme-showme",
   "description": "Skills that turn a request into one self-contained HTML file: TeachMe builds a complete course you study from, ShowMe builds a deck you present from.",
   "owner": { "name": "tppoom" },
   "plugins": [
@@ -11,7 +11,7 @@
       "source": "./plugins/teachme",
       "category": "productivity",
       "keywords": ["course", "learning", "teaching", "study", "documentation", "html"],
-      "homepage": "https://github.com/tppoom/claude-skills/tree/main/plugins/teachme"
+      "homepage": "https://github.com/tppoom/teachme-showme/tree/main/plugins/teachme"
     },
     {
       "name": "showme",
@@ -20,7 +20,7 @@
       "source": "./plugins/showme",
       "category": "productivity",
       "keywords": ["slides", "presentation", "deck", "pitch", "html"],
-      "homepage": "https://github.com/tppoom/claude-skills/tree/main/plugins/showme"
+      "homepage": "https://github.com/tppoom/teachme-showme/tree/main/plugins/showme"
     }
   ]
 }

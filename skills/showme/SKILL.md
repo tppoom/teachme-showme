@@ -149,9 +149,12 @@ It prints the `.chart` block with the values exactly as they are in the file, ag
 tail into "Other", and leaves a `WRITE:` line for the takeaway that the gate refuses to ship.
 
 ### 5 · Assemble, verify, hand over
-Claude Code prints **the skill's base directory** when it loads this skill — call the
-scripts relative to that (`$SKILL/scripts/…`), so the skill works both from `~/.claude/skills/`
-and from a plugin install. Substitute the real path when you run them.
+`$SKILL` below is shorthand for **the folder this SKILL.md lives in** — you just read it from
+disk, so resolve `$SKILL` to that absolute path once and reuse it (Claude Code prints it
+automatically when the skill loads; on Codex or Antigravity, it's the directory of the file
+you're reading). Call the scripts relative to that path, so the skill works the same whether
+it was installed as a Claude Code plugin, copied into `~/.claude/skills/`, `~/.agents/skills/`
+or `~/.gemini/.../skills/`, or is just sitting in a cloned repo.
 
 ```bash
 python3 $SKILL/scripts/assemble.py <deck-dir>
