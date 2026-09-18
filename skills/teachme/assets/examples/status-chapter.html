@@ -7,6 +7,8 @@
   It is a real chapter. It has an objective, a mechanism, evidence with file paths
   and line numbers, and a quiz, exactly like every other chapter.
 
+  Kept short on purpose: three <h2>s, every claim carried by one block, nothing said twice.
+
   What makes it different from the concept chapter beside it:
 
     · Every claim about state cites a file, a test, or a commit. "Auth is done" is
@@ -41,34 +43,24 @@
       <ul>
         <li>Say which subsystems are safe to build on and which will move under you</li>
         <li>Find the evidence for every status claim here, yourself, in the repository</li>
-        <li>Name the two known-broken paths and what happens when you hit them</li>
-        <li>Pick a first task that will not collide with work already in flight</li>
+        <li>Name the two known-broken paths and pick a first task that will not collide with work in flight</li>
       </ul>
     </div>
 
-    <h2>Why this chapter exists</h2>
+    <p>Every other chapter explains how something works. This one explains how much of it is
+    <em>true right now</em> — and the second question is the one that wastes weeks when nobody
+    answers it. A newcomer who assumes the whole architecture is built will spend three days
+    integrating with a module that has never run in production.</p>
 
-    <p>Every other chapter in this course explains how something works. This one explains how
-    much of it is actually <em>true right now</em>. Those are different questions, and the
-    second one is the one that wastes weeks when nobody answers it. A newcomer who reads an
-    architecture document and assumes all of it is built will spend three days integrating with
-    a module that has never run in production.</p>
+    <p>So one rule: <strong>no status claim without evidence you can check.</strong> Every line
+    below points at a file, a test directory or a pull request. Written against commit
+    <code>a3f91c2</code>, 14 January 2026; status ages in weeks, so when the evidence stops
+    matching, trust the repository and fix this page.</p>
 
-    <p>So this chapter has one rule: <strong>no status claim without evidence you can check.</strong>
-    Every line below points at a file, a test directory, or a pull request. If you read this in
-    six months and the evidence no longer matches, trust the repository and not this page — and
-    then fix this page.</p>
+    <h2>Four states of "done"</h2>
 
-    <div class="callout warn"><div class="ic">⚠️</div><div class="co">
-      <div class="ct">This chapter has a shelf life</div>
-      <p>Written against commit <code>a3f91c2</code>, 14 January 2026. Architecture ages in
-      years; status ages in weeks. Check the dates on the evidence before you rely on any of it.</p></div></div>
-
-    <h2>The four states, and why three of them look alike</h2>
-
-    <p>"Done" is not one thing, and most confusion on this project comes from collapsing four
-    genuinely different states into it. A module can be fully written and fully tested and still
-    be worthless to you, because nothing calls it.</p>
+    <p>A module can be fully written and fully tested and still be worthless to you, because
+    nothing calls it. Most confusion here comes from collapsing these four into one word.</p>
 
     <div class="grid">
       <div class="card"><div class="c-ic">✅</div><div class="c-t">Shipped</div>
@@ -81,10 +73,8 @@
         <div class="c-d">Named in the design, no code. Honest and harmless — as long as nobody assumes otherwise.</div></div>
     </div>
 
-    <p>The dangerous state is the second one. "Built, unwired" reads as finished in every code
-    review, passes CI, and shows up green on any coverage dashboard — and then fails the first
-    time real data touches it, because no real data ever has. Two of the subsystems below are
-    in exactly that state.</p>
+    <p>The dangerous one is the second. "Built, unwired" passes review and CI and shows green on
+    every dashboard, then fails the first time real data touches it.</p>
 
     <figure class="viz">
       <div class="viz-t">What is actually connected to what</div>
@@ -105,7 +95,7 @@
       <figcaption>The chain breaks at the indexer. Search is fully written and fully tested and cannot answer a single real query, because nothing has ever put a document into it.</figcaption>
     </figure>
 
-    <h2>Subsystem by subsystem, with the evidence</h2>
+    <h2>The evidence, subsystem by subsystem</h2>
 
     <div class="tw"><table>
       <thead><tr><th>Subsystem</th><th>State</th><th>Evidence</th></tr></thead>
@@ -125,15 +115,13 @@
       </tbody>
     </table></div>
 
-    <p>The <code>grep</code> in the search row is worth running yourself rather than believing.
-    It is the cheapest possible test of whether something is wired in, it takes two seconds, and
-    it is how the "built, unwired" state was discovered in the first place — the module looked
-    complete in every other respect.</p>
+    <p>Run the <code>grep</code> in the search row yourself: it takes two seconds and is how
+    the "built, unwired" state was found in the first place.</p>
 
-    <h2>What is known broken</h2>
+    <h2>What is broken, and what comes next</h2>
 
-    <p>Two paths fail in ways that will cost you an afternoon if you meet them without warning.
-    Both are known, both have issues open, and neither has an owner.</p>
+    <p>Two known paths fail <em>silently</em> — no exception, no log — and look like your own
+    mistake when you hit them. Both have open issues and neither has an owner.</p>
 
     <div class="callout pitfall"><div class="ic">🚫</div><div class="co">
       <div class="ct">Token refresh drops the request body</div>
@@ -150,21 +138,13 @@
       <p><code>queue/worker.py:141</code> — issue #501, open since August. Anything that must not
       be lost has to be idempotent and re-driven from its own source of truth.</p></div></div>
 
-    <p>Both bugs share a shape worth internalising: they fail <em>silently</em>. Neither raises,
-    neither logs an error, and both look like your own mistake when you hit them. That is why
-    they belong in a chapter rather than an issue tracker nobody reads on day one.</p>
-
-    <h2>Where the work is going next</h2>
-
     <ol class="timeline">
       <li><span class="when">Now</span><b>Indexer v2</b>
         <p>PR #518, one engineer. Until it merges, search cannot be tested against anything real.</p></li>
       <li><span class="when">After #518</span><b>Wire up search</b>
         <p>Unblocked the day the indexer lands. Nobody assigned yet — this is the obvious first task for a newcomer.</p></li>
       <li class="hi"><span class="when">Unscheduled</span><b>Issues #497 and #501</b>
-        <p>Both known, both silent, neither owned. They will keep costing afternoons until someone takes them.</p></li>
-      <li><span class="when">Not started</span><b>Billing</b>
-        <p>Design only. No code, no branch, no date.</p></li>
+        <p>Known, silent, unowned. Billing is design only — no code, no branch, no date.</p></li>
     </ol>
 
     <div class="ex">
@@ -189,27 +169,22 @@ grep -rc "def test_" tests/auth/ | awk -F: '{n+=$2} END {print n}'
 # 3 — is the indexer PR still open?
 gh pr view 518 --json state,title,updatedAt</code></pre>
             </div>
-            <p>The first command returning nothing is the whole "built, unwired" claim, verified
-            in one line. If it now returns something, search has been wired up since this was
-            written and this chapter is out of date — which is exactly the outcome the exercise
-            is designed to catch.</p>
-            <p>The general habit matters more than these three commands: <strong>a status claim
-            you cannot reproduce in under a minute is a rumour.</strong> Every row in the table
-            above was written by running something like this, and every row should be
-            re-checkable the same way.</p>
+            <p>The first command returning nothing <em>is</em> the "built, unwired" claim, verified.
+            If it returns something, search has been wired up since this was written and the
+            chapter is out of date.</p>
+            <p>The habit matters more than the commands: <strong>a status claim you cannot
+            reproduce in under a minute is a rumour.</strong></p>
           </div>
         </details>
       </div>
     </div>
 
     <div class="recap">
-      <h4>Recap</h4>
+      <h4>In short</h4>
       <ul>
-        <li>Four states, not two: shipped, built-but-unwired, started, not started.</li>
-        <li>"Built, unwired" is the trap — green tests, zero callers, never met real data.</li>
+        <li>Four states, not two — and "built, unwired" is the trap: green tests, zero callers.</li>
         <li><code>api/</code>, <code>auth/</code> and <code>queue/</code> are safe to depend on. <code>indexer/</code> is moving. <code>search/</code> is unproven. <code>billing/</code> does not exist.</li>
-        <li>Two known silent failures: #497 (refresh drops POST bodies) and #501 (redeploy loses jobs).</li>
-        <li>Every claim here is checkable in one command. Check it, because this page ages faster than the code.</li>
+        <li>Two known silent failures: #497 (refresh drops POST bodies) and #501 (redeploy loses jobs). Check every claim here — this page ages faster than the code.</li>
       </ul>
     </div>
 
@@ -217,36 +192,41 @@ gh pr view 518 --json state,title,updatedAt</code></pre>
       <div class="quiz-h">Checkpoint</div>
 
       <div class="q">
-        <p class="q-t">A module has 22 passing tests and full coverage. What does that tell you about whether you can depend on it?</p>
+        <p class="q-t">A module has 22 passing tests and full coverage. What does that tell you about depending on it?</p>
         <ul class="opts">
-          <li><button class="opt">That it is safe to depend on — the behaviour is pinned down by the tests.</button></li>
-          <li><button class="opt">That it has shipped, because nobody writes 22 tests for unreleased code.</button></li>
-          <li><button class="opt">That the tests are weak, since coverage that high usually asserts nothing.</button></li>
+          <li><button class="opt" data-why="Passing tests prove the module agrees with its own fixtures, not that the system uses it.">It is safe to depend on — the tests pin its behaviour down.</button></li>
+          <li><button class="opt" data-why="Nobody ships on test count; plenty of fully tested code has never been deployed.">It has shipped, because nobody writes 22 tests for unreleased code.</button></li>
+          <li><button class="opt" data-why="Coverage says which lines ran, not how good the assertions are; nothing here shows they are weak.">The tests are weak, since coverage that high usually asserts nothing.</button></li>
           <li><button class="opt" data-correct="true">Almost nothing alone: it may have no callers and may never have met real data.</button></li>
         </ul>
-        <div class="fb"><b>Almost nothing alone.</b> That is precisely the state <code>search/</code> is in.
-        Tests written against fixtures prove the module is self-consistent; they say nothing about
-        whether anything calls it or whether real data has the shape the fixtures assumed.</div>
+        <div class="fb"><b>Almost nothing alone.</b> That is exactly the state <code>search/</code> is in: self-consistent against fixtures, unproven against the system.</div>
       </div>
 
       <div class="q">
-        <p class="q-t">You need to run a job that absolutely must not be lost. What does this chapter tell you to do?</p>
+        <p class="q-t">Your client POSTs to the API and gets a <code>422</code> about missing required fields, though the body is correct in your logs. The session token was issued an hour ago. What do you check first?</p>
         <ul class="opts">
-          <li><button class="opt" data-correct="true">Use the queue, but make the job idempotent and safe to re-run after a redeploy.</button></li>
-          <li><button class="opt">Use the queue as it is — it is marked shipped, so production has proven it.</button></li>
-          <li><button class="opt">Run the job inline instead, since any open issue makes the queue unsafe.</button></li>
-          <li><button class="opt">Hold the job until issue #501 is fixed, then rely on the queue's guarantee.</button></li>
+          <li><button class="opt" data-correct="true">Whether the token had expired, so the middleware refreshed and retried with an empty body.</button></li>
+          <li><button class="opt" data-why="A 422 with fields listed as missing points at the request the server saw, not at its own schema.">Whether the API's request schema changed in the latest release.</button></li>
+          <li><button class="opt" data-why="Job loss on redeploy (#501) is silent and involves the queue, not a rejected request.">Whether a redeploy dropped the job that carries the body.</button></li>
+          <li><button class="opt" data-why="The indexer is not on the request path, so it cannot change what the API receives.">Whether the indexer has finished its backfill.</button></li>
         </ul>
-        <div class="fb"><b>Use the queue, and defend the job.</b> "Shipped" means in production, not flawless. Issue #501
-        is open, unowned and silent, so the defence has to live in your job rather than in a fix
-        you cannot schedule.</div>
+        <div class="fb"><b>Token refresh drops the POST body</b> (<code>auth/middleware.py:88</code>, #497). The 422 sends you hunting in the wrong place, which is why a known silent failure earns its own chapter.</div>
+      </div>
+
+      <div class="q">
+        <p class="q-t">You need a job that absolutely must not be lost. What does this chapter tell you to do?</p>
+        <ul class="opts">
+          <li><button class="opt" data-why="'Shipped' means in production, not flawless — #501 is open and unowned.">Use the queue as it is — it is marked shipped, so production has proven it.</button></li>
+          <li><button class="opt" data-correct="true">Use the queue, but make the job idempotent and safe to re-run after a redeploy.</button></li>
+          <li><button class="opt" data-why="One open issue does not make the whole queue unusable; it means defending against that one failure.">Run the job inline instead, since any open issue makes the queue unsafe.</button></li>
+          <li><button class="opt" data-why="Nobody owns #501 and no date exists, so waiting for a fix is not a plan.">Hold the job until #501 is fixed, then rely on the queue's guarantee.</button></li>
+        </ul>
+        <div class="fb"><b>Defend the job.</b> The fix cannot be scheduled, so idempotency has to live in your code.</div>
       </div>
 
       <div class="q" data-answer="grep|grep -r|search for callers|find callers">
         <p class="q-t">What one-word command distinguishes "built" from "wired in" faster than reading any code?</p>
-        <div class="fb"><b><code>grep</code>.</b> Searching for imports and call sites answers "does
-        anything actually use this?" in seconds. It is the cheapest status check there is, and it
-        is how the <code>search/</code> gap was found.</div>
+        <div class="fb"><b><code>grep</code>.</b> Searching for imports and call sites answers "does anything actually use this?" in seconds — it is how the <code>search/</code> gap was found.</div>
       </div>
     </div>
 

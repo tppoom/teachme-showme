@@ -34,7 +34,7 @@ solutions, and checkpoint quizzes with explained answers.
 `scripts/verify.py` fails the build on any of these, and the fix is always to write the
 missing content rather than relax the check:
 
-- a chapter under 600 words of prose (script-aware, so CJK and Thai count correctly)
+- a chapter under 300 words of prose (script-aware, so CJK and Thai count correctly) — and it *warns* when a chapter runs past ~1,200 words, has more than 4 sections, uses sub-sub-headings, stacks more than 3 callouts, or has walls-of-text paragraphs
 - a chapter with no visual, unless it declares `data-novisual="reason"`
 - a missing objective, recap, exercise or checkpoint quiz
 - a quiz answer with no explanation
@@ -42,8 +42,10 @@ missing content rather than relax the check:
 - the words `TODO`, "similar to the above", "and so on"
 - no glossary-and-cheat-sheet appendix
 
-It also warns when a quiz leaks its answers — the right option always in the same place, or
-always the longest one.
+It fails a quiz whose options only make sense in a fixed order ("both of the above", "the second
+one") and warns on distractors with no explanation, fewer than 3 options, or a right answer that
+is obviously the longest. The page shuffles options on every load, explains the specific
+misconception behind whichever wrong option the learner picked, and lets them retry.
 
 ## Four modes
 

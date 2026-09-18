@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Coverage + quality gate for a built TeachMe course.
 
-Usage:  python3 verify.py <course-dir> [--min-words 600] [--wip]
+Usage:  python3 verify.py <course-dir> [--min-words 300] [--wip]
 
 --wip = mid-build run: chapters the syllabus promises but that are not written yet
         are warnings instead of failures. NEVER pass --wip on the final check.
@@ -14,9 +14,8 @@ Fails (exit 1) if the course is thin, incomplete, or drifted from SYLLABUS.md.
 Read every FAIL line as "go write the missing content", never as "loosen the check".
 """
 import sys, re, json, pathlib, html
-from collections import Counter
 
-MIN_WORDS = 600
+MIN_WORDS = 300
 LAZY = [
     r"\bTODO\b", r"\bTBD\b", r"\bFIXME\b", r"\bPLACEHOLDER\b", r"Lorem ipsum",
     r"coming soon", r"\[\.\.\.\]", r"\(\.\.\.\)", r"left as an exercise for the reader",
@@ -116,7 +115,7 @@ def main():
         if 'class="recap"' not in body: fail(f"{tag} missing .recap block")
         qz = re.findall(r'class="q"', body)
         if not qz: fail(f"{tag} missing checkpoint .quiz")
-        elif len(qz) < 2: warn(f"{tag} quiz has only {len(qz)} question (aim for 2-4)")
+        elif len(qz) < 3: warn(f"{tag} quiz has only {len(qz)} question(s) (aim for 3-4, mixed kinds)")
         for q in re.split(r'(?=<div class="q">)', body):
             if not q.startswith('<div class="q">'): continue
             n_ok = len(re.findall(r'data-correct="true"', q))
@@ -205,31 +204,64 @@ def main():
         if len(re.findall(r"<h2\b", body)) < 2:
             warn(f"{tag} has fewer than 2 <h2> sections — is it really a whole chapter?")
         w = words(body)
-        if w < minw: fail(f"{tag} only {w} words of content (floor is {minw}) — this is a summary, not a lesson")
+        if w < minw: fail(f"{tag} only {w} words of content (floor is {minw}) — this is a stub, not a lesson")
+        # Tightness is a judgement call, so these warn rather than fail — but each names the fix.
+        # A course people finish is short per chapter; padding is the commonest way to lose the reader.
+        w_read = words(re.sub(r'<div class="quiz">[\s\S]*$', "", body))   # the quiz is practice, not reading
+        if w_read > 1200:
+            warn(f"{tag} is {w_read} words before the quiz — past ~1,200 the reader tires. Cut what "
+                 f"repeats an earlier block, or split it into two chapters")
+        n_h2 = len(re.findall(r"<h2\b", body))
+        if n_h2 > 4:
+            warn(f"{tag} has {n_h2} <h2> sections (aim for 2-4) — merge sections that share one idea")
+        if re.search(r"<h3\b", body):
+            warn(f"{tag} uses <h3> — sub-sub-headings fragment a chapter. Fold it into the section above")
+        n_co = len(re.findall(r'<div class="callout', body))
+        if n_co > 3:
+            warn(f"{tag} has {n_co} callouts (aim for 3 or fewer) — a page of boxes has no emphasis left")
+        long_p = [p for p in re.findall(r"<p[^>]*>([\s\S]*?)</p>", body) if count_words(text_of(p)) > 110]
+        if long_p:
+            warn(f"{tag} has {len(long_p)} paragraph(s) over ~110 words — one idea per paragraph, "
+                 f"split or cut")
         if 'class="ex"' not in body: warn(f"{tag} has no .ex exercise")
 
-    # ---- 3b. quiz honesty ------------------------------------------------------
-    # Generated quizzes leak their answers: the correct option lands in the same slot, or is
-    # the longest, most qualified one. A learner who spots the pattern stops thinking.
-    pos, longest, n_mc = Counter(), 0, 0
-    for q in re.findall(r'<div class="q"[^>]*>[\s\S]*?class="fb"', doc):
+    # ---- 3b. quiz quality -------------------------------------------------------
+    # The page shuffles options on every load, so slot position is not an author concern any more.
+    # What is: options that only make sense in the authored order, distractors that teach nothing,
+    # and a right answer that gives itself away by being the longest and most qualified.
+    POSITIONAL = re.compile(r"\b(?:all|none|both|neither) of the (?:above|below|options)\b|\boption [A-D]\b"
+                            r"|\b(?:the )?(?:first|second|third|fourth|last) (?:option|answer|choice)\b"
+                            r"|ทั้งหมดข้างต้น|ไม่มีข้อใดถูก|ถูกทุกข้อ|ข้อ [ก-ง]\b|ข้อแรก|ข้อสุดท้าย", re.I)
+    longest, n_mc, no_why, few_opts, positional = 0, 0, 0, 0, 0
+    for q in re.findall(r'<div class="q"[^>]*>[\s\S]*?class="fb"[\s\S]*?</div>', doc):
+        head = q.split(">", 1)[0]
+        if "data-order" in head and "fixed" in head: fixed = True
+        else: fixed = False
         opts = re.findall(r'<button class="opt"([^>]*)>([\s\S]*?)</button>', q)
         if len(opts) < 2: continue
         n_mc += 1
+        if len(opts) < 3: few_opts += 1
+        wrong = [a for a, _ in opts if 'data-correct="true"' not in a]
+        if any("data-why" not in a for a in wrong): no_why += 1
+        if not fixed and (POSITIONAL.search(text_of(" ".join(t for _, t in opts))) or
+                          POSITIONAL.search(text_of(q.split('class="fb"', 1)[1]))):
+            positional += 1
         k = [n for n, (a, _) in enumerate(opts) if 'data-correct="true"' in a]
         if len(k) != 1: continue
-        pos[k[0]] += 1
         lens = [len(text_of(t).strip()) for _, t in opts]
         if lens[k[0]] == max(lens) and lens.count(max(lens)) == 1 and max(lens) > 1.25 * sorted(lens)[-2]:
             longest += 1
-    if n_mc >= 6:
-        slot, cnt = pos.most_common(1)[0]
-        if cnt / n_mc > 0.5:
-            warn(f"{cnt} of {n_mc} multiple-choice answers are option {slot + 1} — vary the position "
-                 f"of the correct answer, or the quiz teaches the pattern instead of the subject")
-        if longest / n_mc > 0.4:
-            warn(f"in {longest} of {n_mc} questions the correct option is clearly the longest — "
-                 f"make the wrong options as specific and plausible as the right one")
+    if positional:
+        fail(f"{positional} quiz question(s) refer to option position or say 'all/none of the above' — the page "
+             f"shuffles options, so name the answer by its content, or put data-order=\"fixed\" on the .q")
+    if few_opts:
+        warn(f"{few_opts} multiple-choice question(s) have fewer than 3 options — give each at least 3 plausible ones")
+    if no_why:
+        warn(f"{no_why} of {n_mc} multiple-choice questions have wrong options with no data-why — that line is "
+             f"what teaches the learner who picks it. A distractor you can't write one for is filler")
+    if n_mc >= 4 and longest / n_mc > 0.34:
+        warn(f"in {longest} of {n_mc} questions the correct option is clearly the longest — "
+             f"make the wrong options as specific and plausible as the right one")
 
     real = [c for c in chaps if "appendix" not in c.split(">", 1)[0]]
     if len(real) >= 3 and len(real) == len(chaps):

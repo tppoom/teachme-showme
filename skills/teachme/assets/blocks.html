@@ -11,8 +11,8 @@
   For what a WHOLE chapter looks like at the depth verify.py demands, read one of:
 
     assets/examples/concept-chapter.html   explaining an idea — objective, mental-model
-                                           figure, .walk, .math/.where/.derive, misreadings,
-                                           exercise, recap, quiz. ~1,150 words.
+                                           figure, .walk, .math/.where, one misreading,
+                                           exercise, recap, quiz. ~1,000 words.
     assets/examples/status-chapter.html    codebase mode's "where the project stands" —
                                            evidence with file paths, the four states of
                                            done, what is broken by name, what is next.
@@ -61,8 +61,10 @@
 <h2>Why goroutines exist</h2>
 <p>Prose. <code>inline code</code> for identifiers, <strong>bold</strong> for a term the
    first time it is defined.</p>
-<h3>A sub-point</h3>
-<h4>A minor label</h4>
+<!-- Aim for 2-4 <h2> per chapter, each a short phrase that names the point. <h3> exists for the
+     rare reference chapter (an API surface); in a normal chapter it fragments the page — fold
+     the idea into the section above instead. verify.py warns on it. -->
+<h3>A sub-point (rare)</h3>
 
 <!-- 2.3 CALLOUTS
      note = context · tip = do this · warn = careful
@@ -339,21 +341,28 @@ wg.Wait()</code></pre></div>
   </ul>
 </div>
 
-<!-- 5.3 QUIZ — required, 2–4 questions, closes every chapter.
-     Exactly one .opt per question has data-correct="true".
-     .fb explains why the right answer is right AND why the tempting one is tempting. -->
+<!-- 5.3 QUIZ — required, 3–4 questions, closes every chapter.
+     Exactly one .opt per question has data-correct="true". Every OTHER .opt carries data-why="…":
+     one sentence on what someone who picks it is thinking and where it breaks — the page shows
+     it when they pick it. .fb gives the right answer's reason and the principle.
+     Do NOT arrange the options to hide the answer: the page shuffles them on every load and
+     retry. Add data-order="fixed" to the .q only when the options have a natural order.
+     3-4 questions per chapter, mixed kinds: predict / diagnose / decide / typed recall, and at
+     least one on a case that is not in the chapter. -->
 <div class="quiz">
   <div class="quiz-h"><span>Checkpoint</span></div>
   <div class="q">
-    <p class="q-t">What happens to running goroutines when <code>main</code> returns?</p>
+    <p class="q-t">This program prints nothing. Why?
+      <code>func main() { go fmt.Println("hi") }</code></p>
     <ul class="opts">
-      <li><button class="opt">They finish first, then the process exits</button></li>
-      <li><button class="opt" data-correct="true">They are killed immediately</button></li>
-      <li><button class="opt">The runtime panics</button></li>
+      <li><button class="opt" data-why="Println is fine here — the goroutine was never given a chance to reach it.">Println buffers its output and <code>main</code> exits before the flush</button></li>
+      <li><button class="opt" data-correct="true">The process exits when <code>main</code> returns, possibly before the goroutine ever runs</button></li>
+      <li><button class="opt" data-why="Unhandled goroutine panics crash the program loudly; nothing crashed here.">The goroutine panicked, and Go silently swallows panics in goroutines</button></li>
+      <li><button class="opt" data-why="That is how thread joins behave in many languages — Go does not wait unless you ask.">Go waits for goroutines started in <code>main</code>, so the output is lost by the terminal</button></li>
     </ul>
-    <div class="fb"><b>Why:</b> the process exits when <code>main</code> returns; nothing waits.
-      The first option is tempting because that <em>is</em> how thread joins work in most
-      languages — Go makes you ask for it with <code>sync.WaitGroup</code> or a channel.</div>
+    <div class="fb"><b>Nothing waits for the goroutine.</b> When <code>main</code> returns the process ends,
+      so a goroutine that has not been scheduled yet is simply cut off. Fix it by making
+      <code>main</code> wait: <code>sync.WaitGroup</code> or a channel receive.</div>
   </div>
 </div>
 

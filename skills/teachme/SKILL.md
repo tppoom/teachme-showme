@@ -32,6 +32,10 @@ or deferred to "further reading". If you wrote it in `SYLLABUS.md`, you write it
 If you decide something genuinely does not belong, **delete it from the syllabus and say why** —
 never leave a promise unpaid.
 
+"Full" means **complete, not long**: every idea taught well enough to use, said once. The
+contract is about coverage; it is never a licence to pad. A learner who bounces off a wall of
+text learns nothing from the parts you were so careful to include.
+
 `scripts/verify.py` enforces this mechanically. A FAIL means *go write the missing content*.
 It never means loosen the check.
 
@@ -140,8 +144,8 @@ Every concept found in the source material must appear in the ledger, checked, p
 ```
 **Never emit the whole course in one pass.** Writing chapter-at-a-time is the mechanism that
 prevents the collapse into summary that the user is trying to escape. One file, complete, then
-the next. Markup contract: `assets/blocks.html`. Depth floor and prose standards:
-`references/authoring.md`.
+the next. Markup contract: `assets/blocks.html`. What a chapter must contain and how to keep it
+worth reading: `references/authoring.md` — read *Make it worth reading* first.
 
 **Before your first chapter, read one whole worked example** — `assets/blocks.html` gives you
 the vocabulary, but two files show the standard end to end:
@@ -149,11 +153,16 @@ the vocabulary, but two files show the standard end to end:
 `assets/examples/status-chapter.html` (codebase mode's "where the project stands", the chapter
 most often written as vague reassurance instead of evidence). Both pass the gate as written.
 
-Every chapter carries: objective → why it exists → **mental-model figure** → the full
-explanation → worked example with output → variations and edge cases → common mistakes with
-the real error message → exercise with revealed solution → recap → checkpoint quiz with
-explained answers. Minimum 600 words of prose. A chapter that fits in 600 words is two
-chapters merged or one chapter half-written.
+Every chapter carries: objective → why it exists (the opening paragraph, no heading) →
+**mental-model figure** → the explanation → worked example with output → the mistake people
+actually make → exercise with revealed solution → recap → checkpoint quiz with explained
+answers.
+
+**Write it to be read, not to be thorough-looking.** Typically 400–900 words, 2–4 `<h2>`
+sections, no `<h3>`, at most 3 callouts, paragraphs of 2–4 sentences, and each idea said in
+exactly one place. Wide margins, small type and short paragraphs are the shell's job; not
+repeating yourself is yours. Under 300 words is a stub; over ~1,200 (before the quiz) is two chapters.
+`verify.py` warns on all of it — fix the warnings, don't collect them.
 
 **Every chapter ships at least one visual**, and `verify.py` fails a chapter without one.
 Reach for `.walk` — a step-through that highlights the lines it is explaining — whenever the
@@ -263,7 +272,9 @@ chapter as you finish it, `/` searches. Do not narrate the build; they want the 
 | "They only asked about X" | They asked to *understand* X. A missing prerequisite means they don't. |
 | "This part is basic" | Basic to you. The learner is why the course exists. One short chapter costs nothing; a gap costs comprehension. |
 | "I'll cover the rest in a summary table" | A table of names teaches nobody. Names are an index, not a lesson. |
-| "The file is getting huge" | Length is the deliverable. That is the whole point. Build in parts. |
+| "The file is getting huge" | Coverage is the deliverable, not length. Build in parts, and keep each chapter tight. |
+| "More detail is safer" | Detail nobody reads teaches nothing. Say it once, with a real example, and stop. |
+| "I'll box this so it stands out" | Three boxes per chapter is the ceiling. Everything emphasised is nothing emphasised. |
 | "Similar to the previous chapter" | Then write it out, with its own example. The learner cannot infer it. |
 | "Already mentioned in the overview" | An overview is a map. A chapter is the territory. |
 | "The slides don't cover this" | Slides are headings. The course is what the slides assumed. |
@@ -279,7 +290,8 @@ chapter as you finish it, `/` searches. Do not narrate the build; they want the 
 
 ## Red flags — stop and go back to the syllabus
 
-- A chapter under 600 words · no code/worked example · **no visual** · no exercise · no quiz
+- A chapter under 300 words · no code/worked example · **no visual** · no exercise · no quiz
+- The opposite failure: more than 4 `<h2>`s, any `<h3>`, more than 3 callouts, a paragraph over ~110 words, the same point made in a paragraph, a box *and* the recap
 - Writing "imagine", "picture this", "in memory it looks like" — that sentence is a figure you didn't draw
 - The words "etc.", "and so on", "similar to above", "left as an exercise for the reader"
 - A syllabus node with no chapter · a source section with no ledger entry
@@ -334,8 +346,11 @@ progress, and typed-answer quiz questions.
 - **Wrong language.** Write in the language the user is writing in, unless they say otherwise —
   and set `lang` so the interface matches. Keep code, identifiers, commands and error messages
   in their original form; a translated error message cannot be searched for.
-- **Quizzes that leak their answers.** The correct option always second, or always the longest
-  and most carefully qualified. `verify.py` warns on both; write distractors that are as
-  specific as the answer and built from real misconceptions.
+- **Quizzes that test the text instead of the learner.** Questions answerable by finding the
+  sentence, joke distractors, a right answer that is the longest and most qualified, every
+  question the same kind. Write the wrong answers first, each a real misconception with a
+  `data-why`; mix predict / diagnose / decide / typed recall; put one question on a case the
+  chapter never showed. The page shuffles the options itself, so never refer to an option by
+  position. See *Writing a quiz* in `references/authoring.md`.
 - **Unsourced claims in a subject that needs sources.** Law, medicine, history, science: cite,
   date, and never invent a reference. See the accuracy rules at the end of `teaching.md`.
