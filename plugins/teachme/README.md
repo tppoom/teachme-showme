@@ -9,6 +9,12 @@ but everything you need in order to understand what you asked.
 claude plugin install teachme
 ```
 
+**Two ways to run it.** `/teachme` (or just describe what you need) runs the skill in your
+session. `/teachme-cas` runs CAS mode — Command → Agent → Skill: `teachme-planner` writes the syllabus and a shared brief, `teachme-author` agents write chapters in parallel, `teachme-reviewer` reads it all as the learner and fixes it. Use CAS for big jobs where
+one context would start compressing the end.
+
+Pick a depth — `quick`, `standard` or `deep` — and leave out anything you don't want (quizzes, exercises, visuals); the gate follows your choice.
+
 ## Why
 
 Ask an AI to teach you something and you get an answer: short, correct, and full of holes you
@@ -34,7 +40,7 @@ solutions, and checkpoint quizzes with explained answers.
 `scripts/verify.py` fails the build on any of these, and the fix is always to write the
 missing content rather than relax the check:
 
-- a chapter under 300 words of prose (script-aware, so CJK and Thai count correctly) — and it *warns* when a chapter runs past ~1,200 words, has more than 4 sections, uses sub-sub-headings, stacks more than 3 callouts, or has walls-of-text paragraphs
+- a chapter under 300 words of prose (script-aware, so languages written without spaces count correctly) — and it *warns* when a chapter runs past ~1,200 words, has more than 4 sections, uses sub-sub-headings, stacks more than 3 callouts, or has walls-of-text paragraphs
 - a chapter with no visual, unless it declares `data-novisual="reason"`
 - a missing objective, recap, exercise or checkpoint quiz
 - a quiz answer with no explanation

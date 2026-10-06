@@ -1,10 +1,21 @@
 #!/usr/bin/env python3
 """Coverage + quality gate for a built TeachMe course.
 
-Usage:  python3 verify.py <course-dir> [--min-words 300] [--wip]
+Usage:  python3 verify.py <course-dir> [--min-words N] [--wip]
+        python3 verify.py <course-dir> --part parts/03-slug.html
 
---wip = mid-build run: chapters the syllabus promises but that are not written yet
-        are warnings instead of failures. NEVER pass --wip on the final check.
+--wip  = mid-build run: chapters the syllabus promises but that are not written yet
+         are warnings instead of failures. NEVER pass --wip on the final check.
+--part = check one chapter file on its own, without assembling. Safe to run while other
+         chapters are being written in parallel (implies --wip, skips course-wide checks).
+
+meta.json tunes the gate to the request instead of one size for everything:
+  "depth": "quick" | "standard" (default) | "deep"
+      quick    — an explainer, 1-4 chapters: 150-word floor, missing practice blocks warn
+      standard — a real course: 300-word floor, objective/recap/quiz/visual required
+      deep     — reference-grade: 400-word floor, chapters may run to ~1,800 words
+  "omit": ["quiz", "exercise", "objective", "recap", "visual", "appendix", "ledger"]
+      blocks the USER asked to leave out. Each turns its check off. Record why in SYLLABUS.md.
 
 A course too big for one session ships in phases: chapter ids listed under a
 "## Later" heading in SYLLABUS.md are planned, not promised — the final gate passes
@@ -15,7 +26,13 @@ Read every FAIL line as "go write the missing content", never as "loosen the che
 """
 import sys, re, json, pathlib, html
 
-MIN_WORDS = 300
+PROFILES = {
+    #            floor  read-ceiling  practice blocks missing → fail?
+    "quick":    (150,   800,          False),
+    "standard": (300,   1200,         True),
+    "deep":     (400,   1800,         True),
+}
+OMITTABLE = {"quiz", "exercise", "objective", "recap", "visual", "appendix", "ledger"}
 LAZY = [
     r"\bTODO\b", r"\bTBD\b", r"\bFIXME\b", r"\bPLACEHOLDER\b", r"Lorem ipsum",
     r"coming soon", r"\[\.\.\.\]", r"\(\.\.\.\)", r"left as an exercise for the reader",
@@ -51,12 +68,39 @@ def count_words(t):
 def words(frag): return count_words(text_of(frag))
 
 def main():
+    if len(sys.argv) < 2 or sys.argv[1].startswith("-"): sys.exit(__doc__)
     d = pathlib.Path(sys.argv[1]).resolve()
-    minw = int(sys.argv[sys.argv.index("--min-words") + 1]) if "--min-words" in sys.argv else MIN_WORDS
-    wip = "--wip" in sys.argv
-    idx = d / "index.html"
-    if not idx.exists(): sys.exit(f"FAIL: {idx} not built yet — run assemble.py first")
-    doc = idx.read_text(encoding="utf-8")
+    part_file = None
+    if "--part" in sys.argv:
+        i = sys.argv.index("--part") + 1
+        if i >= len(sys.argv) or sys.argv[i].startswith("-"):
+            sys.exit("FAIL: --part needs a file, e.g. --part parts/03-slug.html")
+        part_file = pathlib.Path(sys.argv[i])
+    wip = "--wip" in sys.argv or part_file is not None
+
+    mf = d / "meta.json"
+    meta = json.loads(mf.read_text(encoding="utf-8")) if mf.exists() else {}
+    depth = str(meta.get("depth", "standard")).lower()
+    if depth not in PROFILES:
+        sys.exit(f'FAIL: meta.json depth "{depth}" is not one of {", ".join(PROFILES)}')
+    floor, ceiling, strict = PROFILES[depth]
+    minw = int(sys.argv[sys.argv.index("--min-words") + 1]) if "--min-words" in sys.argv else floor
+    omit = {str(x).lower() for x in meta.get("omit", [])}
+    bad = omit - OMITTABLE
+    if bad: sys.exit(f"FAIL: meta.json omit has unknown item(s) {sorted(bad)} — allowed: {sorted(OMITTABLE)}")
+    # a required block the user did not omit: fails on standard/deep, warns on quick
+    def need(kind, msg):
+        if kind in omit: return
+        (fail if strict else warn)(msg)
+
+    if part_file is not None:
+        if not part_file.is_absolute(): part_file = (d / part_file) if (d / part_file).exists() else part_file.resolve()
+        if not part_file.exists(): sys.exit(f"FAIL: {part_file} not found")
+        doc = part_file.read_text(encoding="utf-8")
+    else:
+        idx = d / "index.html"
+        if not idx.exists(): sys.exit(f"FAIL: {idx} not built yet — run assemble.py first")
+        doc = idx.read_text(encoding="utf-8")
 
     # ---- 1. self-containment -------------------------------------------------
     for pat, msg in [(r"<script[^>]+\bsrc=", "external <script src>"),
@@ -79,15 +123,16 @@ def main():
                    if i not in later_ids]
         ledger = s.split("## Coverage ledger", 1)
         if len(ledger) < 2:
-            fail("SYLLABUS.md has no '## Coverage ledger' section "
-                 "(every concept in the source material must map to a chapter id)")
+            if "ledger" not in omit and part_file is None:
+                (fail if strict else warn)("SYLLABUS.md has no '## Coverage ledger' section "
+                     "(every concept in the source material must map to a chapter id)")
             ledger_ids, unchecked = [], []
         else:
             ledger_txt = re.split(r"^##\s+(?!Coverage)", ledger[1], maxsplit=1, flags=re.M)[0]
             ledger_ids = [i for i in re.findall(r"(ch-[\w-]+)", ledger_txt) if i not in later_ids]
             unchecked = [u for u in re.findall(r"^\s*[-*]\s*\[ \]\s*(.+)$", ledger_txt, re.M)
                          if not any(l in u for l in later_ids)]
-        for u in unchecked:
+        for u in ([] if part_file is not None else unchecked):
             (warn if wip else fail)(f"coverage ledger item still unchecked: {u.strip()[:90]}")
 
     # ---- 3. chapters ---------------------------------------------------------
@@ -111,11 +156,12 @@ def main():
         if 'class="ch-desc"' not in c: fail(f"{tag} missing .ch-desc one-liner")
         if "appendix" in c.split(">", 1)[0]:
             continue
-        if 'class="objective"' not in body: fail(f"{tag} missing .objective block")
-        if 'class="recap"' not in body: fail(f"{tag} missing .recap block")
+        if 'class="objective"' not in body: need("objective", f"{tag} missing .objective block")
+        if 'class="recap"' not in body: need("recap", f"{tag} missing .recap block")
         qz = re.findall(r'class="q"', body)
-        if not qz: fail(f"{tag} missing checkpoint .quiz")
-        elif len(qz) < 3: warn(f"{tag} quiz has only {len(qz)} question(s) (aim for 3-4, mixed kinds)")
+        if not qz: need("quiz", f"{tag} missing checkpoint .quiz")
+        elif len(qz) < 3 and depth != "quick":
+            warn(f"{tag} quiz has only {len(qz)} question(s) (aim for 3-4, mixed kinds)")
         for q in re.split(r'(?=<div class="q">)', body):
             if not q.startswith('<div class="q">'): continue
             n_ok = len(re.findall(r'data-correct="true"', q))
@@ -124,7 +170,7 @@ def main():
         n_viz = (len(re.findall(r'<figure[^>]*class="(?:viz|diagram)', c))
                  + len(re.findall(r'class="walk"', c)))
         if not n_viz and "data-novisual" not in c:
-            fail(f"{tag} has no visual — every chapter needs one "
+            need("visual", f"{tag} has no visual — every chapter needs one "
                  f"(or an explicit data-novisual=\"reason\" on the <section>)")
         for fg in re.findall(r'<figure[^>]*class="(?:viz|diagram)"[\s\S]*?</figure>', c):
             if "<figcaption" not in fg:
@@ -208,8 +254,8 @@ def main():
         # Tightness is a judgement call, so these warn rather than fail — but each names the fix.
         # A course people finish is short per chapter; padding is the commonest way to lose the reader.
         w_read = words(re.sub(r'<div class="quiz">[\s\S]*$', "", body))   # the quiz is practice, not reading
-        if w_read > 1200:
-            warn(f"{tag} is {w_read} words before the quiz — past ~1,200 the reader tires. Cut what "
+        if w_read > ceiling:
+            warn(f"{tag} is {w_read} words before the quiz — past ~{ceiling:,} the reader tires. Cut what "
                  f"repeats an earlier block, or split it into two chapters")
         n_h2 = len(re.findall(r"<h2\b", body))
         if n_h2 > 4:
@@ -223,7 +269,7 @@ def main():
         if long_p:
             warn(f"{tag} has {len(long_p)} paragraph(s) over ~110 words — one idea per paragraph, "
                  f"split or cut")
-        if 'class="ex"' not in body: warn(f"{tag} has no .ex exercise")
+        if 'class="ex"' not in body and "exercise" not in omit: warn(f"{tag} has no .ex exercise")
 
     # ---- 3b. quiz quality -------------------------------------------------------
     # The page shuffles options on every load, so slot position is not an author concern any more.
@@ -264,18 +310,18 @@ def main():
              f"make the wrong options as specific and plausible as the right one")
 
     real = [c for c in chaps if "appendix" not in c.split(">", 1)[0]]
-    if len(real) >= 3 and len(real) == len(chaps):
+    if part_file is None and "appendix" not in omit and depth != "quick" and len(real) >= 3 and len(real) == len(chaps):
         (warn if wip else fail)("no appendix chapter — every course closes with a glossary, a cheat "
                                 "sheet and what to learn next (class=\"chapter appendix\")")
 
     dupes = {i for i in seen if seen.count(i) > 1}
     if dupes: fail("duplicate chapter ids: " + ", ".join(sorted(dupes)))
-    for i in syl_ids:
+    for i in ([] if part_file is not None else syl_ids):
         if i not in seen:
             (warn if wip else fail)(f"SYLLABUS.md promises {i} but it is not in index.html — write it")
     for i in seen:
         if syl_ids and i not in syl_ids: warn(f"{i} is in the page but not in SYLLABUS.md — update the syllabus")
-    for i in set(ledger_ids):
+    for i in (set() if part_file is not None else set(ledger_ids)):
         if i not in seen:
             (warn if wip else fail)(f"coverage ledger points at {i}, which does not exist")
 
@@ -292,9 +338,13 @@ def main():
              f'Prefix ids with the chapter (id="ch7-{i}")')
 
     # ---- 4. laziness markers -------------------------------------------------
-    plain = text_of(doc)
+    # Marker words (TODO, FIXME…) are author shorthand, so they only count in capitals — the
+    # ordinary word "placeholder" in a sentence about placeholders is prose, not a leftover.
+    # Code is quoted material: a real repo excerpt may legitimately contain "# TODO".
+    plain = text_of(re.sub(r"<(pre|code)\b[\s\S]*?</\1>", " ", doc, flags=re.I))
     for pat in LAZY:
-        for m in re.finditer(pat, plain, re.I):
+        flags = 0 if re.fullmatch(r"\\b[A-Z+]+:?(?:\\b)?", pat) else re.I
+        for m in re.finditer(pat, plain, flags):
             fail(f"laziness marker {m.group(0)!r} at …{plain[max(0,m.start()-60):m.end()+40].strip()[:110]}…")
 
     # ---- 5. structural balance ----------------------------------------------
@@ -319,7 +369,9 @@ def main():
         if n: extras.append(f"{n} {label}")
     lang = (re.search(r'<html[^>]*\blang="([^"]*)"', doc) or [None, "?"])[1]
     dirn = (re.search(r'<html[^>]*\bdir="([^"]*)"', doc) or [None, "ltr"])[1]
-    print(f"lang={lang} dir={dirn}   chapters: {len(chaps)}   "
+    prof = f"depth={depth}" + (f" omit={','.join(sorted(omit))}" if omit else "")
+    if part_file is not None: print(f"part check: {part_file.name}   ({prof})")
+    print(f"{prof}   lang={lang} dir={dirn}   chapters: {len(chaps)}   "
           f"visuals: {n_viz} figures + {n_walk} walkthroughs   code blocks: {n_code}   "
           f"quiz questions: {n_q}   words: {tw:,}   size: {len(doc)/1024:.0f} KB"
           + (("\n" + "   " + " · ".join(extras)) if extras else ""))
@@ -330,6 +382,8 @@ def main():
         sys.exit(1)
     if later_ids:
         print(f"LATER {len(later_ids)} chapter(s) planned for a later phase: {', '.join(later_ids)}")
+    if part_file is not None:
+        print("\nPASS (this chapter) — assemble + full verify once every chapter is written"); return
     print("\nPASS (work in progress)" if wip else
           "\nPASS — " + ("this phase is complete; the Later chapters are still owed." if later_ids
                         else "course is complete against its syllabus."))

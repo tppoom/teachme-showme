@@ -56,7 +56,7 @@ The single most common failure in AI-written courses is an example that demonstr
 rather than understanding. A teaching example is:
 
 - **Complete.** It runs, compiles, cooks, parses, resolves. Not a fragment with an ellipsis.
-- **Real.** `invoice`, `patient`, `ผู้เช่า` — never `foo`, `thing`, `X`. Fake names make the
+- **Real.** `invoice`, `patient`, `tenant` — never `foo`, `thing`, `X`. Fake names make the
   learner translate twice.
 - **Shown working.** The output, the result, the finished thing. If it produces something, show
   what it produced.

@@ -8,6 +8,12 @@ One self-contained HTML deck that behaves like real presentation software.
 claude plugin install showme
 ```
 
+**Two ways to run it.** `/showme` (or just describe what you need) runs the skill in your
+session. `/showme-cas` runs CAS mode — Command → Agent → Skill: `showme-storyliner` writes the claim ladder and picks the theme, `showme-builder` agents build slide batches in parallel, `showme-reviewer` checks the deck as the audience sees it. Use CAS for big jobs where
+one context would start compressing the end.
+
+Say how it will be used — `live`, `remote`, `read` (emailed) or `kiosk` — and the word ceilings and notes rules adjust.
+
 ## Why
 
 Most generated decks fail the same way: everything the presenter knows gets poured onto the

@@ -33,7 +33,14 @@ five minutes of reading; a missing prerequisite costs the whole course.
 
 **Typical size** — Topic course: 10–20 chapters. Programming language: 14–22.
 Document digest: at least one chapter per source section. Codebase: 7–14.
-These are floors set by the atlas, not targets. If the atlas says 26, write 26.
+At `standard` and `deep` depth these are floors set by the atlas, not targets: if the atlas
+says 26, the syllabus says 26 — and if that is more than the user wants now, phase it
+(`## Later`) rather than merging nodes.
+
+**At `quick` depth** the atlas still runs in full, but it decides *what the explainer must not
+skip*, not how many chapters it gets. Fold upstream nodes into the opening of the chapter that
+needs them, keep 1–4 chapters, and list the rest of the atlas under *Deliberately out of scope*
+→ "what to learn next", so the reader can see the map even though this is one sitting.
 
 ## Check the atlas against the shapes of knowledge
 
