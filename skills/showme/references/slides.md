@@ -42,6 +42,10 @@ which nobody heard you.
 | A bullet list | 5 bullets, ~12 words each |
 | Speaker notes | no ceiling — this is where it all goes |
 
+These are the `live` numbers. `"delivery": "read"` (or `"density": "dense"`) raises them by
+about 1.8× and allows 7 bullets, for a deck that has to make its case with nobody presenting;
+`kiosk` lowers them. The principle holds at every density: one claim per slide.
+
 ## Picking the layout from the shape of the idea
 
 Not from the subject. A cooking deck, a physics lecture and a board update all use `bignum`
@@ -163,6 +167,11 @@ The runtime does the scaling; you control the rest.
 - Two type sizes per slide is usually enough; three is the maximum before it reads as noise.
 - Line length for anything paragraph-shaped: 24–34 characters at display sizes. The layouts
   already cap this; don't override it.
+- **Languages written without spaces between words wrap between any two words**, so a
+  headline can break inside a phrase. Look at every headline and lead in the rendered deck;
+  wrap a phrase that must stay together in `<span class="nw">…</span>`, or reword it. Never
+  fix it with `<br>` sized to one screen — the canvas is fixed, but the font on the
+  presenter's laptop may not be the one you saw.
 
 ## Speaker notes are part of the deliverable
 

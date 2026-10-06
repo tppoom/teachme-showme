@@ -75,8 +75,8 @@ put the questions it lists straight into the appendix.
 | **Product launch / demo day** | The moment of pain → the reveal → three things it does → price and availability | Specs, roadmap, comparison with competitors | Feature lists. Show one thing working instead of listing ten |
 | **Job interview / case presentation** | The question → how you framed it → the answer → what you'd do in the first 90 days | The assumptions behind every number, alternatives you rejected | Running over. Interview slots are strict — budget 70% of the time |
 | **Lightning talk / Pecha Kucha** | One idea, one story, one ask. Nothing that needs a second slide to make sense | — | Trying to fit a 20-minute talk. `"advance": 20` enforces the pace honestly |
-| **Sent to be read, not presented** | Same argument; headlines must carry it alone, notes become the paragraphs | Everything, since nobody is there to answer | Relying on speech that will never happen. Read mode shows the notes — write them as prose |
-| **Unattended loop (lobby, booth, screen)** | One message per slide, readable in five seconds from three metres | — | Anything that needs a presenter. `"advance"` + `"loop": true`; big type, few words |
+| **Sent to be read, not presented** | Same argument; headlines must carry it alone, notes become the paragraphs | Everything, since nobody is there to answer | Relying on speech that will never happen. Read mode shows the notes — write them as prose. Set `"delivery": "read"` |
+| **Unattended loop (lobby, booth, screen)** | One message per slide, readable in five seconds from three metres | — | Anything that needs a presenter. `"delivery": "kiosk"`, `"advance"` + `"loop": true`; big type, few words |
 | **Personal occasion (farewell, wedding, anniversary)** | A story in three beats, then the toast | — | Inside jokes the room doesn't share. Photos go through `embed-image.py`; no placeholders on the night |
 
 **Remote presenting** changes the craft, not the story: the slide is a thumbnail in someone's

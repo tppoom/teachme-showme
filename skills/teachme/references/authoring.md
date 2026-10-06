@@ -6,7 +6,7 @@ What a chapter must contain, how to keep it worth reading, and the mechanics of 
 
 ```
 <course-dir>/
-  meta.json        {"course_id":"nihongo-n5","lang":"th","title":"…","subtitle":"…"}
+  meta.json        {"course_id":"go-concurrency","lang":"<code>","title":"…","subtitle":"…"}
   SYLLABUS.md
   parts/           01-why-concurrency.html, 02-threads.html, …
   index.html       generated — never edit by hand
@@ -15,8 +15,8 @@ What a chapter must contain, how to keep it worth reading, and the mechanics of 
 `course_id` namespaces the reader's saved progress in `localStorage` — chapter ticks, checklists
 and flashcard decks. Keep it stable across rebuilds or the learner loses everything.
 
-`lang` swaps the entire interface. `assets/i18n.json` ships **en th ja zh ko es fr de pt ru id
-vi hi ar**; RTL languages also flip the layout automatically. For any other language, assemble
+`lang` swaps the entire interface to the course's language — the presets are whatever
+`assets/i18n.json` holds; RTL languages also flip the layout automatically. For any other language, assemble
 prints the key template and you translate it into `"ui"` — the build will not ship a
 half-translated page. Override a single string the same way: `"ui": {"mark": "…"}`.
 
@@ -62,7 +62,10 @@ thing, and never a syllabus node.
 
 ## Chapter anatomy
 
-Required: 1, 5, 8, 9, 10 (objective, worked example, exercise, recap, quiz) plus a visual.
+Required by default: 1, 5, 8, 9, 10 (objective, worked example, exercise, recap, quiz) plus a
+visual. A block the user asked to leave out goes in `meta.json` → `"omit"` and drops out of
+both the chapter and the gate; at `"depth": "quick"` the practice blocks are recommended, not
+required.
 Everything else is content the chapter must *cover*, not a section it must *have* — fold 2, 3, 4, 6
 and 7 into 2–4 `<h2>` sections rather than giving each its own.
 
@@ -85,12 +88,12 @@ Items 1, 9, 10 are fixed at top, bottom, bottom.
 Which of these matter most, and which extra blocks a chapter needs, depends on the subject —
 read `teaching.md` — it maps the shape of each idea to what the chapter must contain.
 
-**At least one visual per chapter is mandatory** (`verify.py` enforces it). Two to five is
+**At least one visual per chapter is mandatory** (`verify.py` enforces it, unless the user omitted visuals). Two to five is
 typical: the mental-model figure early, a `.walk` at the worked example, a comparison figure
 at the trade-off argument. See `visuals.md` for which form fits which idea — reaching for the
 wrong one is most of what makes diagrams useless.
 
-**The floor is 300 words** — below that `verify.py` calls it a stub. That is a tripwire, not a
+**The floor is 300 words** (150 at `quick` depth, 400 at `deep`) — below that `verify.py` calls it a stub. That is a tripwire, not a
 target: aim for the 400–900 in *Make it worth reading*. A chapter that lands under 300 is missing
 a worked example or an explanation; one that lands over 1,200 is two chapters or repeats itself.
 
@@ -214,31 +217,32 @@ error messages, chemical formulas, and legal provisions quoted verbatim. A trans
 message cannot be searched for; a translated statute is no longer the statute.
 
 **Introduce a term in its original form, then gloss it once:**
-`**goroutine** (ฟังก์ชันที่รันแบบขนานภายใต้ Go runtime)`. After that, use the original term.
+`**goroutine** (a one-line gloss in the course language)`. After that, use the original term.
 Add every glossed term to the appendix glossary.
 
 **Write it properly, not translated-sounding.** Use the register a good teacher in that language
 would use — the natural technical vocabulary of that language, its own sentence rhythm, its own
-politeness level. Do not calque English structure. If a language has an established local term
-(Thai *ตัวแปร* for variable), use it and give the English alongside on first use, because that
-is what the learner will meet in documentation.
+politeness level. Do not calque English structure. If the language has an established local
+term for a concept, use it and give the original alongside on first use, because that is what
+the learner will meet in documentation.
 
-**Mark up mixed-language content.** Put `lang="ja"` on the span or block when a passage is in a
+**Mark up mixed-language content.** Put `lang="<code>"` on the span or block when a passage is in a
 language other than the page's, so pronunciation, font selection and screen readers behave.
 Use `<ruby>` for readings. In RTL courses, put `dir="ltr"` on any block whose content is
 inherently left-to-right and is not already covered (code and formulas are handled for you).
 
 ## Working rhythm
 
-One chapter per response. After writing `parts/NN-*.html`:
+One chapter per response. After writing `parts/NN-*.html`, check that one file:
 
 ```bash
-python3 $SKILL/scripts/assemble.py <course-dir> \
-  && python3 $SKILL/scripts/verify.py <course-dir> --wip
+python3 $SKILL/scripts/verify.py <course-dir> --part parts/NN-slug.html
 ```
 
 Fix what it reports before starting the next chapter — thin chapters compound, and a broken
-tag at chapter 3 is trivial to find now and miserable at chapter 18.
+tag at chapter 3 is trivial to find now and miserable at chapter 18. Every few chapters, run
+the whole thing (`assemble.py` then `verify.py --wip`) to catch cross-chapter problems such as
+a duplicated SVG id or `data-id`.
 
 Before hand-over, run `verify.py` **without** `--wip`, open `index.html` in the browser,
 screenshot it, and click one quiz answer and one mark-complete button. Then send the file

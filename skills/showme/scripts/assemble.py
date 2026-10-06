@@ -12,7 +12,7 @@ meta.json
       "deck_id":   "acme-seriesa",          // namespaces "resume where you were"
       "title":     "…",                     // browser tab + slide footer
       "subtitle":  "…",
-      "lang":      "th",                    // deck chrome language
+      "lang":      "en",                    // deck chrome language — the deck's own language
       "dir":       "rtl",                   // optional, inferred from lang
       "ratio":     "16:9",                  // 16:9 (default) | 16:10 | 4:3 | "1600x900"
       "theme": {
@@ -24,7 +24,10 @@ meta.json
       "minutes":  20,                       // the slot — drives the gate and the pace clock
       "logo":     "brand/logo.svg",         // optional, inlined into the footer and title slide
       "advance":  20,                       // optional auto-advance seconds per slide (kiosk,
-      "loop":     true                      //   Pecha Kucha); "loop" restarts at the end
+      "loop":     true,                     //   Pecha Kucha); "loop" restarts at the end
+      "delivery": "live",                   // live | remote | read | kiosk — tunes verify.py
+      "density":  "normal",                 // optional: sparse | normal | dense
+      "omit":     ["notes"]                 // optional: what the user asked to leave out
     }
 
 `fonts.url` is the ONE thing that can break offline use — the deck will need the network the
@@ -34,7 +37,7 @@ import json, sys, re, pathlib
 
 RTL = {"ar", "he", "fa", "ur", "ps", "sd", "yi", "dv", "ckb"}
 RATIOS = {"16:9": (1280, 720), "16:10": (1280, 800), "4:3": (1024, 768), "3:2": (1200, 800)}
-FALLBACK = ('"Noto Sans Thai","IBM Plex Sans Thai",Sarabun,"Hiragino Sans","Yu Gothic UI",'
+FALLBACK = ('"Sukhumvit Set","Noto Sans Thai","IBM Plex Sans Thai","Leelawadee UI",Sarabun,"Hiragino Sans","Yu Gothic UI",'
             '"Noto Sans JP","PingFang SC","Microsoft YaHei","Apple SD Gothic Neo","Malgun Gothic",'
             '"Noto Sans Arabic","Noto Sans Hebrew","Noto Sans Devanagari","Noto Color Emoji"')
 HERE = pathlib.Path(__file__).resolve().parent.parent

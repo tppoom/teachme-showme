@@ -2,13 +2,24 @@
 """Quality gate for a built ShowMe deck.
 
 Usage:  python3 verify.py <deck-dir> [--wip]
+        python3 verify.py <deck-dir> --part parts/02-evidence.html
 
 Where TeachMe's gate catches chapters that are too thin, this one catches slides that are
 too full — the way decks actually fail. Every FAIL means move something into the speaker
 notes or the appendix, split the slide, or cut it. It never means relax the check.
 
---wip = mid-build run: slides the storyline promises but that aren't written yet are
-        warnings instead of failures. Never pass it on the final check.
+--wip  = mid-build run: slides the storyline promises but that aren't written yet are
+         warnings instead of failures. Never pass it on the final check.
+--part = check one part file on its own, without assembling. Safe while other batches are
+         being written in parallel (implies --wip, skips deck-wide checks).
+
+meta.json tunes the gate to how the deck will be used:
+  "delivery": "live" (default) | "remote" | "read" | "kiosk"
+      read   — emailed / read alone: slides may carry ~1.8x the words, notes become prose
+      remote — over a video call: same ceilings, warns on builds that need a pointer
+      kiosk  — unattended loop: notes not required (same as "advance" + "loop")
+  "density": "sparse" | "normal" | "dense"   — overrides the ceiling multiplier directly
+  "omit": ["notes", "title", "closing"]      — what the USER asked to leave out
 """
 import sys, re, html, pathlib
 from collections import Counter
@@ -68,18 +79,54 @@ def layout_of(cls):
         if re.search(rf"\b{k}\b", cls): return k
     return "content"
 
+DELIVERY = {"live": "normal", "remote": "normal", "read": "dense", "kiosk": "sparse"}
+DENSITY = {"sparse": 0.8, "normal": 1.0, "dense": 1.8}
+OMITTABLE = {"notes", "title", "closing"}
+
 def main():
+    if len(sys.argv) < 2 or sys.argv[1].startswith("-"): sys.exit(__doc__)
     d = pathlib.Path(sys.argv[1]).resolve()
-    wip = "--wip" in sys.argv
-    idx = d / "index.html"
-    if not idx.exists(): sys.exit(f"FAIL: {idx} not built — run assemble.py first")
-    doc = idx.read_text(encoding="utf-8")
+    part_file = None
+    if "--part" in sys.argv:
+        i = sys.argv.index("--part") + 1
+        if i >= len(sys.argv) or sys.argv[i].startswith("-"):
+            sys.exit("FAIL: --part needs a file, e.g. --part parts/03-slug.html")
+        part_file = pathlib.Path(sys.argv[i])
+    wip = "--wip" in sys.argv or part_file is not None
 
     import json
     mf = d / "meta.json"
     meta = json.loads(mf.read_text(encoding="utf-8")) if mf.exists() else {}
+    delivery = str(meta.get("delivery", "live")).lower()
+    if delivery not in DELIVERY: sys.exit(f'FAIL: meta.json delivery "{delivery}" is not one of {", ".join(DELIVERY)}')
+    density = str(meta.get("density", DELIVERY[delivery])).lower()
+    if density not in DENSITY: sys.exit(f'FAIL: meta.json density "{density}" is not one of {", ".join(DENSITY)}')
+    mult = DENSITY[density]
+    ceil_of = {key: round(v * mult) for key, v in CEIL.items()}
+    max_bullets = MAX_BULLETS + (2 if density == "dense" else 0)
+    max_bullet_words = round(MAX_BULLET_WORDS * mult)
+    max_code = 12 if density != "dense" else 18
+    note_max = NOTE_MAX * (2 if delivery == "read" else 1)
+    omit = {str(x).lower() for x in meta.get("omit", [])}
+    bad = omit - OMITTABLE
+    if bad: sys.exit(f"FAIL: meta.json omit has unknown item(s) {sorted(bad)} — allowed: {sorted(OMITTABLE)}")
     advance = meta.get("advance") or 0
-    unattended = bool(advance and meta.get("loop"))   # a kiosk loop: nobody is there to speak
+    # a kiosk loop: nobody is there to speak, so notes are not the deliverable
+    unattended = bool(advance and meta.get("loop")) or delivery == "kiosk"
+    need_notes = not unattended and "notes" not in omit
+    if delivery == "kiosk" and not (advance and meta.get("loop")):
+        warn('delivery is "kiosk" but meta.json has no "advance" + "loop": true — '
+             'nobody is there to press next, so the deck will sit on slide 1')
+
+    if part_file is not None:
+        if not part_file.is_absolute():
+            part_file = (d / part_file) if (d / part_file).exists() else part_file.resolve()
+        if not part_file.exists(): sys.exit(f"FAIL: {part_file} not found")
+        doc = part_file.read_text(encoding="utf-8")
+    else:
+        idx = d / "index.html"
+        if not idx.exists(): sys.exit(f"FAIL: {idx} not built — run assemble.py first")
+        doc = idx.read_text(encoding="utf-8")
 
     # ---- 1. self-contained ---------------------------------------------------
     for pat, msg in [(r"<script[^>]+\bsrc=", "external <script src>"),
@@ -137,29 +184,29 @@ def main():
         nt = re.search(r'<div class="notes">([\s\S]*?)</div>\s*(?=</section>)', c)
         body = re.sub(r'<div class="notes">[\s\S]*?</div>\s*(?=</section>)', "", c)
         nw = wc(text_of(nt.group(1))) if nt else 0
-        if lay not in ("title",) and not unattended:
+        if lay not in ("title",) and need_notes:
             if not nt: fail(f"{tag} has no speaker notes — that is where the detail is supposed to live")
             elif nw < NOTE_MIN:
                 fail(f"{tag} notes are {nw} words — say what you would actually say (aim {NOTE_MIN}-{NOTE_MAX})")
-            elif nw > NOTE_MAX: warn(f"{tag} notes are {nw} words — long enough that you will not read them live")
+            elif nw > note_max: warn(f"{tag} notes are {nw} words — long enough that you will not read them live")
 
         # chart data is drawn, not read, and code is measured in lines — neither is prose
         prose = re.sub(r'<div class="chart"[\s\S]*?</table>', " ", body)
         prose = re.sub(r"<pre[\s\S]*?</pre>", " ", prose)
         w = wc(text_of(prose))
-        ceil = CEIL.get(lay, CEIL["_default"])
+        ceil = ceil_of.get(lay, ceil_of["_default"])
         if w > ceil:
             fail(f"{tag} has {w} words on the slide (ceiling {ceil} for {lay}) — "
                  f"move it to the notes, split the slide, or cut it")
 
         for ul in re.findall(r'<ul class="pts">[\s\S]*?</ul>', body):
             lis = re.findall(r"<li[\s\S]*?</li>", ul)
-            if len(lis) > MAX_BULLETS:
-                fail(f"{tag} has {len(lis)} bullets (max {MAX_BULLETS}) — the room stops reading after five")
+            if len(lis) > max_bullets:
+                fail(f"{tag} has {len(lis)} bullets (max {max_bullets}) — past that nobody reads them")
             for li in lis:
                 lw = wc(text_of(li))
-                if lw > MAX_BULLET_WORDS:
-                    fail(f"{tag} a bullet is {lw} words (max {MAX_BULLET_WORDS}) — bullets are labels, not sentences")
+                if lw > max_bullet_words:
+                    fail(f"{tag} a bullet is {lw} words (max {max_bullet_words}) — bullets are labels, not sentences")
 
         for ch in re.findall(r'<div class="chart"[\s\S]*?</div>\s*(?=<div class="(?:take|notes)"|</section>|<div class="cols)', c):
             if "<table" not in ch: fail(f"{tag} a .chart has no <table> of data to draw from")
@@ -184,10 +231,15 @@ def main():
 
         for pre in re.findall(r"<pre[\s\S]*?</pre>", body):
             lines = len(text_of(pre).strip().split("\n"))
-            if lines > 12:
-                fail(f"{tag} a code block is {lines} lines — nobody reads past about 12 on a slide")
-        if len(re.findall(r"data-build", body)) > 5:
+            if lines > max_code:
+                fail(f"{tag} a code block is {lines} lines — nobody reads past about {max_code} on a slide")
+        n_build = len(re.findall(r"data-build", body))
+        if n_build > 5:
             warn(f"{tag} has more than 5 build steps — that is more than one slide")
+        elif delivery == "remote" and n_build > 3:
+            warn(f"{tag} has {n_build} build steps — on a video call nobody sees you point; keep builds to 3")
+        elif delivery == "read" and n_build:
+            notes.append(f"{tag} uses builds, but a deck that is read shows every step at once")
 
         sig = shape_of(lay, body); shapes.append(sig)
         run = run + 1 if sig == prev_sig else 1
@@ -198,22 +250,25 @@ def main():
 
     # ---- 4. deck shape -------------------------------------------------------
     n = len(chunks)
-    if layouts and layouts[0] != "title": fail("the deck does not open on a title slide")
-    if n > 6 and "closing" not in layouts:
+    whole = part_file is None
+    if whole and "title" not in omit and layouts and layouts[0] != "title":
+        fail("the deck does not open on a title slide")
+    if whole and "closing" not in omit and n > 6 and "closing" not in layouts:
         fail("the deck has no closing slide — the last thirty seconds are where the ask goes")
-    if main_n > 10 and "section" not in layouts:
+    if whole and main_n > 10 and "section" not in layouts:
         warn(f"{main_n} main slides and no section dividers — the audience has nowhere to breathe")
     for shp, k in Counter(shapes).most_common(1):
-        if n >= 8 and k / n > MAX_SHARE and shp not in ("title", "section", "appendix"):
+        if whole and n >= 8 and k / n > MAX_SHARE and shp not in ("title", "section", "appendix"):
             warn(f"{int(k/n*100)}% of the deck is {shp} slides — vary the shape of the evidence")
     dupes = {i for i in ids if ids.count(i) > 1 and not i.startswith("#")}
     if dupes: fail("duplicate slide ids: " + ", ".join(sorted(dupes)))
-    for p in promised:
+    for p in (promised if whole else []):
         if p not in ids:
             (warn if wip else fail)(f"STORYLINE.md promises {p} but it is not in the deck")
 
-    mins = meta.get("minutes")
-    if advance and not meta.get("loop"):
+    mins = meta.get("minutes") if whole else None
+    if not whole: pass
+    elif advance and not meta.get("loop"):
         auto = sum(float(re.search(r'data-advance="([\d.]+)"', c.split(">", 1)[0]).group(1))
                    if 'data-advance="' in c.split(">", 1)[0] else advance
                    for c, lay in zip(chunks, layouts) if "appendix" not in c.split(">", 1)[0]) / 60
@@ -227,9 +282,13 @@ def main():
                  f"{int(lo)}-{int(hi)}. Cut, or move slides to the appendix")
 
     # ---- 5. laziness ---------------------------------------------------------
-    plain = text_of(doc)
+    # Marker words (TODO, FIXME…) are author shorthand, so they only count in capitals — the
+    # ordinary word "placeholder" in a sentence about placeholders is prose, not a leftover.
+    # Code is quoted material: a real repo excerpt may legitimately contain "# TODO".
+    plain = text_of(re.sub(r"<(pre|code)\b[\s\S]*?</\1>", " ", doc, flags=re.I))
     for pat in LAZY:
-        for m in re.finditer(pat, plain, re.I):
+        flags = 0 if re.fullmatch(r"\\b[A-Z+]+:?(?:\\b)?", pat) else re.I
+        for m in re.finditer(pat, plain, flags):
             fail(f"placeholder text {m.group(0)!r} at …{plain[max(0,m.start()-50):m.end()+30].strip()[:100]}…")
 
     # ---- 6. structure --------------------------------------------------------
@@ -243,6 +302,9 @@ def main():
     lang = (re.search(r'<html[^>]*\blang="([^"]*)"', doc) or [None, "?"])[1]
     n_chart = len(re.findall(r'class="chart"', doc))
     n_note  = len(re.findall(r'class="notes"', doc))
+    prof = f"delivery={delivery} density={density}" + (f" omit={','.join(sorted(omit))}" if omit else "")
+    if not whole: print(f"part check: {part_file.name}   ({prof})")
+    else: print(prof)
     print(f"{n} slides ({main_n} main + {apx_n} appendix)   lang={lang}   "
           f"charts: {n_chart}   slides with notes: {n_note}/{n}   size: {len(doc)/1024:.0f} KB")
     if spine: print(f"spine: {spine[:96]}")
@@ -254,6 +316,8 @@ def main():
         print(f"\n{len(fails)} failure(s). Fix by moving content to the notes or the appendix, "
               f"splitting slides, or cutting — not by relaxing the gate.")
         sys.exit(1)
+    if not whole:
+        print("\nPASS (this batch) — assemble + full verify once every batch is written"); return
     print("\nPASS (work in progress)" if wip else "\nPASS — the deck is presentable.")
 
 if __name__ == "__main__":
