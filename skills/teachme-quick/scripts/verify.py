@@ -276,7 +276,9 @@ def main():
             warn(f"{tag} has a figure or table but no worked example (.eg, code, .cmp) — show one case worked through")
 
         # --- length & padding ---
-        w_read = words(re.sub(r'<div class="quiz">[\s\S]*$', "", body))
+        # the budget is for prose: code and its output are read differently and are not padding
+        w_read = words(re.sub(r"<pre\b[\s\S]*?</pre>|<div class=\"code-out\">[\s\S]*?</div>", " ",
+                              re.sub(r'<div class="quiz">[\s\S]*$', "", body)))
         if w_read < floor:
             warn(f"{tag} is only {w_read} words — check the example is worked through, not just named")
         if w_read > ceiling:
@@ -297,6 +299,16 @@ def main():
                  (f" (+{len(hits)-4} more)" if len(hits) > 4 else "") + " — delete and state the point")
 
         # --- one language ---
+        if lang in ("th", "lo", "my", "km"):
+            dots = re.findall(r"[\u0e00-\u0e7f\u0e80-\u0eff]\.(?=\s|<|$)", text_of(prose))
+            if dots:
+                warn(f"{tag} {len(dots)} English full stop(s) after {lang} text — the script does not use them; delete")
+        if lang not in ("en",) and lang.isalpha():
+            for lab in re.findall(r'<(?:div class="quiz-h"|span class="eg-h"|div class="ct"|h5)[^>]*>([\s\S]*?)</(?:div|span|h5)>', body):
+                lt = text_of(lab).strip()
+                if lt and re.fullmatch(r"[A-Za-z][A-Za-z '’!?.:,-]{2,40}", lt) and lt.lower() not in ("api", "json", "git"):
+                    warn(f"{tag} label {lt!r} is in English but the course is lang={lang} — translate it "
+                         f"(an empty <div class=\"quiz-h\"></div> gets the interface's own word)")
         if lang in ("th", "ja", "zh", "ko", "ar", "he", "ru", "hi", "el", "uk", "fa"):
             for p in re.findall(r"<p[^>]*>([\s\S]*?)</p>", prose):
                 t = text_of(p)
@@ -344,14 +356,17 @@ def main():
             (warn if t == "p" else fail)(f"<{t}> open/close mismatch: {o} open vs {cl} close")
 
     # ---- 6. report -----------------------------------------------------------
-    tw = sum(words(re.sub(r'<div class="quiz">[\s\S]*$', "", c.split('class="ch-body"', 1)[-1])) for c in chaps)
+    def prose_words(c):
+        b = re.sub(r'<div class="quiz">[\s\S]*$', "", c.split('class="ch-body"', 1)[-1])
+        return words(re.sub(r"<pre\b[\s\S]*?</pre>|<div class=\"code-out\">[\s\S]*?</div>", " ", b))
+    tw = sum(prose_words(c) for c in chaps)
     n_eg = len(re.findall(r'class="eg"', doc))
     n_code = len(re.findall(r'class="code"', doc))
     n_viz = len(re.findall(r'<figure[^>]*class="(?:viz|diagram)', doc)) + len(re.findall(r'class="walk"', doc))
     n_q = len(re.findall(r'<div class="q"[ >]', doc))
     prof = f"depth={depth}" + (f" omit={','.join(sorted(omit))}" if omit else "")
     if part_file is not None: print(f"part: {part_file.name}")
-    print(f"{prof}   lang={lang}   chapters: {len(chaps)}   reading words: {tw:,} (~{max(1, round(tw/190))} min)   "
+    print(f"{prof}   lang={lang}   chapters: {len(chaps)}   prose words: {tw:,}   "
           f"worked examples: {n_eg}   code: {n_code}   visuals: {n_viz}   quiz questions: {n_q}")
     for w in warns: print("WARN  " + w)
     for f in fails: print("FAIL  " + f)

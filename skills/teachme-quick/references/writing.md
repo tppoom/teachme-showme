@@ -96,6 +96,9 @@ Delete on sight. The gate warns on many of these.
   not English sentence structure in another language. In Thai, prefer short sentences, use
   the common Thai term where one exists and give the English once in brackets, and don't
   open paragraphs with stacked connectors (นอกจากนี้ / อย่างไรก็ตาม / ดังนั้น) by habit.
+- **Every label in the course language** — example titles, box titles, `.cmp` headings. Leave
+  `.quiz-h` empty; the page fills it. Thai, Lao, Burmese and Khmer take no full stop: the
+  English examples end sentences with `.`, a Thai course does not.
 
 ## Markup traps that show up as bugs
 

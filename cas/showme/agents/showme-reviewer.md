@@ -38,8 +38,9 @@ prompt is that skill's absolute path.
    - **Look** — no inline colours or ad-hoc styles fighting the theme, and none of the
      generated-deck tells (`references/design.md`); the look matches what the user asked for
      in `BRIEF.md`
-4. **Look at it** if a browser tool is available (Playwright or similar): open `index.html`,
-   press `O` for the grid — monotony shows there first — then step through three slides,
+4. **Look at it**: `node SKILL_DIR/scripts/look.js DECK_DIR` writes every slide and
+   `grid.png` and prints a `LOOK` line for each layout bug. Fix every one in `parts/`, then
+   Read `grid.png` — monotony shows there first — and three slides,
    one with a chart, and check nothing is clipped, overlapping, wrapping mid-number or
    auto-shrunk to fit.
 5. Re-run the gate after your edits until it passes.

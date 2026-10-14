@@ -180,8 +180,12 @@ python3 $SKILL/scripts/verify.py <dir> --part parts/NN-slug.html
 python3 $SKILL/scripts/assemble.py <dir>
 python3 $SKILL/scripts/verify.py  <dir>          # final gate — no --wip
 ```
-Then review as the audience: open `index.html` (Playwright or similar, if available), press
-`O` for the overview grid — a deck that looks monotonous as a grid *is* monotonous — step
+Then look at it — the gate cannot see layout:
+```bash
+node $SKILL/scripts/look.js <dir>      # every slide + grid.png; spills, auto-shrunk slides, tiny text
+```
+Fix every `LOOK` line in `parts/`. Then review as the audience: open `grid.png` from it (or
+press `O` in the deck) — a deck that looks monotonous as a grid *is* monotonous — step
 through two or three slides, and check one chart rendered. Look for anything clipped,
 overlapping or wrapping badly, and for any of the generated-deck tells. Read only the
 headlines in order: they should tell the whole argument. Then ask: is this what the user
@@ -244,7 +248,7 @@ and code left as they are.
 | Every layout as a working slide | `assets/layouts.html` |
 | Fifteen looks + token contract | `assets/themes.json` |
 | Scaffold | `scripts/new.py <dir> --title … --theme … --minutes … [--delivery …]` |
-| Check one batch / build / gate | `verify.py --part`, `assemble.py`, `verify.py` |
+| Check one batch / build / gate / look | `verify.py --part`, `assemble.py`, `verify.py`, `node look.js` |
 | Chart from CSV, values untouched | `scripts/chart-table.py data.csv --type …` |
 | Inline an image | `scripts/embed-image.py <img> "alt"` |
 

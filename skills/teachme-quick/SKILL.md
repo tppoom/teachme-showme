@@ -101,9 +101,13 @@ Fix every FAIL and WARN before moving on.
 python3 $SKILL/scripts/assemble.py <dir>
 python3 $SKILL/scripts/verify.py  <dir>
 ```
-If you can open a browser (Playwright or similar), look at the cover and one chapter at
-desktop and phone width, in light and dark. Fix anything that looks wrong in `parts/` —
-`index.html` is generated.
+Then look at it — the gate cannot see layout:
+```bash
+node $SKILL/scripts/look.js <dir>      # screenshots + sideways scroll, tiny diagram text, JS errors
+```
+Fix every `LOOK` line in `parts/`, and open two or three of the screenshots it wrote (a phone
+one included). If Playwright is missing, say the visual check was skipped. `index.html` is
+generated — never edit it.
 
 ### 5 · Hand over
 Send the file (`SendUserFile` where it exists) or give the absolute path. Report in two or
@@ -143,5 +147,5 @@ never invent a source.
 | Which visual for which idea; SVG rules | `references/visuals.md` |
 | Every block's markup | `assets/blocks.html` (grep it) |
 | The target style, one whole chapter | `assets/examples/example-chapter.html` |
-| Scaffold · check one chapter · build · gate | `new.py` · `verify.py --part` · `assemble.py` · `verify.py` |
+| Scaffold · check one chapter · build · gate · look | `new.py` · `verify.py --part` · `assemble.py` · `verify.py` · `node look.js` |
 | Inline an image | `scripts/embed-image.py <img> "caption"` |

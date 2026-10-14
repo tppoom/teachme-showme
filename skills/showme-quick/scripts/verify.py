@@ -216,7 +216,8 @@ def main():
             if rows > 7: warn(f"{tag} a chart has {rows-1} series/rows — beyond ~5 it is a table with extra steps")
         if 'class="chart"' in c and 'class="take"' not in c and lay != "appendix":
             warn(f"{tag} has a chart but no .take line — say what the data proves")
-        if ('class="chart"' in c or "<table" in body) and 'class="src"' not in c:
+        has_numbers = 'class="chart"' in c or any(re.search(r"\d", text_of(t)) for t in re.findall(r"<table[\s\S]*?</table>", body))
+        if has_numbers and 'class="src"' not in c:
             warn(f"{tag} shows numbers with no <p class=\"src\"> line — say where they came "
                  f"from and what they exclude, before someone in the room asks")
         for pr in re.findall(r'<div class="pr[^"]*"[\s\S]*?</div>\s*</div>', body):

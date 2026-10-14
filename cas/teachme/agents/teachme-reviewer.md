@@ -37,9 +37,11 @@ your prompt is that skill's absolute path.
      an example without real output or real numbers
    - padding: filler sentences, restated paragraphs, boxes that repeat the prose — cut them
    - every syllabus chapter and coverage item actually taught where it says
-4. **Look at it** if a browser tool is available (Playwright or similar): open `index.html`,
-   check the cover, two chapters, a figure in light and dark, one quiz answer and one *Mark
-   complete*.
+4. **Look at it**: `node SKILL_DIR/scripts/look.js COURSE_DIR` writes desktop and phone
+   screenshots and prints a `LOOK` line for each layout bug (sideways scroll, unreadable
+   diagram text, JS errors). Fix every one in `parts/`, then Read two or three of the
+   screenshots, a phone one included. If it says Playwright is missing, report the visual
+   check as skipped.
 5. Re-run the gate after your edits until it passes.
 
 Edit surgically. When a chapter needs more than about a third rewritten, leave it and list it

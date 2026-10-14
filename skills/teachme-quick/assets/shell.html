@@ -163,7 +163,8 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--sunken);border:1px
 .ch-body hr{border:none;border-top:1px solid var(--line);margin:56px 0}
 .ch-body>p code,li code,td code,h2 code,h3 code,h4 code,.callout code,summary code{
   font-family:var(--mono);font-size:.875em;background:var(--sunken);border:1px solid var(--line);
-  padding:1.5px 6px;border-radius:5px;color:var(--fg);white-space:nowrap}
+  padding:1.5px 6px;border-radius:5px;color:var(--fg);white-space:normal;overflow-wrap:anywhere;
+  -webkit-box-decoration-break:clone;box-decoration-break:clone}
 
 /* ---------- objective ---------- */
 .objective{background:var(--accent-soft);border-radius:var(--r);padding:22px 26px;margin:0 0 44px;
@@ -948,7 +949,7 @@ $$(".code pre code").forEach(function(c){
     var hd=document.createElement("div"); hd.className="code-hd";
     hd.innerHTML='<div class="dots"><i></i><i></i><i></i></div>'+
       '<span class="code-fn">'+esc(box.dataset.file||"")+'</span>'+
-      (lang?'<span class="code-lg">'+esc(lang)+'</span>':'')+
+      (lang&&!/^(text|txt|output|plain|none)$/i.test(lang)?'<span class="code-lg">'+esc(lang)+'</span>':'')+
       '<button class="copy" title="copy">'+UI.copy+'</button>';
     box.insertBefore(hd,box.firstChild);
   }
@@ -972,6 +973,7 @@ function shuffle(list){for(var i=list.length-1;i>0;i--){var j=Math.floor(Math.ra
 $$(".quiz").forEach(function(qz){
   var qs=$$(".q",qz), total=qs.length, got=0, done=0, resets=[];
   var hd=$(".quiz-h",qz);
+  if(hd&&!hd.textContent.trim())hd.innerHTML="<span>"+esc(UI.quiz)+"</span>";
   var sc=hd&&$(".score",hd);
   if(hd&&!sc){sc=document.createElement("span");sc.className="score";hd.appendChild(sc)}
   var again=document.createElement("button"); again.className="quiz-again"; again.type="button";
@@ -1233,6 +1235,14 @@ document.addEventListener("keydown",function(e){
   else if(e.key==="k"||e.key==="K"){if(i>0)chapters[i-1].scrollIntoView({behavior:"smooth"})}
   else if(e.key==="m"||e.key==="M"){if(cur){var mk=$(".mark",cur);if(mk)mk.click()}}
   else if(e.key==="t"||e.key==="T"){$("#themeBtn").click()}
+});
+
+/* ---------------- diagrams on phones ----------------
+   A 640-wide drawing squeezed into a 340px column renders its labels at about 6px. Below the
+   drawing's natural width, keep it at ~85% of that width and let the figure scroll sideways. */
+$$("figure.viz svg[viewBox],figure.diagram svg[viewBox]").forEach(function(sv){
+  var vb=(sv.getAttribute("viewBox")||"").trim().split(/[\s,]+/), w=parseFloat(vb[2]);
+  if(w>360)sv.style.minWidth=Math.round(Math.min(w,700)*.85)+"px";
 });
 
 /* ---------------- shared SVG arrowheads ---------------- */
