@@ -84,13 +84,17 @@ Delete on sight. The gate warns on many of these.
 ## Prose
 
 - **Second person, present tense, plain words.** "You call `fetch` and get a promise back."
-- **Bold** only the term being defined, once.
+- **Bold** only the term being defined, once — and in a table, the one figure the reader should
+  look at.
 - **Define a term where it is first used**, in one clause. Original term first when the course
   is not in English: `**closure** (ฟังก์ชันที่จำตัวแปรรอบตัวไว้ได้)` — then keep using the original.
 - Bullets only for genuinely parallel items (≤ 6). A list that is secretly a paragraph is a
   paragraph.
-- A table when items share attributes. A figure when the point is a shape. Prose when the
-  point is a *because*.
+- A table when items share attributes — at most 4 short columns, or it scrolls sideways on a
+  phone. Define a term before the table that uses it as a header. A figure when the point is a
+  shape. Prose when the point is a *because*. A diagram that flows left to right stacks
+  vertically on a phone; keep it to 3–5 boxes.
+- One closing line that bridges to the next chapter is fine; a paragraph previewing it is not.
 - Never translate code, commands, file paths, error messages or product names.
 - Write the language natively — its own rhythm, register and established technical terms —
   not English sentence structure in another language. In Thai, prefer short sentences, use
@@ -151,3 +155,9 @@ questions — never copy past papers.
 Date anything that changes (laws, prices, versions, guidelines). Cite what can be checked;
 never invent a statistic, case or quote — say the source needs checking instead. For health,
 law and money, teach how things work and name who to consult; don't advise on a specific case.
+
+**No sources and no way to check?** Then current legal limits, official rates and fees are not
+yours to state — they change by notice and memory is out of date. Teach the mechanism with a
+figure labelled as an example ("สมมติดอกเบี้ย 16% ต่อปี"), compute every number from it, and
+tell the reader exactly where the real value is (their statement, the contract, the
+regulator's site).

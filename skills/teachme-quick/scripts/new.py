@@ -10,13 +10,14 @@ Safe to re-run: it never overwrites a file that already exists.
 """
 import json, sys, re, pathlib
 
-SCRIPTS = pathlib.Path(__file__).resolve().parent
+SCRIPTS = pathlib.Path(__file__).absolute().parent   # as invoked, not the symlink target
 
 def arg(flag, default=None):
     return sys.argv[sys.argv.index(flag) + 1] if flag in sys.argv else default
 
 def main():
-    if len(sys.argv) < 2 or sys.argv[1].startswith("-"): sys.exit(__doc__)
+    if len(sys.argv) < 2 or sys.argv[1] in ("-h", "--help"): print(__doc__); sys.exit(0 if len(sys.argv) > 1 else 2)
+    if sys.argv[1].startswith("-"): sys.exit(__doc__)
     d = pathlib.Path(sys.argv[1]).expanduser().resolve()
     title = arg("--title") or d.name.replace("-", " ").title()
     lang = arg("--lang") or "en"
@@ -71,8 +72,8 @@ def main():
     print("  created: " + (", ".join(made) if made else "nothing new — files already existed"))
     print(f"  next:    fill in SYLLABUS.md, then write parts/01-<slug>.html")
     print(f"  check:   python3 {SCRIPTS}/verify.py {d} --part parts/01-<slug>.html")
-    print(f"  build:   python3 {SCRIPTS}/assemble.py {d} && "
-          f"python3 {SCRIPTS}/verify.py {d} --wip")
+    print(f"  build:   python3 {SCRIPTS}/assemble.py {d} && python3 {SCRIPTS}/verify.py {d}")
+    print(f"  look:    node {SCRIPTS}/look.js {d}")
 
 if __name__ == "__main__":
     main()

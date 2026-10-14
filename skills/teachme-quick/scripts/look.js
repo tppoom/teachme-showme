@@ -4,9 +4,11 @@
 
    Usage:  node look.js <course-dir | index.html> [out-dir]
 
-   Writes desktop (light) and phone (dark) screenshots of the cover and every chapter to
-   out-dir (default <course-dir>/.look/), and prints one line per problem:
+   Writes a desktop (light) screenshot of the top of every chapter and a phone (dark)
+   screenshot of every WHOLE chapter to out-dir (default <course-dir>/.look/), and prints one
+   line per problem:
      - the page scrolls sideways on a phone, and which element causes it
+     - a table a phone reader has to scroll sideways to read
      - diagram text rendered below 9px (unreadable)
      - JavaScript errors
    Exit code 1 when it finds a problem. Needs Playwright (npm i -g playwright, or any
@@ -42,7 +44,11 @@ function load() {
       }, i);
       await page.waitForTimeout(150);
       const f = path.join(out, `${name}-${i < 0 ? "cover" : "ch" + (i + 1)}.png`);
-      await page.screenshot({ path: f }); shots.push(f);
+      if (name === "phone" && i >= 0) {
+        /* the whole chapter, so tables and figures below the fold are seen too */
+        await page.locator(".chapter").nth(i).screenshot({ path: f });
+      } else await page.screenshot({ path: f });
+      shots.push(f);
     }
     const r = await page.evaluate(() => {
       const res = { over: [], tiny: [] }, W = innerWidth;
@@ -53,6 +59,10 @@ function load() {
             res.over.push((e.closest(".chapter") || {}).id + " <" + e.tagName.toLowerCase() + "> " + (e.textContent || "").trim().slice(0, 50));
         });
       }
+      if (W < 500) document.querySelectorAll(".tw").forEach(t => {
+        if (t.scrollWidth > t.clientWidth + 4)
+          res.wide = (res.wide || []).concat((t.closest(".chapter") || {}).id + " (" + t.querySelectorAll("tr:first-child > *").length + " columns)");
+      });
       document.querySelectorAll("figure svg text").forEach(t => {
         const h = t.getBoundingClientRect().height;
         if (h && h < 9) res.tiny.push((t.closest(".chapter") || {}).id + ": " + t.textContent.trim().slice(0, 30));
@@ -60,6 +70,7 @@ function load() {
       return res;
     });
     [...new Set(r.over)].slice(0, 6).forEach(o => problems.push(`[${name}] page scrolls sideways — widened by ${o}`));
+    if (r.wide) problems.push(`[${name}] table(s) scroll sideways on a phone: ${r.wide.join(", ")} — readers miss the right-hand columns; use ≤4 short columns or split the table`);
     if (r.tiny.length) problems.push(`[${name}] ${r.tiny.length} diagram label(s) render under 9px, e.g. ${r.tiny.slice(0, 3).join(" | ")} — draw fewer, bigger labels`);
     await page.close();
   }

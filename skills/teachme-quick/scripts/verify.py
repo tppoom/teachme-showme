@@ -300,7 +300,8 @@ def main():
 
         # --- one language ---
         if lang in ("th", "lo", "my", "km"):
-            dots = re.findall(r"[\u0e00-\u0e7f\u0e80-\u0eff]\.(?=\s|<|$)", text_of(prose))
+            # a dot after a 1-3 letter run is an abbreviation (ก.ย., พ.ศ., ธปท.), which is correct
+            dots = re.findall(r"(?<![\u0e00-\u0eff.])[\u0e00-\u0eff]{4,}\.(?=\s|<|$)", text_of(prose))
             if dots:
                 warn(f"{tag} {len(dots)} English full stop(s) after {lang} text — the script does not use them; delete")
         if lang not in ("en",) and lang.isalpha():
