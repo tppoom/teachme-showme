@@ -95,6 +95,10 @@ Delete on sight. The gate warns on many of these.
   shape. Prose when the point is a *because*. A diagram that flows left to right stacks
   vertically on a phone; keep it to 3–5 boxes.
 - One closing line that bridges to the next chapter is fine; a paragraph previewing it is not.
+- Never say "left" / "right" / "above" about a `.cmp`, `.flow` or table: on a phone they stack.
+  Name the box instead ("the http:// box").
+- A URL, a filename or one line someone sees goes in inline `<code>` (it wraps). A `.code`
+  block is for real code or output of several lines.
 - Never translate code, commands, file paths, error messages or product names.
 - Write the language natively — its own rhythm, register and established technical terms —
   not English sentence structure in another language. In Thai, prefer short sentences, use
@@ -102,7 +106,8 @@ Delete on sight. The gate warns on many of these.
   open paragraphs with stacked connectors (นอกจากนี้ / อย่างไรก็ตาม / ดังนั้น) by habit.
 - **Every label in the course language** — example titles, box titles, `.cmp` headings. Leave
   `.quiz-h` empty; the page fills it. Thai, Lao, Burmese and Khmer take no full stop: the
-  English examples end sentences with `.`, a Thai course does not.
+  English examples end sentences with `.`, a Thai course does not: end a Thai sentence with a
+  space, or start a new paragraph.
 
 ## Markup traps that show up as bugs
 
@@ -155,6 +160,15 @@ questions — never copy past papers.
 Date anything that changes (laws, prices, versions, guidelines). Cite what can be checked;
 never invent a statistic, case or quote — say the source needs checking instead. For health,
 law and money, teach how things work and name who to consult; don't advise on a specific case.
+
+**Security and privacy topics:** explain the mechanism in general terms — no real bank,
+company or person as the bad example, no exact figures you cannot source, and say plainly what
+the protection does *not* cover.
+
+**Explaining to a non-specialist:** an everyday analogy first if it helps, then the real
+mechanism in one small worked example (small numbers, a real error message), then where the
+analogy breaks. Keep the real thing — it is what makes the analogy trustworthy — but keep it
+small.
 
 **No sources and no way to check?** Then current legal limits, official rates and fees are not
 yours to state — they change by notice and memory is out of date. Teach the mechanism with a

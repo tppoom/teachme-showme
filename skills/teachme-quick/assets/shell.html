@@ -230,6 +230,11 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--sunken);border:1px
 .code pre::-webkit-scrollbar-thumb{background:#334155;border-radius:99px}
 .t-kw{color:var(--kw)}.t-str{color:var(--str)}.t-num{color:var(--num)}
 .t-com{color:var(--com);font-style:italic}.t-fn{color:var(--fn)}.t-op{color:var(--op)}
+/* a short plain block (a URL, what someone sees, a line of output) needs no title bar */
+.code.bare{position:relative}
+.code.bare .code-hd{position:absolute;top:7px;inset-inline-end:8px;padding:0;background:none;border:0;z-index:1}
+.code.bare .code-hd .code-fn{display:none}
+.code.bare pre{padding-inline-end:56px}
 .code-out{border-top:1px dashed var(--code-line);padding:12px 18px;font-family:var(--mono);
           font-size:12.6px;color:#93a3bb;white-space:pre-wrap;line-height:1.65}
 .code-out::before{content:"▸ output";display:block;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
@@ -759,6 +764,9 @@ rt{font-size:.55em;color:var(--muted);font-weight:500}
   body.menu #sb{transform:none}
   body.menu #scrim{display:block}
   .cmp{grid-template-columns:minmax(0,1fr)}
+  /* on a phone a sideways scroller hides the end of a URL or a line of output — wrap it */
+  .code.plain pre code{white-space:pre-wrap;overflow-wrap:anywhere}
+  .code.plain .ln{width:auto}
   .flow{flex-direction:column;align-items:stretch;max-width:340px;margin:0 auto}
   .flow .arrow{min-width:0;padding:2px 0;flex-direction:row;justify-content:center;gap:8px}
   .flow .arrow::after,[dir="rtl"] .flow .arrow::after{content:"↓"}
@@ -951,6 +959,9 @@ $$(".code pre code").forEach(function(c){
   var box=c.closest(".code");
   if(box.hasAttribute("data-lines"))box.classList.add("numbered");
   if(box.dataset.hl)mark(box,box.dataset.hl);
+  var plainLang=!lang||/^(text|txt|output|plain|none)$/i.test(lang);
+  if(plainLang)box.classList.add("plain");
+  if(plainLang&&!box.dataset.file&&!box.closest(".walk"))box.classList.add("bare");
   if(!$(".code-hd",box)){
     var hd=document.createElement("div"); hd.className="code-hd";
     hd.innerHTML='<div class="dots"><i></i><i></i><i></i></div>'+

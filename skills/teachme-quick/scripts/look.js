@@ -45,10 +45,16 @@ function load() {
       await page.waitForTimeout(150);
       const f = path.join(out, `${name}-${i < 0 ? "cover" : "ch" + (i + 1)}.png`);
       if (name === "phone" && i >= 0) {
-        /* the whole chapter, so tables and figures below the fold are seen too */
-        await page.locator(".chapter").nth(i).screenshot({ path: f });
-      } else await page.screenshot({ path: f });
-      shots.push(f);
+        /* the whole chapter at full page width (gutters included), cut into screen-sized
+           pieces so each image stays readable: phone-ch2-1.png, phone-ch2-2.png, … */
+        const box = await page.evaluate(i => { const r = document.querySelectorAll(".chapter")[i].getBoundingClientRect();
+          return { top: r.top + scrollY, h: r.height }; }, i);
+        for (let k = 0, y = box.top; y < box.top + box.h; k++, y += 1400) {
+          const g = f.replace(/\.png$/, `-${k + 1}.png`);
+          await page.screenshot({ path: g, fullPage: true, clip: { x: 0, y, width: vp.width, height: Math.min(1400, box.top + box.h - y) } });
+          shots.push(g);
+        }
+      } else { await page.screenshot({ path: f }); shots.push(f); }
     }
     const r = await page.evaluate(() => {
       const res = { over: [], tiny: [] }, W = innerWidth;
@@ -59,6 +65,12 @@ function load() {
             res.over.push((e.closest(".chapter") || {}).id + " <" + e.tagName.toLowerCase() + "> " + (e.textContent || "").trim().slice(0, 50));
         });
       }
+      if (W < 500) document.querySelectorAll(".code pre").forEach(p => {
+        /* highlighted code is one span.ln per line, with no newline characters left in it */
+        const lines = p.querySelectorAll(".ln").length || (p.textContent || "").trim().split("\n").length;
+        if (lines <= 3 && p.scrollWidth > p.clientWidth + 4)
+          res.hidden = (res.hidden || []).concat((p.closest(".chapter") || {}).id + ": " + (p.textContent || "").trim().slice(0, 40));
+      });
       if (W < 500) document.querySelectorAll(".tw").forEach(t => {
         if (t.scrollWidth > t.clientWidth + 4)
           res.wide = (res.wide || []).concat((t.closest(".chapter") || {}).id + " (" + t.querySelectorAll("tr:first-child > *").length + " columns)");
@@ -70,6 +82,7 @@ function load() {
       return res;
     });
     [...new Set(r.over)].slice(0, 6).forEach(o => problems.push(`[${name}] page scrolls sideways — widened by ${o}`));
+    if (r.hidden) problems.push(`[${name}] short code block(s) scroll sideways on a phone and hide their end: ${r.hidden.join(" | ")} — use inline <code> (it wraps) or lang-text`);
     if (r.wide) problems.push(`[${name}] table(s) scroll sideways on a phone: ${r.wide.join(", ")} — readers miss the right-hand columns; use ≤4 short columns or split the table`);
     if (r.tiny.length) problems.push(`[${name}] ${r.tiny.length} diagram label(s) render under 9px, e.g. ${r.tiny.slice(0, 3).join(" | ")} — draw fewer, bigger labels`);
     await page.close();
