@@ -178,11 +178,11 @@ The runtime does the scaling; you control the rest.
 - Two type sizes per slide is usually enough; three is the maximum before it reads as noise.
 - Line length for anything paragraph-shaped: 24–34 characters at display sizes. The layouts
   already cap this; don't override it.
-- **Languages written without spaces between words wrap between any two words**, so a
-  headline can break inside a phrase. Look at every headline and lead in the rendered deck;
-  wrap a phrase that must stay together in `<span class="nw">…</span>`, or reword it. Never
-  fix it with `<br>` sized to one screen — the canvas is fixed, but the font on the
-  presenter's laptop may not be the one you saw.
+- **Thai, Lao, Khmer and Burmese have no spaces between words.** In headlines, takeaways and
+  leads the runtime only breaks lines at the spaces you write between phrases, so put a space
+  wherever a break is acceptable and none inside a phrase. `<span class="nw">…</span>` still
+  forces a group to stay together. Never fix a break with `<br>` sized to one screen — the
+  font on the presenter's laptop may not be the one you saw.
 
 ## Speaker notes are part of the deliverable
 

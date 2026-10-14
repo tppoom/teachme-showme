@@ -522,6 +522,8 @@ figure.viz>img,figure.diagram>img{border-radius:var(--r-sm);border:1px solid var
 .ch-body td,.ch-body th{overflow-wrap:break-word}
 .tw td{font-variant-numeric:tabular-nums}
 .cv-sub:empty,.sb-sub:empty,.ch-desc:empty{display:none}
+.nwa{white-space:nowrap}.nwa.wide{white-space:normal}
+:is(:lang(th),:lang(lo),:lang(my),:lang(km)) :is(.cv-title,.ch-title,.ch-body h2){text-wrap:balance}
 
 /* ---------- code line highlighting ---------- */
 .code pre{padding:17px 0}
@@ -1236,6 +1238,34 @@ document.addEventListener("keydown",function(e){
   else if(e.key==="m"||e.key==="M"){if(cur){var mk=$(".mark",cur);if(mk)mk.click()}}
   else if(e.key==="t"||e.key==="T"){$("#themeBtn").click()}
 });
+
+/* ---------------- headings in scripts without word spaces ----------------
+   Thai, Lao, Khmer and Burmese break between any two words, so a heading can split a phrase
+   ("พนักงาน|ใหม่"). Writers put spaces between phrases; in headings only those may break.
+   A phrase wider than its column is released again (.wide), so nothing overflows. */
+(function(){
+  if(!/^(th|lo|km|my)\b/i.test(document.documentElement.lang||""))return;
+  var SEA=/[\u0e00-\u0eff\u1000-\u109f\u1780-\u17ff]/;
+  $$(".cv-title,.ch-title,.ch-body h2,.eg-h,.nv-x,.mc-t").forEach(function(h){
+    var tw=document.createTreeWalker(h,NodeFilter.SHOW_TEXT,null), t, list=[];
+    while((t=tw.nextNode()))list.push(t);
+    list.forEach(function(t){
+      if(!SEA.test(t.nodeValue)||t.parentNode.closest("code"))return;
+      var f=document.createDocumentFragment();
+      t.nodeValue.split(/( +)/).forEach(function(part){
+        if(!part)return;
+        if(/^ +$/.test(part)||!SEA.test(part)){f.appendChild(document.createTextNode(part));return}
+        var sp=document.createElement("span"); sp.className="nwa"; sp.textContent=part; f.appendChild(sp);
+      });
+      t.parentNode.replaceChild(f,t);
+    });
+  });
+  function release(){$$(".nwa").forEach(function(sp){sp.classList.remove("wide");
+    var box=sp.parentNode.closest("h1,h2,.eg-h,.nv-x,.mc-t")||sp.parentNode;
+    if(sp.offsetWidth>box.clientWidth+1)sp.classList.add("wide")})}
+  release(); var rt; addEventListener("resize",function(){clearTimeout(rt);rt=setTimeout(release,150)});
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(release);
+})();
 
 /* ---------------- diagrams on phones ----------------
    A 640-wide drawing squeezed into a 340px column renders its labels at about 6px. Below the

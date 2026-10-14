@@ -190,6 +190,9 @@ kbd{font-family:var(--font-mono);font-size:11.5px;background:var(--chrome-key);
 .slide em{font-style:normal;color:var(--accent)}
 /* keep a phrase on one line — scripts written without spaces break between any two words */
 .slide .nw{white-space:nowrap}
+.slide .nwa{white-space:nowrap}
+.slide .nwa.wide{white-space:normal}
+:is(:lang(th),:lang(lo),:lang(my),:lang(km)) :is(.slide h1,.slide h2,.slide .take,.slide .lead){text-wrap:balance}
 .slide code{font-family:var(--font-mono);font-size:.84em;background:color-mix(in srgb,var(--ink) 6%,transparent);
   border-radius:6px;padding:.08em .38em;color:inherit}
 /* on any filled surface the chip takes its colour from the text, so it never vanishes */
@@ -683,6 +686,7 @@ slides.forEach(function(s,n){
   });
   s.insertBefore(fitBox,s.firstChild);
   keepNumbers(fitBox);
+  phrases(fitBox);
   if(LOGO&&s.classList.contains("title")){
     var tl=document.createElement("img"); tl.className="tlogo"; tl.alt=""; tl.src=LOGO; s.appendChild(tl);
   }
@@ -711,6 +715,11 @@ function fit(){
   wake();
 })();
 function fitLines(s){
+  $$(".nwa",s).forEach(function(sp){sp.classList.remove("wide")});
+  $$(".nwa",s).forEach(function(sp){
+    var box=sp.parentNode.closest("h1,h2,h3,.take,.lead,.attrib,dd,.card,.side")||sp.parentNode;
+    if(sp.offsetWidth>box.clientWidth+1)sp.classList.add("wide");
+  });
   function shrink(el){
     el.style.fontSize="";
     var fs=parseFloat(getComputedStyle(el).fontSize)||0, n=0;
@@ -722,6 +731,30 @@ function fitLines(s){
   $$(".stats",s).forEach(function(row){
     var bs=$$(".st b",row), fs=Math.min.apply(null,bs.map(shrink));
     if(isFinite(fs))bs.forEach(function(b){b.style.fontSize=fs+"px"});
+  });
+}
+/* Thai, Lao, Khmer and Burmese have no spaces between words, so the browser breaks a headline
+   between any two words — "พนักงาน|ใหม่". Writers in these scripts put a space between phrases,
+   so in headlines only those spaces may break. A phrase too long for the line is released
+   again in fitLines (.wide), so nothing can overflow because of this. */
+function phrases(root){
+  /* tested here, not in a var beside it: this runs while the slides are set up, before any
+     later var assignment in this script has executed */
+  if(!/^(th|lo|km|my)\b/i.test(document.documentElement.lang||""))return;
+  $$("h1,h2,h3,.take,.lead,.attrib,.kv dd b,.card h3,.cmp .side h3",root).forEach(function(h){
+    if(h.querySelector(".nw,.nwa"))return;          /* the author already decided */
+    var tw=document.createTreeWalker(h,NodeFilter.SHOW_TEXT,null), t, list=[];
+    while((t=tw.nextNode()))list.push(t);
+    list.forEach(function(t){
+      if(!/[\u0e00-\u0eff\u1000-\u109f\u1780-\u17ff]/.test(t.nodeValue)||t.parentNode.closest("code,.nw"))return;
+      var f=document.createDocumentFragment();
+      t.nodeValue.split(/( +)/).forEach(function(part){
+        if(!part)return;
+        if(/^ +$/.test(part)||!/[\u0e00-\u0eff\u1000-\u109f\u1780-\u17ff]/.test(part)){f.appendChild(document.createTextNode(part));return}
+        var sp=document.createElement("span"); sp.className="nwa"; sp.textContent=part; f.appendChild(sp);
+      });
+      t.parentNode.replaceChild(f,t);
+    });
   });
 }
 /* "300 บาท", "41 %", "12 months": a number never ends a line apart from the word after it */
