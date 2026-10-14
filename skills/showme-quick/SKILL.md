@@ -75,15 +75,16 @@ slides" → `dense`).
 
 | Slot | Main slides |
 |---|---|
-| 5 min, lightning | 5–8 |
-| 10 min | 8–14 |
+| 5 min, lightning | 4–7 |
+| 8 min | 6–10 |
+| 10 min | 8–12 |
 | 20 min | 12–22 |
 | 45 min lecture / workshop | 25–45, section divider every 6–8 |
 | Pecha Kucha / Ignite | exactly 20, `"advance": 20` (or 15) |
 | Kiosk loop | 6–12, `"advance"` 8–15, `"loop": true` |
 | No slot (read) | 10–20 |
 
-Backup slides do not count against the slot. When the material needs more than the slot
+Title and closing count as main slides; backup (appendix) slides do not count against the slot. When the material needs more than the slot
 allows, move slides to the appendix and say which.
 
 **Editable .pptx / Keynote / Google Slides required** (mandatory company template, colleagues

@@ -58,7 +58,7 @@ def cut(chunk):
 # "content" by class, but to the room they are three different shapes — the monotony
 # check has to compare what is drawn, not what the section is called.
 EVIDENCE = [("chart", r'<div class="chart"[^>]*data-type="(\w+)"'), ("stats", r'class="stats"'),
-            ("cmp", r'class="cmp'), ("flow", r'class="flow'), ("tline", r'class="tline'),
+            ("cmp", r'class="cmp'), ("diagram", r'class="dg"'), ("flow", r'class="flow'), ("tline", r'class="tline'),
             ("layers", r'class="layers'), ("matrix", r'class="matrix'), ("funnel", r'class="funnel'),
             ("prog", r'class="prog'), ("checks", r'class="checks'), ("kv", r'class="kv'),
             ("chips", r'class="chips'), ("agenda", r'class="agenda'), ("cards", r'class="card\b'),
@@ -258,6 +258,12 @@ def main():
             if m:
                 fail(f"{tag} unescaped '<' in code: {m.group(0)[:40]!r} — the browser eats it; write &lt;")
                 break
+        for sv in re.findall(r"<svg\b[^>]*>", body):
+            if 'class="ic"' in sv or 'aria-hidden' in sv: continue          # decorative icon
+            if 'role="img"' not in sv or "aria-label" not in sv:
+                fail(f"{tag} an <svg> has no role=\"img\" + aria-label — it is the only description a screen reader gets")
+        if re.search(r'<(?:rect|path|circle|line|text|polygon|ellipse)\b[^>]*(?:fill|stroke)="#', body):
+            warn(f"{tag} a drawing hard-codes a colour — use the d-* classes in figure.dg so a restyle restyles it")
         if re.search(r'style="[^"]*(?:color|background)\s*:\s*#', body):
             warn(f"{tag} an inline colour bypasses the theme — use the theme tokens or classes")
         # --- the tells that make a deck read as generated ---

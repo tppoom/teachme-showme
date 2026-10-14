@@ -87,6 +87,8 @@ when there is one number that matters.
 | Parallel options of equal weight | `cols c3` with `card`s |
 | Exact values people will check | `table` — sparingly |
 | A worked example, code, a formula, a passage | `code` slide |
+| A mechanism, a path, a shape none of the above draws | `figure.dg` — your own inline SVG in the theme's colours |
+| A question for the room (class, workshop) | question → reveal: options on the slide, the answer as a `data-build` `take` |
 | A pause between arguments | `section` |
 
 If the idea doesn't fit any of these, it is usually two ideas. Split it.
@@ -100,6 +102,21 @@ briefed needs to see state, not read about it.
 flags runs of the same layout and any single layout used for more than about 40% of the deck —
 not for variety's sake, but because a change in shape is how the audience knows a new kind of
 thing is being said.
+
+**The headline is the claim, shortened if it has to be.** `data-claim` holds the full
+sentence for the notes and the gate; the `<h2>` may be a shorter version of the same claim,
+never a topic label.
+
+## Drawing your own diagram
+
+When the idea is a mechanism or a shape no layout draws, draw it — a deck for a class or a
+general audience that only has text and cards loses the room. Put one inline `<svg>` in
+`<figure class="dg">` (example slide in `layouts.html`), and use only the `d-*` classes, so the
+theme colours it and a restyle restyles it. Keep it to the few boxes that matter, labels
+19–34px, everything inside the viewBox. Never pass a drawing through `embed-image.py`: as an
+image it is cropped by `.fig` and its colours are frozen.
+
+A caption that is not a source (scale, a note) uses `<p class="src nolabel">`.
 
 ## Evidence that is actually evidence
 
@@ -123,7 +140,9 @@ thing is being said.
   person could ask "says who?" about, and put the exclusions in it before someone finds them.
 - **One measure, one colour.** Colouring every bar of a single series differently tells the
   audience "these are different things", which the labels already told them, and it spends the
-  one signal you have. Grey the field and colour the bar you are talking about (`data-hi`).
+  one signal you have. Grey the field and colour the bar you are talking about: `data-hi`
+  works on every chart — category indices for bar, hbar and stack, series indices for line
+  and area (0 = first).
 
 ## When the numbers come from a file
 

@@ -73,7 +73,7 @@
      Max 5, ~12 words each. Use .num for an ordered sequence.
      .sub is a quiet second line when a point genuinely needs one. -->
 <section id="s-5" class="slide" data-claim="Three forces drove the churn, and only one of them is expensive to fix.">
-  <div class="s-head"><h2>Why small accounts leave</h2></div>
+  <div class="s-head"><h2>Small accounts leave quietly, at month four</h2></div>
   <div class="body"><ul class="pts">
     <li data-build="1"><b>They leave quietly.</b><span class="sub">No ticket, no exit call — they just stop renewing.</span></li>
     <li data-build="2"><b>They leave at month four.</b><span class="sub">Right after the onboarding sequence ends.</span></li>
@@ -96,7 +96,7 @@
 <!-- ══════════ 7 · STAT ROW — three or four numbers worth comparing ══════════
      .d.up / .d.down for a delta. Three or four; five is a table. -->
 <section id="s-7" class="slide" data-claim="Every headline metric improved except the one that predicts next year.">
-  <div class="s-head"><h2>The year in four numbers</h2></div>
+  <div class="s-head"><h2>Three numbers up — and the one that predicts next year down</h2></div>
   <div class="body"><div class="stats">
     <div class="st"><b>41%</b><span>revenue growth</span><span class="d up">▲ 11 pts vs plan</span></div>
     <div class="st"><b>128%</b><span>net revenue retention</span><span class="d up">▲ 19 pts</span></div>
@@ -131,7 +131,7 @@
 
 <!-- line / area: change over time. donut: parts of a whole, 3–5 slices, no more. -->
 <section id="s-9" class="slide" data-claim="The two retention numbers are moving in opposite directions.">
-  <div class="s-head"><h2>Two retention numbers moving apart</h2></div>
+  <div class="s-head"><h2>We keep growing accounts but losing more of them</h2></div>
   <div class="chart" data-type="line" data-unit="%">
     <table>
       <tr><th></th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th></tr>
@@ -147,7 +147,7 @@
 <!-- ══════════ 9 · TWO COLUMNS — evidence beside its reading ══════════
      cols c2 | c2-wide (visual larger) | c2-narrow (text larger) | c3 | c4 · add "top" to align to top -->
 <section id="s-10" class="slide" data-claim="Churn is concentrated in accounts under 20 seats.">
-  <div class="s-head"><h2>Where the churn actually is</h2></div>
+  <div class="s-head"><h2>Churn sits in accounts under 20 seats</h2></div>
   <div class="cols c2">
     <div class="chart" data-type="donut" data-center="72%" data-center-label="under 20 seats">
       <table><tr><th></th><th>Under 20 seats</th><th>20–100</th><th>100+</th></tr>
@@ -185,7 +185,7 @@
      data-hi="0" (comma-separated indices) greys every other bar — use it whenever one
      bar is the point, which is most of the time. -->
 <section id="s-10c" class="slide" data-claim="Every churn reason we can name is a relationship failure, not a product failure.">
-  <div class="s-head"><h2>Why they said they left</h2></div>
+  <div class="s-head"><h2>The top reason they left is one we control</h2></div>
   <div class="chart" data-type="hbar" data-unit="%" data-hi="0">
     <table>
       <tr><th></th><th>Nobody followed up</th><th>Price</th><th>Missing feature</th><th>Switched vendor</th><th>Company closed</th></tr>
@@ -203,7 +203,7 @@
      (check x arrow up alert bulb target clock users chart lock gear star doc bolt globe)
      .card.hi for the one you are recommending. -->
 <section id="s-11" class="slide" data-claim="We have three options and they differ in cost, not in whether they work.">
-  <div class="s-head"><h2>Three ways to fix the handoff</h2></div>
+  <div class="s-head"><h2>Three fixes; only one reaches the cause</h2></div>
   <div class="cols c3">
     <div class="card"><h3>Extend onboarding</h3>
       <p>Push the sequence from 30 to 90 days. Cheap, partial.</p></div>
@@ -218,7 +218,7 @@
 
 <!-- ══════════ 11 · COMPARE — two things in tension ══════════ -->
 <section id="s-12" class="slide" data-claim="The old assumption and the actual behaviour disagree on when the risk starts.">
-  <div class="s-head"><h2>What we assumed vs what happens</h2></div>
+  <div class="s-head"><h2>The risk starts at month four, not at renewal</h2></div>
   <div class="cmp">
     <div class="side bad"><h3>We assumed</h3><ul>
       <li>Risk is highest at renewal</li><li>Silence means it's fine</li><li>Small accounts are low effort</li></ul></div>
@@ -229,10 +229,54 @@
   <div class="notes"><p>Every row on the left was a decision somebody made for a good reason in 2023, and saying that out loud is what stops this being a blame slide. The point is not that we were wrong then; it is that the assumptions have an expiry date and nobody set a reminder.</p></div>
 </section>
 
+<!-- ══════════ DIAGRAM — your own drawing, in the theme's colours ══════════
+     figure.dg holds one inline <svg>. Draw with the d-* classes only (no hex colours), so a
+     restyle restyles the drawing too:
+       boxes  .d-box (.hi accent · .alt second accent · .dim dashed)   lines .d-line (.dash)
+       arrows .d-arrow (.dim · .alt) — arrowheads are built in and stay the same size
+       text   default ink · .d-on (on an accent box) · .d-dim · .d-accent · .d-alt · .d-big · .d-sm
+     viewBox ~1100 wide; keep every x/y inside it. Text 19-34px reads from the back.
+     Fewer, bigger labels: four boxes that matter, not fourteen that exist. -->
+<section id="s-13x" class="slide" data-claim="The account is handed over twice and owned in neither handover.">
+  <div class="s-head"><h2>Two handovers, and nobody owns the gap between them</h2></div>
+  <figure class="dg"><svg viewBox="0 0 1100 360" role="img" aria-label="Sales hands the account to onboarding at day 0; onboarding ends at day 30; nobody owns it until renewal at day 365">
+    <rect class="d-box" x="20" y="120" width="230" height="110" rx="14"/>
+    <text x="135" y="183" text-anchor="middle">Sales</text>
+    <rect class="d-box" x="330" y="120" width="230" height="110" rx="14"/>
+    <text x="445" y="183" text-anchor="middle">Onboarding</text>
+    <rect class="d-box hi" x="640" y="120" width="230" height="110" rx="14"/>
+    <text class="d-on d-big" x="755" y="187" text-anchor="middle">nobody</text>
+    <rect class="d-box dim" x="950" y="120" width="130" height="110" rx="14"/>
+    <text class="d-dim" x="1015" y="181" text-anchor="middle">renewal</text>
+    <path class="d-arrow" d="M250 175 H322"/>
+    <path class="d-arrow" d="M560 175 H632"/>
+    <path class="d-arrow dim" d="M870 175 H942"/>
+    <text class="d-dim" x="286" y="100" text-anchor="middle">day 0</text>
+    <text class="d-dim" x="596" y="100" text-anchor="middle">day 30</text>
+    <text class="d-accent" x="755" y="290" text-anchor="middle">days 30–120: where churn happens</text>
+  </svg></figure>
+  <div class="take">The gap is a missing owner, not a missing feature.</div>
+  <div class="notes"><p>Walk the boxes left to right with your hand. Stop on the highlighted one and say "nobody" out loud. The point of drawing it is that the room sees the hole; a bullet saying "no owner after onboarding" is read and forgotten.</p></div>
+</section>
+
+<!-- ══════════ QUESTION → REVEAL — check understanding in a class or workshop ══════════
+     The question is the headline; the options sit on the slide; data-build reveals the
+     answer and the reason on the next press. Give the room ten seconds before you press. -->
+<section id="s-13y" class="slide" data-claim="Accounts most often churn at month four, after onboarding ends.">
+  <div class="s-head"><span class="eyebrow">Quick check</span><h2>When does a small account most often leave?</h2></div>
+  <div class="body"><ol class="pts num">
+    <li><b>At renewal, month twelve</b></li>
+    <li><b>Right after onboarding ends, month four</b></li>
+    <li><b>In the first week</b></li>
+  </ol></div>
+  <div class="take" data-build="1">Month four — the gap after onboarding, not the renewal everyone watches.</div>
+  <div class="notes"><p>Ask the room to vote with fingers: one, two or three. Most people pick renewal, because that is where the alarm rings. Press once to reveal. If nobody picked month four, that is the slide doing its job — the whole proposal rests on this being a surprise.</p></div>
+</section>
+
 <!-- ══════════ 12 · FLOW / LAYERS / MATRIX / TIMELINE / FUNNEL ══════════
      Diagrams, not decoration. Mark the focus with class "hi". -->
 <section id="s-13" class="slide" data-claim="The churn happens in the gap between onboarding ending and success starting.">
-  <div class="s-head"><h2>Where the account falls through</h2></div>
+  <div class="s-head"><h2>Accounts fall through a 90-day gap nobody owns</h2></div>
   <div class="body"><div class="flow">
     <span class="node">Signup<small>day 0</small></span>
     <span class="arrow"><b>30 days</b></span>
@@ -248,7 +292,7 @@
 
 <!-- layers: things stacked on things. Mark the layer the argument is about with "hi". -->
 <section id="s-13b" class="slide" data-claim="The fix belongs in the customer-facing layer, not in the product.">
-  <div class="s-head"><h2>Which layer this actually lives in</h2></div>
+  <div class="s-head"><h2>The fix belongs in the customer team, not the product</h2></div>
   <div class="body"><div class="layers">
     <div class="ly hi">Customer team<small>where the ninety-day gap sits</small></div>
     <div class="ly">Product<small>onboarding sequence, in-app prompts</small></div>
@@ -261,7 +305,7 @@
 <!-- matrix: two axes of choice. Three .ax cells across the top (blank, then the two column
      labels), then a .ax.y row label before each row of quadrants. -->
 <section id="s-13c" class="slide" data-claim="Only one option is both high impact and affordable this quarter.">
-  <div class="s-head"><h2>Impact against effort</h2></div>
+  <div class="s-head"><h2>Only pooled CSM is both high-impact and cheap</h2></div>
   <div class="matrix">
     <div class="ax"></div><div class="ax">Low effort</div><div class="ax">High effort</div>
     <div class="ax y">High impact</div>
@@ -276,7 +320,7 @@
 
 <!-- tline: events across time. .mi.dim for what has not happened yet. -->
 <section id="s-13d" class="slide" data-claim="A decision in January is measurable by June, which is inside this fiscal year.">
-  <div class="s-head"><h2>What happens after today</h2></div>
+  <div class="s-head"><h2>Decide in January, see the evidence by June</h2></div>
   <div class="body"><div class="tline">
     <div class="mi"><span class="w">Jan</span><b>Decision</b><p>Fund, or stop selling small.</p></div>
     <div class="mi"><span class="w">Mar</span><b>Team in seat</b><p>Two CSMs, one book.</p></div>
@@ -290,7 +334,7 @@
 <!-- funnel: narrowing stages. --w sets each stage's width; make it proportional to the
      number, or the picture argues something the data doesn't. -->
 <section id="s-13e" class="slide" data-claim="Six in ten accounts are gone before month four, and almost all of the loss is after activation.">
-  <div class="s-head"><h2>Where the cohort goes</h2></div>
+  <div class="s-head"><h2>Six in ten accounts are gone before month four</h2></div>
   <div class="funnel">
     <div class="fs" style="--w:100%"><b>12,400</b><span>signups</span></div>
     <div class="fs" style="--w:74%"><b>9,180</b><span>activated</span></div>
@@ -304,7 +348,7 @@
      .prog for how far along something is, .checks for shipped / not shipped.
      These are what a project update needs and a sales deck never uses. -->
 <section id="s-13f" class="slide appendix" data-claim="Two of the four workstreams are behind, and both are behind for the same reason.">
-  <div class="s-head"><span class="eyebrow">Appendix</span><h2>Where each workstream stands</h2></div>
+  <div class="s-head"><span class="eyebrow">Appendix</span><h2>Two workstreams are behind, for the same reason</h2></div>
   <div class="body"><div class="prog">
     <div class="pr done"><b>Churn analysis</b><span class="pv">100%</span>
       <div class="track"><i style="--p:100%"></i></div></div>
@@ -319,7 +363,7 @@
 </section>
 
 <section id="s-13g" class="slide appendix" data-claim="Of the five things we committed to in Q3, three shipped and the two that did not are the ones that needed a person.">
-  <div class="s-head"><span class="eyebrow">Appendix</span><h2>Q3 commitments</h2></div>
+  <div class="s-head"><span class="eyebrow">Appendix</span><h2>Three of five Q3 commitments shipped</h2></div>
   <div class="body"><ul class="checks">
     <li>Exit-interview programme<span>61 interviews, running monthly since March.</span></li>
     <li>Churn dashboard<span>Live, refreshed nightly.</span></li>
@@ -382,7 +426,7 @@
      .chips for short labels you want scanned, not read. .kv for a spec sheet: the
      numbers that define a proposal, where a paragraph would bury them. -->
 <section id="s-15c" class="slide" data-claim="The proposal is deliberately small: two people, one quarter, one number to judge it by.">
-  <div class="s-head"><h2>The shape of the ask</h2></div>
+  <div class="s-head"><h2>Two hires, one quarter, one measure</h2></div>
   <div class="body">
     <dl class="kv">
       <dt>Headcount</dt><dd>2 CSMs<small>pooled, no named accounts</small></dd>
@@ -395,7 +439,7 @@
 </section>
 
 <section id="s-15d" class="slide" data-claim="This proposal touches four teams, and only one of them has to change how it works.">
-  <div class="s-head"><h2>Who this touches</h2></div>
+  <div class="s-head"><h2>Only one of the four teams has to change how it works</h2></div>
   <div class="body">
     <div class="chips">
       <span class="hi">Customer Success</span><span>Sales</span><span>Data</span>
@@ -409,7 +453,7 @@
 <!-- ══════════ 15 · CODE / TABLE — exact things people will check ══════════
      data-hl highlights lines: "3", "3-5", "3-5,9". Tables: sparse, round numbers. -->
 <section id="s-16" class="slide code" data-claim="The CSM assignment rule has the threshold hard-coded.">
-  <div class="s-head"><h2>Where the threshold lives</h2></div>
+  <div class="s-head"><h2>The 20-seat cut-off is hard-coded</h2></div>
   <div class="body"><pre data-hl="3">function assignCsm(account) {
   const seats = account.seats;
   if (seats &lt; 20) return null;      // ← set in 2023, never revisited
@@ -419,7 +463,7 @@
 </section>
 
 <section id="s-17" class="slide" data-claim="The cost of the two hires is recovered inside two quarters.">
-  <div class="s-head"><h2>What it costs and what it returns</h2></div>
+  <div class="s-head"><h2>Pooled CSM pays back inside two quarters</h2></div>
   <div class="body"><table>
     <tr><th>Option</th><th>Cost</th><th>Churn averted</th><th>Payback</th></tr>
     <tr><td>Longer onboarding</td><td>—</td><td>~$120k</td><td>immediate</td></tr>
@@ -443,7 +487,7 @@
 
 <!-- ══════════ 17 · APPENDIX — the answer you flip to ══════════ -->
 <section id="s-19" class="slide appendix" data-claim="CAC held flat across every channel, which is why acquisition was not the growth story.">
-  <div class="s-head"><span class="eyebrow">Appendix</span><h2>CAC by channel, Q1–Q4</h2></div>
+  <div class="s-head"><span class="eyebrow">Appendix</span><h2>CAC held flat in every channel</h2></div>
   <div class="chart" data-type="bar" data-unit="">
     <table><tr><th></th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th></tr>
     <tr><th>Paid</th><td>1780</td><td>1810</td><td>1840</td><td>1795</td></tr>

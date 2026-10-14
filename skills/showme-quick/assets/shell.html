@@ -314,6 +314,27 @@ kbd{font-family:var(--font-mono);font-size:11.5px;background:var(--chrome-key);
 .stats .st .d{font-size:15px;font-weight:750;margin-top:8px}
 .stats .st .d.up{color:var(--ok)} .stats .st .d.down{color:var(--bad)}
 
+/* ══ diagram — a hand-drawn inline SVG that follows the theme ══
+   <figure class="dg"><svg viewBox="0 0 1100 420" role="img" aria-label="…">…</svg></figure>
+   Draw with the d-* classes only; the theme decides every colour, so a restyle restyles it. */
+.dg{flex:1;min-height:0;margin:0;display:flex;align-items:center;justify-content:center}
+.dg svg{width:100%;height:auto;max-height:360px;display:block;overflow:visible}
+.dg svg text{fill:var(--ink);font-family:var(--font-body);font-size:24px}
+.dg .d-box{fill:var(--surface);stroke:var(--line);stroke-width:2}
+.dg .d-box.hi{fill:var(--accent);stroke:var(--accent)}
+.dg .d-box.alt{fill:var(--accent-2);stroke:var(--accent-2)}
+.dg .d-box.dim{fill:none;stroke:var(--ink-3);stroke-dasharray:8 6}
+.dg .d-line{stroke:var(--ink-3);stroke-width:2.5;fill:none}
+.dg .d-line.dash{stroke-dasharray:8 6}
+.dg .d-arrow{stroke:var(--accent);stroke-width:4;fill:none;marker-end:url(#sm-ah)}
+.dg .d-arrow.dim{stroke:var(--ink-3);marker-end:url(#sm-ah-dim)}
+.dg .d-arrow.alt{stroke:var(--accent-2);marker-end:url(#sm-ah-alt)}
+.dg .d-fill{fill:var(--accent);opacity:.14}
+.dg text.d-on{fill:var(--accent-ink)} .dg text.d-dim{fill:var(--ink-3);font-size:19px}
+.dg text.d-accent{fill:var(--accent)} .dg text.d-alt{fill:var(--accent-2)}
+.dg text.d-big{font-size:34px;font-weight:var(--w-display)} .dg text.d-sm{font-size:19px}
+#sm-ah path{fill:var(--accent)} #sm-ah-dim path{fill:var(--ink-3)} #sm-ah-alt path{fill:var(--accent-2)}
+
 /* source line — where a number came from. The one honest answer to "says who?" */
 .slide .src,.src{flex:none;margin-top:14px;font-size:15px;line-height:1.45;color:var(--ink-3)}
 .src::before{content:"@@T_SOURCE@@: ";font-weight:750}
@@ -542,8 +563,8 @@ kbd{font-family:var(--font-mono);font-size:11.5px;background:var(--chrome-key);
 .chart .lg span{display:inline-flex;align-items:center;gap:8px}
 .chart .lg i{width:13px;height:13px;border-radius:3px;display:block}
 .chart text{font-family:var(--font-body)}
-.chart .ax-l{fill:var(--ink-3);font-size:15px}
-.chart .val{fill:var(--ink-2);font-size:15px;font-weight:700}
+.chart .ax-l{fill:var(--ink-2);font-size:17px}
+.chart .val{fill:var(--ink);font-size:17px;font-weight:700}
 .chart .gl{stroke:var(--line);stroke-width:1}
 .chart .dn-c{fill:var(--ink);font-family:var(--font-display);font-weight:var(--w-display)}
 
@@ -583,6 +604,9 @@ body.m-grid [data-build],body.m-read [data-build],body.printing [data-build]{opa
 <body class="m-present" data-motif="@@MOTIF@@">
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<marker id="sm-ah" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="18" markerHeight="18" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z"/></marker>
+<marker id="sm-ah-dim" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="18" markerHeight="18" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z"/></marker>
+<marker id="sm-ah-alt" viewBox="0 0 10 10" refX="8" refY="5" markerUnits="userSpaceOnUse" markerWidth="18" markerHeight="18" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z"/></marker>
 <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
 <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
 <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-7 7 7-7 7"/></symbol>
@@ -763,7 +787,8 @@ function keepNumbers(root){
   while((t=tw.nextNode()))list.push(t);
   list.forEach(function(t){
     var p=t.parentNode; if(!p||p.closest("pre,code,script,style,table,svg"))return;
-    var v=t.nodeValue.replace(/(\d[\d,.]*\s?%?) (?=[^\s\d]{1,8}(?:\s|$|[.,;:!?)]))/g,"$1\u00a0");
+    var v=t.nodeValue.replace(/(\d[\d,.]*\s?%?) (?=[^\s\d]{1,8}(?:\s|$|[.,;:!?)]))/g,"$1\u00a0")
+                     .replace(/(\d)-(?=[A-Za-z])/g,"$1\u2011");          /* "90-day" never splits at the hyphen */
     if(v!==t.nodeValue)t.nodeValue=v;
   });
 }
@@ -780,7 +805,16 @@ function fitSlide(s){
     w.style.flex="none"; w.style.height="auto"; w.style.width=px+"px"; w.style.transform="none";
     return w.offsetHeight;
   }
-  if(natural(availW)<=availH+1){w.style.cssText=""; return}
+  var dgs=$$(".dg svg",s); dgs.forEach(function(sv){sv.style.maxHeight=""});
+  var nat0=natural(availW);
+  if(nat0<=availH+1){w.style.cssText=""; return}
+  /* a drawing scales cleanly on its own: give it the height that is left (down to 200px)
+     before shrinking the headline and everything else with it */
+  if(dgs.length){
+    var over=(nat0-availH+2)/dgs.length;
+    dgs.forEach(function(sv){sv.style.maxHeight=Math.max(200,sv.getBoundingClientRect().height/(parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--k"))||1)-over)+"px"});
+    if(natural(availW)<=availH+1){w.style.cssText=""; return}
+  }
   var k=1;
   for(var pass=0;pass<5;pass++){
     var nat=natural(availW/k);
@@ -1162,7 +1196,7 @@ function draw(host,d,type,unit,box){
     if(box.dataset.max)hmax=parseFloat(box.dataset.max)||hmax;
     var hi=(box.dataset.hi||"").split(",").map(function(x){return parseInt(x,10)});
     var muted=getComputedStyle(document.documentElement).getPropertyValue("--ink-3").trim()||"#999";
-    var lw=Math.min(w*0.36,Math.max.apply(null,d.cats.map(function(c){return c.length*8.4}))+14);
+    var lw=Math.min(w*0.36,Math.max.apply(null,d.cats.map(function(c){return c.length*9.6}))+16);
     var rowH=(h-10)/Math.max(1,d.cats.length), bh=Math.min(34,rowH*0.62);
     d.cats.forEach(function(c,k){
       var cy=5+rowH*(k+0.5), bwid=Math.max(2,(hs.vals[k]||0)/hmax*(w-lw-76));
@@ -1209,18 +1243,25 @@ function draw(host,d,type,unit,box){
     t.textContent=c; svg.appendChild(t);
   });
 
+  /* data-hi works on every chart: on line/area it names series (0 = first row), on bars it
+     names categories (0 = first column). Everything else steps back to the muted ink. */
+  var HI=(box.dataset.hi||"").split(",").map(function(x){return parseInt(x,10)}).filter(function(x){return !isNaN(x)});
+  var MUTE=getComputedStyle(document.documentElement).getPropertyValue("--ink-3").trim()||"#999";
+  function lit(k){return !HI.length||HI.indexOf(k)>-1}
+
   if(type==="line"||type==="area"){
     d.series.forEach(function(s,si){
+      var col=lit(si)?PAL[si%6]:MUTE, op=lit(si)?1:.45;
       var pts=s.vals.map(function(v,k){return [pl+iw*(k+0.5)/d.cats.length, y(v)]});
       var dd=pts.map(function(p,k){return (k?"L":"M")+p[0]+" "+p[1]}).join(" ");
       if(type==="area"){
         svg.appendChild(svgEl("path",{d:dd+" L"+pts[pts.length-1][0]+" "+y(min)+" L"+pts[0][0]+" "+y(min)+" Z",
-          fill:PAL[si%6],opacity:.16,stroke:"none"}));
+          fill:col,opacity:.16*op,stroke:"none"}));
       }
-      svg.appendChild(svgEl("path",{d:dd,fill:"none",stroke:PAL[si%6],"stroke-width":3.5,
+      svg.appendChild(svgEl("path",{d:dd,fill:"none",stroke:col,"stroke-width":lit(si)?3.5:2.5,opacity:op,
         "stroke-linejoin":"round","stroke-linecap":"round"}));
-      pts.forEach(function(p){svg.appendChild(svgEl("circle",{cx:p[0],cy:p[1],r:5,
-        fill:"var(--bg)",stroke:PAL[si%6],"stroke-width":3}))});
+      pts.forEach(function(p){svg.appendChild(svgEl("circle",{cx:p[0],cy:p[1],r:lit(si)?5:3.5,opacity:op,
+        fill:"var(--bg)",stroke:col,"stroke-width":3}))});
     });
     return;
   }
@@ -1255,7 +1296,7 @@ function draw(host,d,type,unit,box){
       var cx=pl+slot*(k+0.5)-(ns*bw)/2+si*bw;
       var top=y(v), base=y(Math.max(min,Math.min(0,max)));
       svg.appendChild(svgEl("rect",{x:cx+2,y:Math.min(top,base),width:Math.max(1,bw-4),
-        height:Math.max(2,Math.abs(base-top)),fill:PAL[si%6],rx:4}));
+        height:Math.max(2,Math.abs(base-top)),fill:lit(k)?PAL[si%6]:MUTE,opacity:lit(k)?1:.42,rx:4}));
       if(ns<=2){
         /* a negative bar's label belongs under it, or it lands on top of the axis */
         var t=svgEl("text",{x:cx+bw/2,y:v<0?top+20:top-9,"text-anchor":"middle",class:"val"});
