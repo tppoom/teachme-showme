@@ -35,10 +35,13 @@ prompt is that skill's absolute path.
      carries a `.src` line where someone could ask "says who?"
    - **Notes** sound like one presenter: same voice, same terms, each ends by handing off to
      the next slide
-   - **Look** — no inline colours or ad-hoc styles fighting the theme
+   - **Look** — no inline colours or ad-hoc styles fighting the theme, and none of the
+     generated-deck tells (`references/design.md`); the look matches what the user asked for
+     in `BRIEF.md`
 4. **Look at it** if a browser tool is available (Playwright or similar): open `index.html`,
    press `O` for the grid — monotony shows there first — then step through three slides,
-   one with a chart, and check nothing is auto-shrunk to fit.
+   one with a chart, and check nothing is clipped, overlapping, wrapping mid-number or
+   auto-shrunk to fit.
 5. Re-run the gate after your edits until it passes.
 
 Edit surgically. When a batch needs more than about a third rebuilt, leave it and list it as

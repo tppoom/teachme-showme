@@ -1,6 +1,6 @@
 ---
 name: teachme-planner
-description: First stage of /teachme-cas. Reads every source, builds the concept atlas, scaffolds the course directory and writes SYLLABUS.md (chapters + coverage ledger) and BRIEF.md (the shared standard every chapter author follows). Writes no chapters.
+description: First stage of /teachme-cas. Reads every source, scaffolds the course directory and writes SYLLABUS.md (a lean chapter plan, plus coverage for source material) and BRIEF.md (the shared standard every chapter author follows). Writes no chapters.
 tools: Read, Grep, Glob, Bash, Write, Edit, WebFetch, WebSearch
 skills:
   - teachme
@@ -20,7 +20,7 @@ context, invoke the Skill tool with `teachme` (or `teachme:teachme`) before anyt
 
 ## Steps
 
-1. **Read the method**: `SKILL_DIR/references/atlas.md` and `SKILL_DIR/references/teaching.md`.
+1. **Read the method**: `SKILL_DIR/SKILL.md` (sizing) and `SKILL_DIR/references/writing.md`.
 
 2. **Read every source completely** — every file, page, slide, URL in `SOURCES`. Codebase
    mode: entry points, config, tests, `git log`, TODO/FIXME markers, and enough of every
@@ -32,14 +32,13 @@ context, invoke the Skill tool with `teachme` (or `teachme:teachme`) before anyt
    python3 SKILL_DIR/scripts/new.py COURSE_DIR --title "…" --lang LANGUAGE --depth DEPTH [--omit …]
    ```
 
-4. **Build the atlas and write `SYLLABUS.md`** in the format `atlas.md` specifies: five
-   axes, mode shape, chapters in dependency order, coverage ledger with every item checked
-   and pointing at a chapter, *Deliberately out of scope* with reasons. Respect the depth's
-   chapter band; if the atlas needs materially more, put the extra chapters under `## Later`
-   and say so in your report. Use chapter ids `ch-1 … ch-N` and `ch-appendix`.
-   Size each chapter to the depth's reading ceiling (quick ~800 words, standard ~1,200, deep
-   ~1,800 before the quiz): a chapter that owns more nodes than that fits is two chapters, or
-   — at `quick` — some of those nodes move to "what to learn next".
+4. **Write `SYLLABUS.md`**: chapters in dependency order, one idea each, ids `ch-1 … ch-N`
+   (plus `ch-appendix` only if the course coins more than ~10 terms). Size to the request,
+   not to everything adjacent: stay inside the depth's chapter band (quick 1–4, standard 3–8,
+   deep 6–16) and merge any two chapters that teach one idea. Source material gets a
+   `## Coverage` list mapping each important source point to a chapter id, all checked.
+   What you leave out goes under `## Left out` with one line of reason. If the honest size
+   is much larger than the depth, put the rest under `## Later` and say so in your report.
 
 5. **Write `COURSE_DIR/BRIEF.md`** — the shared standard for every author:
 
@@ -51,6 +50,8 @@ context, invoke the Skill tool with `teachme` (or `teachme:teachme`) before anyt
    **Depth / omit:** standard / none
    **Running example:** one realistic scenario reused across chapters (e.g. "an invoice
    service for a small clinic"), so chapters build on each other instead of restarting
+   **Style:** example first, then the idea; 150–700 words per chapter; no filler (see
+   writing.md → The cut list)
 
    ## Terminology
    - **goroutine** — <the one-line gloss every chapter uses, in the course language> (introduced in ch-3)
@@ -58,8 +59,9 @@ context, invoke the Skill tool with `teachme` (or `teachme:teachme`) before anyt
 
    ## Chapter notes
    ### ch-3 — Your first goroutine
-   - Objective: what the reader can do afterwards (1 line)
-   - Must cover: the atlas nodes this chapter owns
+   - After it the reader can: … (1 line)
+   - The example: the concrete case that carries the chapter (numbers, snippet, scenario)
+   - Must cover: the points this chapter owns
    - Sources: exact files / pages / slides to read for this chapter (codebase: paths + lines)
    - Builds on: ch-2 (stack vs heap); sets up: ch-6 (channels)
    - Likely misconception: the wrong intuition to name
@@ -73,6 +75,6 @@ context, invoke the Skill tool with `teachme` (or `teachme:teachme`) before anyt
 - `COURSE_DIR`, mode, depth, language
 - A table: id · file name (`parts/NN-slug.html`) · title · one line · est. minutes
 - Assumptions you made, sources you could not read, and any size warning
-  ("the atlas wants 22 chapters; 14 are in this phase, 8 under ## Later")
+  ("an honest course is 14 chapters; 8 are in this phase, 6 under ## Later")
 
 Leave every `parts/` file to the authors.

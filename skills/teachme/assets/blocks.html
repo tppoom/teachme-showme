@@ -1,54 +1,38 @@
 <!--
   ============================================================
-  TeachMe BLOCK LIBRARY — the complete markup contract.
-  The shell's CSS/JS knows ONLY these class names.
-  Do not invent new ones; compose these instead.
+  TeachMe BLOCK LIBRARY — the markup contract. The shell's CSS/JS knows ONLY these class
+  names; compose them, don't invent new ones. Grep for the block you need instead of
+  reading the whole file.
 
-  §1 chapter skeleton   §2 content   §3 visuals   §4 interactive   §5 practice
-  §6 more blocks        §7 appendix
+  §1 chapter skeleton  §2 content (incl. .eg worked example)  §3 visuals
+  §4 interactive  §5 practice  §6 subject blocks  §7 appendix
 
-  This file is the parts bin: every block, minimal, so you can see the markup.
-  For what a WHOLE chapter looks like at the depth verify.py demands, read one of:
-
-    assets/examples/concept-chapter.html   explaining an idea — objective, mental-model
-                                           figure, .walk, .math/.where, one misreading,
-                                           exercise, recap, quiz. ~1,000 words.
-    assets/examples/status-chapter.html    codebase mode's "where the project stands" —
-                                           evidence with file paths, the four states of
-                                           done, what is broken by name, what is next.
-
-  Read one of those once before authoring your first chapter. They are the standard;
-  this file is only the vocabulary.
+  The target style for a whole chapter: assets/examples/example-chapter.html
   ============================================================
-
 
   ══ §1 · CHAPTER SKELETON — one per file in parts/ ══
 
-  <section class="chapter" id="ch-3" data-title="Goroutines" data-min="18">
+  <section class="chapter" id="ch-3" data-title="Goroutines">
     <header class="ch-head">
       <div class="ch-label"></div>            <- leave empty; JS fills "Chapter 03"
       <h1 class="ch-title">Goroutines</h1>
       <p class="ch-desc">One sentence: what this chapter makes you able to do.</p>
-      <div class="ch-meta"><span class="tag intermediate">Intermediate</span></div>
+      <div class="ch-meta"><span class="tag beginner">Beginner</span></div>   <- optional
     </header>
     <div class="ch-body">
-      <div class="objective">…</div>
-      … content, at least one visual …
-      <div class="recap">…</div>
-      <div class="quiz">…</div>
+      hook paragraph → worked example → the idea → figure → the trap → (optional quiz)
     </div>
   </section>
 
   id MUST be "ch-N" matching SYLLABUS.md. data-title drives the sidebar.
   tag classes: beginner | intermediate | advanced | core
-  A chapter with genuinely nothing to draw must say so on the section:
-  data-novisual="pure prose: naming conventions" — verify.py fails silently-missing visuals.
+  data-min="12" overrides the estimated reading minutes.
 -->
 
 
 <!-- ═══════════════════ §2 · CONTENT ═══════════════════ -->
 
-<!-- 2.1 OBJECTIVE — required, first block of every chapter -->
+<!-- 2.1 OBJECTIVE — optional; only for long chapters where the goal is not obvious from .ch-desc -->
 <div class="objective">
   <div class="ob-h">After this chapter you can</div>
   <ul>
@@ -61,28 +45,38 @@
 <h2>Why goroutines exist</h2>
 <p>Prose. <code>inline code</code> for identifiers, <strong>bold</strong> for a term the
    first time it is defined.</p>
-<!-- Aim for 2-4 <h2> per chapter, each a short phrase that names the point. <h3> exists for the
+<!-- 0-3 <h2> per chapter, each a short phrase that names the point. <h3> exists for the
      rare reference chapter (an API surface); in a normal chapter it fragments the page — fold
      the idea into the section above instead. verify.py warns on it. -->
 <h3>A sub-point (rare)</h3>
 
-<!-- 2.3 CALLOUTS
+<!-- 2.2b WORKED EXAMPLE — the concrete case that makes the idea visible. Use it whenever the
+     example is not just a code block: a calculation, a scenario, a before/after with numbers.
+     .eg-h is your own title for the example; .res states the result. -->
+<div class="eg">
+  <span class="eg-h">Example — 26 vs 18 completions out of 40 each</span>
+  <p>Shuffle the 44 completions randomly between the two groups 10,000 times and count how
+     often the gap is 8 or more.</p>
+  <span class="res">It happens 721 times in 10,000 — p ≈ 0.07.</span>
+</div>
+
+<!-- 2.3 CALLOUTS — at most two per chapter, for the thing the reader must not miss.
      note = context · tip = do this · warn = careful
      pitfall = the mistake people actually make · key = must remember -->
-<div class="callout key"><div class="ic">🔑</div><div class="co">
+<div class="callout key"><div class="co">
   <div class="ct">The one thing to remember</div>
   <p>A goroutine is not a thread. The runtime multiplexes many onto few OS threads.</p></div></div>
-<div class="callout note"><div class="ic">📌</div><div class="co"><div class="ct">Context</div><p>…</p></div></div>
-<div class="callout tip"><div class="ic">💡</div><div class="co"><div class="ct">Tip</div><p>…</p></div></div>
-<div class="callout warn"><div class="ic">⚠️</div><div class="co"><div class="ct">Careful</div><p>…</p></div></div>
-<div class="callout pitfall"><div class="ic">🚫</div><div class="co"><div class="ct">Common mistake</div>
+<div class="callout note"><div class="co"><div class="ct">Context</div><p>…</p></div></div>
+<div class="callout tip"><div class="co"><div class="ct">Tip</div><p>…</p></div></div>
+<div class="callout warn"><div class="co"><div class="ct">Careful</div><p>…</p></div></div>
+<div class="callout pitfall"><div class="co"><div class="ct">Common mistake</div>
   <p>Shown with the literal error message the learner will see.</p></div></div>
 
 <!-- 2.4 CONCEPT CARDS — 2–4 parallel ideas -->
 <div class="grid">
-  <div class="card"><div class="c-ic">⚡</div><div class="c-t">Cheap</div>
+  <div class="card"><div class="c-t">Cheap</div>
        <div class="c-d">~2 KB stack, grows on demand.</div></div>
-  <div class="card"><div class="c-ic">🔀</div><div class="c-t">Multiplexed</div>
+  <div class="card"><div class="c-t">Multiplexed</div>
        <div class="c-d">M goroutines run on N OS threads.</div></div>
 </div>
 
@@ -313,7 +307,7 @@ func main() {
      Also the right block for predict-then-check: ask what the code prints,
      hide the answer behind the summary. -->
 <div class="ex">
-  <div class="ex-h"><span class="ic">✍️</span><b>Try it yourself</b></div>
+  <div class="ex-h"><b>Try it yourself</b></div>
   <div class="ex-b">
     <p>Start three goroutines that print 1, 2, 3 and make <code>main</code> wait for all of them.</p>
     <details>
@@ -332,7 +326,7 @@ wg.Wait()</code></pre></div>
   </div>
 </div>
 
-<!-- 5.2 RECAP — required, last prose block -->
+<!-- 5.2 RECAP — optional; only after a long chapter -->
 <div class="recap">
   <h4>Recap</h4>
   <ul>
@@ -341,14 +335,13 @@ wg.Wait()</code></pre></div>
   </ul>
 </div>
 
-<!-- 5.3 QUIZ — required, 3–4 questions, closes every chapter.
+<!-- 5.3 QUIZ — optional quick check, 1–3 questions, closes the chapter.
      Exactly one .opt per question has data-correct="true". Every OTHER .opt carries data-why="…":
      one sentence on what someone who picks it is thinking and where it breaks — the page shows
      it when they pick it. .fb gives the right answer's reason and the principle.
      Do NOT arrange the options to hide the answer: the page shuffles them on every load and
      retry. Add data-order="fixed" to the .q only when the options have a natural order.
-     3-4 questions per chapter, mixed kinds: predict / diagnose / decide / typed recall, and at
-     least one on a case that is not in the chapter. -->
+     Ask the reader to APPLY the idea to a new case (predict, diagnose, decide). -->
 <div class="quiz">
   <div class="quiz-h"><span>Checkpoint</span></div>
   <div class="q">
@@ -373,7 +366,7 @@ wg.Wait()</code></pre></div>
      that shape. Formulas turn up in finance and physics; vocabulary tables in
      languages and in any field with its own terminology; timelines in history,
      in a project status, and in a disease course.
-     Which shape needs what: references/teaching.md
+     Which form fits which idea: references/visuals.md
      ═════════════════════════════════════════════════════════ -->
 
 <!-- ---------- 6.1 MATHEMATICS, PHYSICS, CHEMISTRY, FINANCE, STATISTICS ----------

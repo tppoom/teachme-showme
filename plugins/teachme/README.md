@@ -1,84 +1,71 @@
 # TeachMe
 
-> **TEACH me everything I HAVE to know.**
+> **Teach me so I get it — fast.**
 
-One self-contained HTML course that teaches a subject completely — not just what you asked,
-but everything you need in order to understand what you asked.
+One self-contained HTML course that makes you understand a subject quickly: short chapters,
+each about one idea, each built around a concrete example you can see working.
 
 ```bash
 claude plugin install teachme
 ```
 
 **Two ways to run it.** `/teachme` (or just describe what you need) runs the skill in your
-session. `/teachme-cas` runs CAS mode — Command → Agent → Skill: `teachme-planner` writes the syllabus and a shared brief, `teachme-author` agents write chapters in parallel, `teachme-reviewer` reads it all as the learner and fixes it. Use CAS for big jobs where
-one context would start compressing the end.
-
-Pick a depth — `quick`, `standard` or `deep` — and leave out anything you don't want (quizzes, exercises, visuals); the gate follows your choice.
+session — right for almost everything. `/teachme-cas` runs CAS mode (a planner, parallel
+chapter authors and a reviewer) for big `deep` courses only.
 
 ## Why
 
-Ask an AI to teach you something and you get an answer: short, correct, and full of holes you
-cannot see. It skips what you needed to know first, and it never tells you what to learn next.
-Paid courses stop halfway. Lecture slides are headings without the lecture.
+AI-written courses tend to fail the same way: too many chapters, paragraphs that circle the
+idea without landing it, boxes that repeat the prose, and almost no examples. You finish a
+chapter and still couldn't explain it to anyone.
 
-TeachMe treats the request as a **destination, not a scope**. It expands along five axes —
-what you must know first, the subject itself, the full mechanical detail, how it is really
-used, and what surrounds it — writes that out as a syllabus, and then treats the syllabus as a
-contract that a script enforces.
+TeachMe is built the other way round:
+
+- **Sized to the request.** "Explain X" is 1–4 chapters; a full course only when you ask for one.
+- **Example first, then the idea.** Every chapter opens on a real case — numbers, a snippet,
+  a situation — and names the rule once you've seen it work.
+- **Pictures for mechanisms** — flows, sequences, timelines, comparisons, step-through code.
+- **No filler.** No "in this chapter we will", no restating, no objectives-recap-glossary
+  ceremony unless it earns its place.
 
 ## What you get
 
-A single HTML file with a sidebar table of contents, per-chapter completion saved in your
-browser, a progress bar, full-text search, light/dark, and offline reading. Inside the
-chapters: diagrams, sequence and timing charts, step-through walkthroughs that highlight the
-code line under discussion, MathML formulas with symbol legends and derivations, vocabulary
-tables with ruby readings, flashcard decks, persistent checklists, exercises with revealed
-solutions, and checkpoint quizzes with explained answers.
+A single HTML file with a sidebar table of contents, progress saved in your browser, search,
+light/dark, offline reading and print styles. Inside the chapters: worked examples, diagrams,
+step-through walkthroughs that highlight the code line under discussion, MathML formulas with
+symbol legends, vocabulary tables, flashcards, checklists, and optional quick checks that
+explain why each wrong answer is tempting.
 
-## The discipline
+## The gate
 
-`scripts/verify.py` fails the build on any of these, and the fix is always to write the
-missing content rather than relax the check:
+`scripts/verify.py` checks the course before it is handed over:
 
-- a chapter under 300 words of prose (script-aware, so languages written without spaces count correctly) — and it *warns* when a chapter runs past ~1,200 words, has more than 4 sections, uses sub-sub-headings, stacks more than 3 callouts, or has walls-of-text paragraphs
-- a chapter with no visual, unless it declares `data-novisual="reason"`
-- a missing objective, recap, exercise or checkpoint quiz
-- a quiz answer with no explanation
-- a concept in the source material with no chapter mapped to it
-- the words `TODO`, "similar to the above", "and so on"
-- no glossary-and-cheat-sheet appendix
+- **Fails** anything that would render broken — Markdown left in the HTML, code swallowed as
+  tags, unbalanced markup, external resources, duplicate ids, malformed quizzes and widgets.
+- **Fails** a chapter with no concrete example (worked example, code with output, figure,
+  comparison or table).
+- **Warns** on padding — chapters past their length budget, filler phrases (English and Thai),
+  stacked boxes, too many chapters for the depth, and paragraphs left in the wrong language.
 
-It fails a quiz whose options only make sense in a fixed order ("both of the above", "the second
-one") and warns on distractors with no explanation, fewer than 3 options, or a right answer that
-is obviously the longest. The page shuffles options on every load, explains the specific
-misconception behind whichever wrong option the learner picked, and lets them retry.
+## Inputs
 
-## Four modes
-
-**Topic** — "teach me Rust from zero, I know Python."
-**Digest** — turn slides, PDFs or notes into a course, *plus the chapters the source skipped*.
-**Codebase** — what a project is, how it works, and **where it actually stands**: done, in
-progress, stubbed, broken, TODO — each with the file path and the evidence.
-**Exam** — built from the official blueprint: chapters weighted by marks, practice in the
-exam's own question format, the traps examiners set, timing strategy, and a full mock exam.
-
-Written for the actual reader — a child, an exam student, a busy professional, a team you hand
-it to. Courses too big for one sitting ship in **phases**: the syllabus stays whole, later
-chapters sit under `## Later`, and the gate passes honestly for what this phase promised.
+**A topic** — "explain how HTTPS works". **Your material** — slides, PDFs or notes turned into
+chapters that say what the lecturer would say. **A codebase** — what it does, the flows that
+matter traced through real files, and where it stands. **An exam** — chapters weighted by marks,
+practice in the exam's own format.
 
 ## Layout
 
 ```
 skills/teachme/
-├── SKILL.md              workflow, the iron law, what it refuses to do
+├── SKILL.md              workflow and sizing
 ├── references/
-│   ├── atlas.md          five expansion axes, syllabus shapes, coverage ledger
-│   ├── teaching.md       how people understand things; shapes of knowledge; accuracy
-│   ├── authoring.md      chapter anatomy, prose and example standards, language
-│   └── visuals.md        when a picture earns its place, and which form
+│   ├── writing.md        chapter recipe, examples, the cut list, quizzes, input types
+│   └── visuals.md        which visual for which idea; SVG rules
 ├── assets/
 │   ├── shell.html        the reader app: CSS, JS, every component
-│   ├── blocks.html       every block, copy-paste ready
+│   ├── blocks.html       every block's markup
+│   ├── examples/         one chapter in the target style
 │   └── i18n.json         14 interface languages
 └── scripts/              new.py · assemble.py · verify.py · embed-image.py
 ```

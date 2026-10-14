@@ -21,7 +21,7 @@ meta.json tunes the gate to how the deck will be used:
   "density": "sparse" | "normal" | "dense"   — overrides the ceiling multiplier directly
   "omit": ["notes", "title", "closing"]      — what the USER asked to leave out
 """
-import sys, re, html, pathlib
+import sys, re, html, pathlib, math
 from collections import Counter
 
 # Reading and listening compete for the same channel, so these are ceilings, not targets.
@@ -156,7 +156,9 @@ def main():
     SL = r'<section\b[^>]*\bclass="[^"]*\bslide\b'
     # cut each chunk at its own </section>; otherwise the last slide swallows the
     # page chrome and the script, and gets measured against words it does not contain
-    chunks = [cut(c) for c in re.split(f"(?={SL})", doc) if re.match(SL, c)]
+    # commented-out markup is not on any slide — a template comment must not count as one
+    live = re.sub(r"<!--[\s\S]*?-->", "", doc)
+    chunks = [cut(c) for c in re.split(f"(?={SL})", live) if re.match(SL, c)]
     if not chunks: fail("no slides found")
     layouts, shapes, ids, main_n, apx_n = [], [], [], 0, 0
     prev_sig, run = None, 0
@@ -241,6 +243,46 @@ def main():
         elif delivery == "read" and n_build:
             notes.append(f"{tag} uses builds, but a deck that is read shows every step at once")
 
+        # --- things that render wrong ---
+        vis = re.sub(r"<(pre|code|svg|table|script)\b[\s\S]*?</\1>", " ", body, flags=re.I)
+        vtxt = text_of(vis)
+        md = []
+        if re.search(r"(?<![*\w])\*\*[^*\n]{1,80}\*\*(?!\*)", vtxt): md.append("**bold**")
+        if re.search(r"(?m)^\s{0,3}#{1,4}\s+\S", vtxt): md.append("# heading")
+        if "```" in vtxt: md.append("``` fence")
+        if re.search(r"(?<![\w`])`[^`\n]{1,60}`(?![\w`])", vtxt): md.append("`code`")
+        if md: fail(f"{tag} Markdown renders literally on the slide: {', '.join(md)} — use <strong>, <code>")
+        for code in re.findall(r"<code\b[^>]*>([\s\S]*?)</code>", body):
+            m = re.search(r"<(?!/?(?:span|b|i|em|strong|mark|u|br)\b)[/!]?[A-Za-z][^>]*>?", code)
+            if m:
+                fail(f"{tag} unescaped '<' in code: {m.group(0)[:40]!r} — the browser eats it; write &lt;")
+                break
+        if re.search(r'style="[^"]*(?:color|background)\s*:\s*#', body):
+            warn(f"{tag} an inline colour bypasses the theme — use the theme tokens or classes")
+        # --- the tells that make a deck read as generated ---
+        emo = re.findall(r"[\U0001F300-\U0001FAFF\u2600-\u26FF\u2700-\u27BF]\ufe0f?", vtxt)
+        emo = [e for e in emo if e not in "✓✔✕✗★☆→←↑↓▲▼●○"]
+        if emo:
+            warn(f"{tag} emoji on the slide ({''.join(emo[:4])}) — decorative emoji read as machine-made; "
+                 f"use the icon set or nothing")
+        for h in re.findall(r"<h[12][^>]*>([\s\S]*?)</h[12]>", body):
+            ht = text_of(h).strip().lower().rstrip(".!?:")
+            if wc(text_of(h)) > 16 and lay not in ("statement", "quote"):
+                warn(f"{tag} headline is {wc(text_of(h))} words — keep it to two lines (~8-14 words); "
+                     f"the rest goes in the evidence or the notes")
+            if re.fullmatch(r"(?:overview|introduction|intro|agenda|summary|conclusions?|key takeaways?|"
+                            r"background|next steps|thank you|thanks|questions|any questions|q ?& ?a|"
+                            r"ภาพรวม|บทนำ|สรุป|สรุปผล|ขอบคุณ|ขอบคุณครับ|ขอบคุณค่ะ|คำถาม|มีคำถามไหม|ถาม-ตอบ)", ht):
+                (fail if lay == "closing" else warn)(
+                    f"{tag} headline {text_of(h).strip()!r} is a label — write the point as a sentence"
+                    + (" (the closing slide states the ask)" if lay == "closing" else ""))
+        buzz = re.findall(r"\b(?:unlock(?:ing)?|leverag(?:e|ing)|seamless(?:ly)?|game[- ]chang\w*|revolutioni[sz]\w*|"
+                          r"cutting[- ]edge|synerg\w*|delve|holistic|robust solution|next[- ]level|supercharge\w*|"
+                          r"in today'?s (?:fast-paced|digital) world)\b", vtxt, re.I)
+        if buzz:
+            warn(f"{tag} buzzwords on the slide ({', '.join(sorted(set(b.lower() for b in buzz))[:3])}) — "
+                 f"say the specific thing instead")
+
         sig = shape_of(lay, body); shapes.append(sig)
         run = run + 1 if sig == prev_sig else 1
         if run == MAX_RUN + 1 and lay == "content":
@@ -279,7 +321,7 @@ def main():
         lo, hi = mins / MAX_PER_SLIDE, mins / MIN_PER_SLIDE
         if not (lo <= main_n <= hi):
             warn(f"{main_n} main slides for a {mins}-minute slot — that slot fits roughly "
-                 f"{int(lo)}-{int(hi)}. Cut, or move slides to the appendix")
+                 f"{math.ceil(lo)}-{int(hi)}. Cut, or move slides to the appendix")
 
     # ---- 5. laziness ---------------------------------------------------------
     # Marker words (TODO, FIXME…) are author shorthand, so they only count in capitals — the

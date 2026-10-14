@@ -5,12 +5,15 @@ dependencies, no network. Open it, keep it, send it.
 
 | Skill | Produces | Use it when |
 |---|---|---|
-| **[TeachMe](skills/teachme)** | A complete course you study from | You want to actually learn something, not get an answer |
+| **[TeachMe](skills/teachme)** | A short course that makes you understand, fast | You want to actually get something, not just an answer |
 | **[ShowMe](skills/showme)** | A deck you present from | You have to present to a room |
 
-They are siblings with opposite disciplines. TeachMe's gate fails a chapter that says **too
-little**. ShowMe's gate fails a slide that says **too much**. Both refuse to ship placeholder
-text, invented citations, or content promised in the outline and never written.
+Both share one discipline: **say less, show more.** TeachMe teaches each idea through a concrete
+worked example in short chapters, and its gate fails a chapter with no example and warns on
+padding. ShowMe puts one claim and one piece of evidence on each slide, and its gate fails a
+slide that says too much and warns on the patterns that make a deck look machine-made. Both
+gates also fail anything that would render broken — stray Markdown, code swallowed as tags,
+clipped or overflowing content — and both refuse placeholder text and invented numbers.
 
 Both follow the open [Agent Skills](https://agentskills.io) format (`SKILL.md` + `scripts/` +
 `references/` + `assets/`), so they work the same in **Claude Code**, **Codex CLI** and
@@ -22,7 +25,7 @@ Both follow the open [Agent Skills](https://agentskills.io) format (`SKILL.md` +
 |---|---|---|
 | **Start it** | `/teachme`, `/showme` — or just describe what you need | `/teachme-cas <topic>`, `/showme-cas <talk>` |
 | **How it works** | One session follows the skill end to end | **Command → Agent → Skill**: an orchestrator command interviews you, a planner agent writes the contract (`SYLLABUS.md` / `STORYLINE.md` + a shared `BRIEF.md`), author agents write chapters or slide batches **in parallel, each with a fresh context**, and a reviewer agent reads the whole thing as the learner/audience and fixes it |
-| **Best for** | Quick explainers, standard courses, decks up to ~20 slides | Deep courses (10+ chapters), long lectures and workshops, heavy source material — where one context starts compressing the last third |
+| **Best for** | Almost everything: explainers, courses, decks up to ~20 slides | Only big jobs — deep courses over ~10 chapters, long lectures and workshops |
 | **Asks you** | Once: it shows the brief it understood and asks only what would change the result | The same single confirmation; the plan is shown and only re-asked if it departs from what you confirmed |
 | **Works in** | Claude Code, Codex CLI, Antigravity | Claude Code |
 
@@ -40,8 +43,8 @@ setting, not a fight with the checker. The user's explicit wishes beat the skill
 
 | | Setting | Values |
 |---|---|---|
-| TeachMe | `"depth"` | `quick` (1–4 chapters, one sitting) · `standard` · `deep` (reference-grade) |
-| TeachMe | `"omit"` | `quiz` `exercise` `objective` `recap` `visual` `appendix` `ledger` |
+| TeachMe | `"depth"` | `quick` (1–4 chapters) · `standard` (3–8, default) · `deep` (6–16, a full course) |
+| TeachMe | `"omit"` | `quiz` `exercise` `visual` `appendix` |
 | ShowMe | `"delivery"` | `live` · `remote` (video call) · `read` (emailed — ~1.8× words per slide) · `kiosk` (loop, no notes) |
 | ShowMe | `"density"` | `sparse` · `normal` · `dense` |
 | ShowMe | `"omit"` | `notes` `title` `closing` |
@@ -113,14 +116,14 @@ reliable one and needs no configuration.
 
 ## What each skill ships
 
-**TeachMe** — topic, digest, codebase and exam modes; a sidebar with scroll-spy, per-chapter
-completion saved in `localStorage`, a reading-progress bar, full-text search over the whole
-course, light/dark, copy-and-highlight code, step-through `.walk` explanations, interactive
-quizzes with scoring, flashcard decks, persistent checklists, MathML formulas with symbol
-legends and derivations, and print styles. Two complete worked chapters in `assets/examples/`
-show the depth the gate demands.
+**TeachMe** — short, example-first chapters from a topic, your notes/slides, a codebase or an
+exam blueprint; worked-example blocks, a sidebar with scroll-spy, per-chapter completion saved
+in `localStorage`, a reading-progress bar, full-text search, light/dark, copy-and-highlight
+code, step-through `.walk` explanations, optional quick-check quizzes that explain each wrong
+answer, flashcards, checklists, MathML formulas with symbol legends, and print styles. One
+chapter in `assets/examples/` shows the target style.
 
-**ShowMe** — a fixed canvas that scales to any screen, keyboard and touch navigation,
+**ShowMe** — a fixed canvas that scales to any screen, keyboard, swipe and tap navigation,
 progressive builds, an overview grid, a presenter window synced to the projector with notes,
 next slide, timer and pace clock, a black screen, a read-it-alone mode, auto-advance and
 looping, print-to-PDF at the exact slide size, and SVG charts — bar, stacked, horizontal,

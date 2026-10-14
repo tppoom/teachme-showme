@@ -51,6 +51,8 @@ prompt is that skill's absolute path.
 
    ```markdown
    # Brief
+   **What the user asked for:** their exact wishes — must-have content, length, look, tone,
+   anything they ruled out. Builders check every slide against this line.
    **Audience:** who, what they already believe   **Delivery:** live, 20 min
    **Voice of the notes:** person, register and tone, in the deck's language (the user's, unless they asked otherwise)
    **Look:** swiss, accent #e2231a, rule motif — why, in one line

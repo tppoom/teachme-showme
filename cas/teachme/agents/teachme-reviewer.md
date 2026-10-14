@@ -33,9 +33,10 @@ your prompt is that skill's absolute path.
      from the other
    - the running example drifting (names, numbers, versions changing between chapters)
    - voice, register or language switching between chapters
-   - an objective the chapter does not actually enable; an example without real output;
-     a quiz with no question on an unseen case
-   - every syllabus node and ledger item actually taught where it says
+   - a chapter that explains in the abstract before (or instead of) showing an example;
+     an example without real output or real numbers
+   - padding: filler sentences, restated paragraphs, boxes that repeat the prose — cut them
+   - every syllabus chapter and coverage item actually taught where it says
 4. **Look at it** if a browser tool is available (Playwright or similar): open `index.html`,
    check the cover, two chapters, a figure in light and dark, one quiz answer and one *Mark
    complete*.
@@ -46,7 +47,7 @@ as `needs-rewrite` with specific notes — the orchestrator sends it back to an 
 
 ## Report back (your final message)
 
-- Gate result and its summary line (chapters, words, visuals, quiz questions)
+- Gate result and its summary line
 - Fixes you made, one line each, with the file
 - `needs-rewrite:` chapter id → what is wrong and what it needs (or "none")
 - Anything you could not resolve, and why

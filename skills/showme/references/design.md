@@ -107,6 +107,29 @@ own brand colours and fonts, use those exactly; that is different, and it is the
    room is washed out; a white deck in a dark auditorium is a flashbulb. If you don't know the
    room, light wins for meetings, dark wins for stages.
 
+## The tells of a generated deck — and what a designer does instead
+
+Audiences now recognise machine-made decks on sight, and the recognition costs credibility
+before you say a word. These are the patterns that give it away. `verify.py` warns on the
+ones it can see; the rest are yours to catch in the overview grid.
+
+| The tell | What a designer does |
+|---|---|
+| Every slide the same skeleton: heading, three cards, an icon on each | Picks the layout from the shape of the idea; most slides have no cards and no icons |
+| Emoji as bullets or decoration | Nothing, or one icon from the set when it carries meaning |
+| Label headlines — "Overview", "Key Takeaways", "สรุป", "Thank you" | The point as a sentence: "Churn is a small-account problem" |
+| Gradient fills, glows and drop shadows on everything | Flat colour; one accent used rarely, for the thing to look at first |
+| Dashboard tiles of round, plausible numbers | Real numbers from the source, with a `.src` line — or no number |
+| Buzzwords: unlock, leverage, seamless, game-changing, cutting-edge | The specific thing: "cuts onboarding from 30 days to 5" |
+| Every bullet the same length, every list exactly three items | As many items as the content has; uneven is honest |
+| Text filling every slide to the bottom | One idea and air around it — whitespace is part of the composition |
+| A palette nobody chose (the tool's default purple/blue, cream with muted red) | Colours from the user's brand, their words, or the room — chosen and said out loud |
+| Generic stock-photo placeholders | A real image from the user, or an honest `.ph` that says what belongs there |
+
+The fix is the same each time: decide from the content and the user's request, not from the
+template. If the user described a look — "like our website", "minimal", "playful", a colour,
+a reference deck — that description outranks every default in this file.
+
 ## Making a custom theme
 
 Override tokens rather than writing a whole set:

@@ -4,6 +4,17 @@ One idea per slide, shown rather than listed. This file is the craft layer: what
 slide, which layout the idea wants, and how to keep it legible from the back of the room.
 Markup for everything named here: `assets/layouts.html`.
 
+## Why these rules — the research in one paragraph
+
+Two bodies of evidence shape everything below. **Assertion–evidence design** (Michael Alley,
+Penn State): a slide whose headline is a full-sentence claim, supported by visual evidence
+rather than bullets, is understood and remembered better than a topic-plus-bullets slide.
+**Mayer's multimedia principles**, tested across dozens of experiments: people learn more when
+extraneous material is cut (*coherence*), when cues point at what matters (*signaling* — the
+`hi` highlight, the `take` line), and when the slide does not repeat in text what the speaker
+is saying aloud (*redundancy* — that text belongs in the notes). One idea per slide, real
+data, and a layout chosen from the shape of the idea follow directly from these.
+
 ## The headline is the claim
 
 The single change that improves a deck more than any other:
@@ -15,7 +26,7 @@ The single change that improves a deck more than any other:
 | Timeline | We lose the window if we start after March |
 | User feedback | People aren't confused — they don't trust it |
 
-A topic headline makes the audience do the work of figuring out why they're looking at this.
+Keep it to two lines — roughly 8–14 words. A topic headline makes the audience do the work of figuring out why they're looking at this.
 A claim headline hands them the point and lets the evidence confirm it. It also makes the deck
 skimmable later, which is how most decks are actually consumed.
 
@@ -38,7 +49,7 @@ which nobody heard you.
 | | Ceiling |
 |---|---|
 | A statement slide | ~25 words |
-| A normal content slide | ~55 words |
+| A normal content slide | ~55 words (aim for 30) |
 | A bullet list | 5 bullets, ~12 words each |
 | Speaker notes | no ceiling — this is where it all goes |
 

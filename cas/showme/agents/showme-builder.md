@@ -22,8 +22,10 @@ prompt is that skill's absolute path.
 
 1. **Read the contract**: `DECK_DIR/STORYLINE.md`, `DECK_DIR/BRIEF.md`, `DECK_DIR/meta.json`
    (delivery, density, omit).
-2. **Read the standard**: `SKILL_DIR/references/slides.md` and `SKILL_DIR/assets/layouts.html`
-   — the layouts are the only class names the runtime knows; copy one and replace the content.
+2. **Read the standard**: `SKILL_DIR/references/slides.md` and *The tells of a generated deck*
+   in `SKILL_DIR/references/design.md`. Grep `SKILL_DIR/assets/layouts.html` for the layouts
+   your batch uses — they are the only class names the runtime knows; copy one and replace
+   the content. No icon-on-every-card, emoji, label headlines or buzzwords.
 3. **Write the batch straight to its file** (`BATCH` names it). For each slide: the `id` from
    the storyline, `data-claim` = its claim, the layout the storyline assigned, one piece of
    evidence, and `.notes` with what the presenter would actually say — opening line, the

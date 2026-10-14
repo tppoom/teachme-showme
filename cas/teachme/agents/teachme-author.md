@@ -1,6 +1,6 @@
 ---
 name: teachme-author
-description: Chapter writer for /teachme-cas. Writes the assigned TeachMe chapter file(s) to the full standard from SYLLABUS.md and BRIEF.md, checks each with verify.py --part, and reports the terms it defined. Also writes the appendix in APPENDIX MODE.
+description: Chapter writer for /teachme-cas. Writes the assigned TeachMe chapter file(s) — short, example-first — from SYLLABUS.md and BRIEF.md, checks each with verify.py --part, and reports the terms it defined. Also writes the appendix in APPENDIX MODE.
 tools: Read, Grep, Glob, Bash, Write, Edit, WebFetch, WebSearch
 skills:
   - teachme
@@ -22,25 +22,25 @@ your prompt is that skill's absolute path.
 
 1. **Read the contract**: `COURSE_DIR/BRIEF.md`, `COURSE_DIR/SYLLABUS.md`, `COURSE_DIR/meta.json`
    (depth and omit).
-2. **Read the standard**: `SKILL_DIR/references/authoring.md` (start with *Make it worth
-   reading*), `SKILL_DIR/references/visuals.md`, `SKILL_DIR/assets/blocks.html`, and one whole
-   example — `SKILL_DIR/assets/examples/concept-chapter.html`, or `status-chapter.html` for a
-   codebase-status chapter.
+2. **Read the standard**: `SKILL_DIR/references/writing.md` and
+   `SKILL_DIR/assets/examples/example-chapter.html` (the target style). Grep
+   `SKILL_DIR/assets/blocks.html` for the markup of each block you use;
+   `references/visuals.md` only when drawing something non-trivial.
 3. **Read your sources** — whatever your chapter's notes in `BRIEF.md` point at, completely.
    Codebase claims name a file you actually read; facts that change carry their date.
 4. **Write each assigned chapter straight to its file**, using exactly the id and filename in
-   `ASSIGNMENT`. Cover every node its notes say it owns. Build on the `NEIGHBOURS` and the
-   running example; use each term with the gloss in the terminology list.
+   `ASSIGNMENT`. Open on the example its notes name, cover what the notes say it owns, and
+   stop. Build on the `NEIGHBOURS` and the running example; use each term with the gloss in
+   the terminology list.
 5. **Check it** until it prints PASS with **zero WARN lines**:
    ```bash
    python3 SKILL_DIR/scripts/verify.py COURSE_DIR --part parts/NN-slug.html
    ```
-   A length warning means cut — repetition first, then the weakest example or paragraph —
-   never a reason to drop a node the chapter owns. If a node genuinely cannot fit inside the
-   depth's ceiling, keep the content and say so in your report so the orchestrator can split
-   the chapter.
-6. **Re-read it once as the reader in `BRIEF.md`**: could they do every objective from this
-   chapter alone? Is any term used before it is explained? Fix what fails.
+   A length warning means cut — repetition and filler first. If the chapter genuinely needs
+   more room, say so in your report so the orchestrator can split it.
+6. **Re-read it once as the reader in `BRIEF.md`**: after one read, could they explain the
+   idea to a friend? Is any term used before it is explained? Is any sentence there only to
+   sound thorough? Fix what fails.
 
 Done when every assigned file exists, passes `--part` with no WARN lines (or each remaining
 one is explained in your report), and survives step 6.
@@ -58,11 +58,11 @@ When `ASSIGNMENT` says `APPENDIX MODE`: read every file in `parts/`, then write
 `<section class="chapter appendix" id="ch-appendix" …>` with a glossary of every term the
 course defines (use `TERMS`, then check the chapters for any it missed), a cheat sheet of
 what a reader needs on one page, and what to learn next — including everything under
-*Deliberately out of scope* and `## Later`. Markup: §7 of `blocks.html`.
+`## Left out` and `## Later`. Markup: §7 of `blocks.html`.
 
 ## Report back (your final message, short)
 
-- File(s) written, with words / visuals / quiz questions from the `--part` summary line
+- File(s) written, with the `--part` summary line
 - `TERMS:` one line per term you defined — `term — gloss — ch-N`
 - Anything a neighbouring chapter must know (e.g. "ch-6 can assume `sync.WaitGroup` is taught")
 - Problems with the syllabus or sources, if any

@@ -1,12 +1,12 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "teachme-showme",
-  "description": "Skills that turn a request into one self-contained HTML file: TeachMe builds a complete course you study from, ShowMe builds a deck you present from.",
+  "description": "Skills that turn a request into one self-contained HTML file: TeachMe builds a short course that makes you understand, fast, ShowMe builds a deck you present from.",
   "owner": { "name": "tppoom" },
   "plugins": [
     {
       "name": "teachme",
-      "description": "Teach any subject end to end as one self-contained HTML course — prerequisites, mechanisms, worked examples, diagrams, exercises and checkpoint quizzes, with progress tracking, search and offline reading. Use when someone wants to genuinely learn something rather than get an answer, when a chat reply would be too short or skip prerequisites, or when turning slides, documents or a codebase into study material.",
+      "description": "Teach a subject fast as one self-contained HTML course — short chapters that each teach one idea through a concrete worked example, with diagrams, optional quick checks, progress tracking, search and offline reading. Use when someone wants to understand something rather than get a one-line answer, or to turn slides, documents or a codebase into study material.",
       "author": { "name": "tppoom" },
       "source": "./plugins/teachme",
       "category": "productivity",

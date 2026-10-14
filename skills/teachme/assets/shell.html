@@ -4,16 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>@@TITLE@@</title>
-<script>try{var t=localStorage.getItem('@@COURSE_ID@@:theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');document.documentElement.dataset.theme=t}catch(e){}</script>
+<script>try{var t=JSON.parse(localStorage.getItem('@@COURSE_ID@@:theme')||'null');if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light';document.documentElement.dataset.theme=t}catch(e){}</script>
 <style>
 /* ============================ TOKENS ============================ */
 *,*::before,*::after{box-sizing:border-box}
 :root{
   --sbw:302px;
   --bg:#fff; --elev:#f7f8fa; --sunken:#eef1f5;
-  --fg:#0f172a; --muted:#4b5563; --faint:#94a3b8;
+  --fg:#16191f; --muted:#4a5260; --faint:#7d8696;
   --line:#e5e7eb; --line2:#d3d8e0;
-  --accent:#4f46e5; --accent2:#7c3aed; --on-accent:#fff; --accent-soft:#eef2ff;
+  --accent:#1f5fbf; --accent2:#1f5fbf; --on-accent:#fff; --accent-soft:#edf3fc;
   --ok:#059669; --ok-soft:#ecfdf5;
   --warn:#b45309; --warn-soft:#fffbeb;
   --bad:#dc2626; --bad-soft:#fef2f2;
@@ -35,9 +35,9 @@
 }
 :root[data-theme="dark"]{
   --bg:#0b0f19; --elev:#111827; --sunken:#0f1524;
-  --fg:#e8edf5; --muted:#a3aec0; --faint:#6b7688;
+  --fg:#e8edf5; --muted:#aab4c4; --faint:#7c879a;
   --line:#1f2937; --line2:#2d3748;
-  --accent:#818cf8; --accent2:#a78bfa; --on-accent:#0b0f19; --accent-soft:#1a1f3a;
+  --accent:#7fb0ff; --accent2:#7fb0ff; --on-accent:#0b0f19; --accent-soft:#16233a;
   --ok:#34d399; --ok-soft:#052e26;
   --warn:#fbbf24; --warn-soft:#2e2205;
   --bad:#f87171; --bad-soft:#2e0b0b;
@@ -48,7 +48,7 @@
 }
 html{scroll-behavior:smooth;scroll-padding-top:24px;-webkit-text-size-adjust:100%}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);
-     font-size:16px;line-height:1.85;-webkit-font-smoothing:antialiased}
+     font-size:16.5px;line-height:1.8;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 ::selection{background:var(--accent);color:var(--on-accent)}
 a{color:var(--accent);text-decoration:none}
 a:hover{text-decoration:underline}
@@ -59,16 +59,14 @@ button{font:inherit;cursor:pointer}
 #sb{position:fixed;inset-block:0;inset-inline-start:0;width:var(--sbw);background:var(--elev);
     border-inline-end:1px solid var(--line);display:flex;flex-direction:column;z-index:60}
 .sb-top{padding:20px 20px 14px;border-bottom:1px solid var(--line)}
-.sb-slogan{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);font-weight:700}
-.sb-slogan b{color:var(--accent)}
-.sb-title{font-size:17px;font-weight:800;margin:7px 0 3px;line-height:1.3;letter-spacing:-.01em}
+.sb-title{font-size:17px;font-weight:800;margin:0 0 3px;line-height:1.3;letter-spacing:-.01em}
 .sb-sub{font-size:12.5px;color:var(--muted);line-height:1.45}
 .sb-prog{padding:14px 20px;border-bottom:1px solid var(--line)}
 .sb-prog-row{display:flex;justify-content:space-between;align-items:baseline;font-size:11.5px;
              font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-bottom:7px}
 .sb-prog-pct{color:var(--accent);font-size:14px;letter-spacing:0}
 .track{height:7px;border-radius:99px;background:var(--sunken);overflow:hidden}
-.fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2));
+.fill{height:100%;width:0;border-radius:99px;background:var(--accent);
       transition:width .45s cubic-bezier(.4,0,.2,1)}
 .sb-prog-note{font-size:11.5px;color:var(--faint);margin-top:6px}
 .sb-search{padding:12px 16px;border-bottom:1px solid var(--line)}
@@ -112,31 +110,23 @@ button{font:inherit;cursor:pointer}
 
 /* ============================ MAIN ============================ */
 #rp{position:fixed;top:0;inset-inline-start:var(--sbw);inset-inline-end:0;height:3px;z-index:50;background:transparent;pointer-events:none}
-#rp i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2))}
-[dir="rtl"] #rp i{background:linear-gradient(270deg,var(--accent),var(--accent2))}
+#rp i{display:block;height:100%;width:0;background:var(--accent)}
 main{margin-inline-start:var(--sbw);padding:0 clamp(20px,6vw,96px) 160px;max-width:calc(var(--sbw) + 1180px)}
 .wrap{max-width:720px;margin:0 auto}
 
 /* ============================ COVER ============================ */
-.cover{padding:clamp(64px,10vw,120px) 0 64px;border-bottom:1px solid var(--line);margin-bottom:12px}
-.cv-slogan{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;
-           color:var(--accent);background:var(--accent-soft);padding:7px 14px;border-radius:99px;margin-bottom:22px}
+.cover{padding:clamp(56px,9vw,104px) 0 56px;border-bottom:1px solid var(--line);margin-bottom:12px}
 .cv-title{font-size:clamp(30px,5vw,42px);line-height:1.2;font-weight:800;letter-spacing:-.02em;margin:0 0 20px}
 .cv-sub{font-size:clamp(15px,1.8vw,17px);color:var(--muted);line-height:1.8;margin:0 0 36px;max-width:58ch}
-.cv-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(122px,1fr));gap:12px;margin-bottom:32px}
-.stat{background:var(--elev);border:1px solid var(--line);border-radius:var(--r);padding:15px 17px}
-.stat b{display:block;font-size:22px;font-weight:800;letter-spacing:-.01em;line-height:1.2}
-.stat span{font-size:11.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
-.cta{display:inline-flex;align-items:center;gap:9px;padding:13px 26px;border:none;border-radius:99px;
-     background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;font-weight:750;font-size:15.5px;
-     box-shadow:var(--sh);transition:.18s}
-.cta:hover{transform:translateY(-1px);box-shadow:var(--sh-lg)}
-.cv-how{margin-top:34px;padding:16px 18px;border:1px dashed var(--line2);border-radius:var(--r);
-        font-size:13.5px;color:var(--muted);line-height:1.7}
+.cv-meta{font-size:14px;color:var(--faint);margin:-18px 0 30px;font-variant-numeric:tabular-nums}
+.cta{display:inline-flex;align-items:center;gap:9px;padding:12px 24px;border:none;border-radius:var(--r-sm);
+     background:var(--accent);color:var(--on-accent);font-weight:700;font-size:15px;transition:.18s}
+.cta:hover{filter:brightness(1.08)}
+.cv-how{margin-top:22px;font-size:13px;color:var(--faint);line-height:1.7;max-width:62ch}
 .cv-how b{color:var(--fg)}
 kbd{font-family:var(--mono);font-size:11.5px;background:var(--sunken);border:1px solid var(--line2);
     border-bottom-width:2px;border-radius:5px;padding:1px 6px;color:var(--fg)}
-.cv-map{margin-top:44px}
+.cv-map{margin-top:48px}
 .cv-map h3{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);margin:0 0 14px}
 .map-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:11px}
 .map-card{display:block;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r);
@@ -147,8 +137,8 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--sunken);border:1px
 .map-card .mc-d{font-size:12.5px;color:var(--muted);line-height:1.5}
 
 /* ============================ CHAPTER ============================ */
-.chapter{padding:104px 0 0;scroll-margin-top:28px}
-.ch-head{padding-bottom:32px;margin-bottom:44px;border-bottom:1px solid var(--line)}
+.chapter{padding:80px 0 0;scroll-margin-top:28px}
+.ch-head{padding-bottom:26px;margin-bottom:36px;border-bottom:1px solid var(--line)}
 .ch-label{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
 .ch-title{font-size:clamp(25px,3.6vw,31px);font-weight:800;letter-spacing:-.015em;line-height:1.3;margin:0 0 14px}
 .ch-desc{font-size:15.5px;color:var(--muted);line-height:1.8;margin:0 0 18px;max-width:62ch}
@@ -159,7 +149,7 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--sunken);border:1px
 .tag.advanced{background:var(--bad-soft);color:var(--bad)}
 .tag.core{background:var(--accent-soft);color:var(--accent)}
 
-.ch-body h2{font-size:21px;font-weight:750;letter-spacing:-.01em;line-height:1.4;margin:80px 0 20px;
+.ch-body h2{font-size:21px;font-weight:750;letter-spacing:-.01em;line-height:1.4;margin:56px 0 16px;
             scroll-margin-top:26px}
 .ch-body h3{font-size:17px;font-weight:700;margin:44px 0 14px;scroll-margin-top:26px}
 .ch-body h4{font-size:15px;font-weight:700;margin:32px 0 10px;color:var(--muted)}
@@ -167,6 +157,8 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--sunken);border:1px
 .ch-body ul,.ch-body ol{margin:0 0 24px;padding-inline-start:24px}
 .ch-body li{margin-bottom:10px}
 .ch-body li>ul,.ch-body li>ol{margin-top:10px}
+.ch-body .opts,.ch-body .steps,.ch-body .check,.ch-body .timeline{padding-inline-start:0}
+.ch-body .opts{margin:0}.ch-body .opts>li{margin:0}
 .ch-body strong{font-weight:700;color:var(--fg)}
 .ch-body hr{border:none;border-top:1px solid var(--line);margin:56px 0}
 .ch-body>p code,li code,td code,h2 code,h3 code,h4 code,.callout code,summary code{
@@ -184,7 +176,7 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--sunken);border:1px
 /* ---------- callouts ---------- */
 .callout{display:flex;gap:16px;padding:20px 24px;border-radius:var(--r);margin:36px 0;
          border:1px solid var(--line);background:var(--elev);border-inline-start-width:4px}
-.callout .ic{flex:none;font-size:17px;line-height:1.6}
+.callout .ic{display:none}
 .callout .co{flex:1;min-width:0}
 .callout .co>:last-child{margin-bottom:0}
 .callout .ct{font-weight:700;margin-bottom:8px;font-size:14.5px;line-height:1.5}
@@ -200,10 +192,19 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--sunken);border:1px
 .callout.key{border-inline-start-color:var(--accent);background:var(--accent-soft)}
 .callout.key .ct{color:var(--accent)}
 
+/* ---------- worked example: the concrete case that makes the idea visible ---------- */
+.eg{margin:32px 0;padding:20px 24px;border:1px solid var(--line2);border-radius:var(--r);background:var(--bg)}
+.eg>.eg-h{display:block;font-size:13px;font-weight:750;color:var(--accent);margin:0 0 10px;letter-spacing:.01em}
+.eg>:last-child{margin-bottom:0}
+.eg .code,.eg .tw,.eg figure.viz{margin:16px 0}
+.eg .code:last-child,.eg .tw:last-child{margin-bottom:0}
+.eg ol,.eg ul{margin-bottom:14px}
+.eg .res{display:block;margin-top:12px;padding-top:12px;border-top:1px dashed var(--line2);font-weight:650}
+
 /* ---------- concept cards ---------- */
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:16px;margin:36px 0}
 .card{background:var(--elev);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px}
-.card .c-ic{font-size:21px;margin-bottom:9px}
+.card .c-ic{display:none}
 .card .c-t{font-weight:700;font-size:14.5px;margin-bottom:8px}
 .card .c-d{font-size:13.5px;color:var(--muted);line-height:1.75}
 .card .c-d>:last-child{margin-bottom:0}
@@ -212,7 +213,7 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--sunken);border:1px
 .code{margin:36px 0;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:var(--code-bg)}
 .code-hd{display:flex;align-items:center;gap:10px;padding:9px 14px;background:rgba(255,255,255,.045);
          border-bottom:1px solid var(--code-line)}
-.dots{display:flex;gap:5px}
+.dots{display:none}
 .dots i{width:10px;height:10px;border-radius:99px;display:block}
 .dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
 .code-fn{font-family:var(--mono);font-size:11.5px;color:#94a3b8;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -251,7 +252,8 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--sunken);border:1px
 .steps>li>b:first-child{display:block;margin-bottom:5px;font-size:15.5px}
 
 /* ---------- compare ---------- */
-.cmp{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:36px 0}
+.cmp{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:36px 0}
+.cmp>div,.grid>.card,.tab,.ex-b,.walk-steps{min-width:0}
 .cmp>div{border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;background:var(--elev);font-size:14.5px}
 .cmp>div p:last-child{margin-bottom:0}
 .cmp .bad{border-color:color-mix(in srgb,var(--bad) 40%,transparent);background:var(--bad-soft)}
@@ -273,7 +275,7 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--sunken);border:1px
 /* ---------- exercise ---------- */
 .ex{margin:44px 0;border:1.5px solid var(--line2);border-radius:var(--r);overflow:hidden;background:var(--elev)}
 .ex-h{padding:16px 24px;display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--line)}
-.ex-h .ic{font-size:17px}
+.ex-h .ic{display:none}
 .ex-h b{font-size:14.5px}
 .ex-b{padding:22px 24px}
 .ex-b>:last-child{margin-bottom:0}
@@ -296,13 +298,14 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--sunken);border:1px
 .q+.q{border-top:1px solid var(--line)}
 .q-t{font-weight:650;margin:0 0 16px;font-size:15px;line-height:1.7}
 .opts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
-.opt{width:100%;text-align:left;display:flex;gap:12px;align-items:flex-start;padding:13px 16px;
+.opt{width:100%;text-align:start;display:block;position:relative;padding:13px 16px;padding-inline-start:48px;
      border:1.5px solid var(--line);border-radius:var(--r-sm);background:var(--bg);color:var(--fg);
      font-size:14px;line-height:1.65;transition:.15s}
 .opt:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft)}
 .opt:disabled{cursor:default;opacity:.72}
-.opt .dot{flex:none;width:21px;height:21px;border-radius:99px;border:2px solid var(--line2);
-          display:grid;place-items:center;font-size:10.5px;font-weight:800;margin-top:1px}
+.opt .dot{position:absolute;inset-inline-start:15px;top:15px;width:21px;height:21px;border-radius:99px;border:2px solid var(--line2);
+          display:grid;place-items:center;font-size:10.5px;font-weight:800;line-height:1}
+.opt code{white-space:normal}
 .opt.right{border-color:var(--ok);background:var(--ok-soft);opacity:1}
 .opt.right .dot{background:var(--ok);border-color:var(--ok);color:#fff}
 .opt.right .dot::after{content:"✓"}
@@ -344,7 +347,7 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--sunken);border:1px
 .nav-lr a:hover{border-color:var(--accent);color:var(--accent);text-decoration:none}
 
 /* ---------- appendix ---------- */
-.appendix{padding-top:104px}
+.appendix{padding-top:80px}
 .gl{border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin:36px 0}
 .gl-i{display:grid;grid-template-columns:190px 1fr;gap:20px;padding:16px 22px;border-bottom:1px solid var(--line);font-size:14.5px}
 .gl-i:last-child{border-bottom:none}
@@ -352,11 +355,11 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--sunken);border:1px
 .gl-i dd{margin:0;color:var(--muted);line-height:1.6}
 
 /* ---------- done banner ---------- */
-#done{display:none;margin:56px 0 0;padding:34px;text-align:center;border-radius:var(--r);
-      background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff}
+#done{display:none;margin:56px 0 0;padding:30px;text-align:center;border-radius:var(--r);
+      border:1px solid var(--line);background:var(--elev)}
 #done.show{display:block}
-#done h3{margin:12px 0 8px;font-size:24px;font-weight:840}
-#done p{margin:0;opacity:.92;font-size:15px}
+#done h3{margin:0 0 8px;font-size:22px;font-weight:800}
+#done p{margin:0;color:var(--muted);font-size:15px}
 
 /* ---------- search results ---------- */
 #sr{display:none;padding:6px}
@@ -478,8 +481,7 @@ figcaption .fign{font-weight:800;color:var(--accent);letter-spacing:.03em}
 .bars .b{display:grid;grid-template-columns:132px 1fr 68px;gap:12px;align-items:center;font-size:13.3px}
 .bars .b>span:first-child{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bars .bar{height:23px;border-radius:6px;background:var(--sunken);overflow:hidden}
-.bars .bar i{display:block;height:100%;width:var(--p,0%);border-radius:6px;
-  background:linear-gradient(90deg,var(--accent),var(--accent2))}
+.bars .bar i{display:block;height:100%;width:var(--p,0%);border-radius:6px;background:var(--accent)}
 .bars .bar.g i{background:linear-gradient(90deg,var(--ok),var(--ok))}
 .bars .bar.r i{background:linear-gradient(90deg,var(--bad),var(--bad))}
 .bars .v{text-align:right;font-family:var(--mono);font-size:12.3px;color:var(--muted)}
@@ -514,7 +516,10 @@ figure.viz svg text,figure.diagram svg text{fill:var(--fg);font-family:var(--fon
 .ch-body img,.cover img{max-width:100%;height:auto}
 figure.viz>img,figure.diagram>img{border-radius:var(--r-sm);border:1px solid var(--line)}
 /* long identifiers, URLs and hashes must wrap rather than widen the page */
-.ch-body p,.ch-body li,.ch-body td,.ch-body dd,.callout,.fb{overflow-wrap:anywhere}
+.ch-body p,.ch-body li,.ch-body dd,.callout,.fb{overflow-wrap:anywhere}
+.ch-body td,.ch-body th{overflow-wrap:break-word}
+.tw td{font-variant-numeric:tabular-nums}
+.cv-sub:empty,.sb-sub:empty,.ch-desc:empty{display:none}
 
 /* ---------- code line highlighting ---------- */
 .code pre{padding:17px 0}
@@ -748,7 +753,8 @@ rt{font-size:.55em;color:var(--muted);font-weight:500}
   #sb{transform:translateX(-100%);transition:transform .26s cubic-bezier(.4,0,.2,1);width:min(88vw,320px);box-shadow:var(--sh-lg)}
   body.menu #sb{transform:none}
   body.menu #scrim{display:block}
-  .cmp{grid-template-columns:1fr}
+  .cmp{grid-template-columns:minmax(0,1fr)}
+  .eg{padding:16px 18px}
   .gl-i{grid-template-columns:1fr;gap:4px}
   body{font-size:15.5px}
   .chapter,.appendix{padding-top:72px}
@@ -804,7 +810,6 @@ rt{font-size:.55em;color:var(--muted);font-weight:500}
 
 <nav id="sb" aria-label="Course navigation">
   <div class="sb-top">
-    <div class="sb-slogan">TEACH me <b>everything</b> I HAVE to know</div>
     <div class="sb-title">@@TITLE@@</div>
     <div class="sb-sub">@@SUBTITLE@@</div>
   </div>
@@ -817,7 +822,7 @@ rt{font-size:.55em;color:var(--muted);font-weight:500}
   <div id="nav"></div>
   <div id="sr"></div>
   <div class="sb-foot">
-    <button class="ghost" id="themeBtn">◐ @@T_THEME@@</button>
+    <button class="ghost" id="themeBtn">@@T_THEME@@</button>
     <button class="ghost" id="resetBtn">↺ @@T_RESET@@</button>
   </div>
 </nav>
@@ -828,10 +833,9 @@ rt{font-size:.55em;color:var(--muted);font-weight:500}
 <div class="wrap">
 
   <section class="cover" id="cover">
-    <div class="cv-slogan">TEACH me everything I HAVE to know</div>
     <h1 class="cv-title">@@TITLE@@</h1>
     <p class="cv-sub">@@SUBTITLE@@</p>
-    <div class="cv-stats"></div>
+    <div class="cv-meta"></div>
     <button class="cta" id="startBtn">@@T_START@@ →</button>
     <div class="cv-how">@@T_HOWTO@@</div>
     <div class="cv-map"><h3>@@T_CONTENTS@@</h3><div class="map-grid"></div></div>
@@ -839,7 +843,7 @@ rt{font-size:.55em;color:var(--muted);font-weight:500}
 
 <!--@@CHAPTERS@@-->
 
-  <div id="done"><div style="font-size:44px">🎓</div><h3>@@T_DONEH@@</h3><p>@@T_DONEP@@</p></div>
+  <div id="done"><h3>@@T_DONEH@@</h3><p>@@T_DONEP@@</p></div>
 
 </div>
 </main>
@@ -1135,15 +1139,10 @@ document.addEventListener("click",function(e){
   }
 });
 
-/* stats */
-var st=$(".cv-stats");
-if(st)st.innerHTML=
-  '<div class="stat"><b>'+chapters.length+'</b><span>'+UI.chapter+'</span></div>'+
-  '<div class="stat"><b>'+$$(".ch-body h2").length+'</b><span>'+UI.topics+'</span></div>'+
-  '<div class="stat"><b>'+($$(".code").length+$$(".math").length)+'</b><span>'+UI.examples+'</span></div>'+
-  '<div class="stat"><b>'+($$("figure.viz").length+$$("figure.diagram").length+$$(".walk").length)+'</b><span>'+UI.visuals+'</span></div>'+
-  '<div class="stat"><b>'+$$(".q").length+'</b><span>'+UI.quiz+'</span></div>'+
-  '<div class="stat"><b>~'+Math.round(totalMin/60*10)/10+'h</b><span>'+UI.read+'</span></div>';
+/* one quiet line, not a dashboard: how many chapters and how long */
+var st=$(".cv-meta");
+if(st)st.textContent=chapters.length+" "+UI.chapter+" · ~"+
+  (totalMin<90?totalMin+" "+UI.minRead:(Math.round(totalMin/60*10)/10)+" h");
 
 /* ---------------- scroll spy + reading bar ---------------- */
 var cur=null;
@@ -1391,7 +1390,7 @@ $$(".cards").forEach(function(dk,di){
   ft.innerHTML='<button class="no">↺ '+esc(UI.again)+'</button><button class="ok">✓ '+esc(UI.known)+'</button>';
   dk.appendChild(ft);
   var fin=document.createElement("div"); fin.className="cards-done";
-  fin.innerHTML='🎉 <button class="no" style="margin-inline-start:10px">↺</button>';
+  fin.innerHTML='✓ <button class="no" style="margin-inline-start:10px">↺</button>';
   dk.appendChild(fin);
 
   all.forEach(function(c,i){

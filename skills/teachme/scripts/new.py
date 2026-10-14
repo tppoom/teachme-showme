@@ -52,32 +52,18 @@ def main():
     if not sf.exists():
         sf.write_text(f"""# {title}
 
-**Destination:** what the learner asked for, in one line
-**Learner level assumed:** what they already know — be specific, it sets where axis 1 stops
-**Language:** {lang}
-**Depth:** {depth}{(" — omitted at the user's request: " + ", ".join(omit)) if omit else ""}
+**Request:** what the user asked for, in one line
+**Reader:** who reads it and what they already know
+**Language:** {lang} · **Depth:** {depth}{(" · omitted at the user's request: " + ", ".join(omit)) if omit else ""}
 
 ## Chapters
 
-- `ch-1` — … — *must know because …*
-- `ch-2` — … — *prerequisite, axis 1*
-- `ch-appendix` — Glossary, cheat sheet, what to learn next
+- `ch-1` — Title — *after this you can …*
+- `ch-2` — Title — *after this you can …*
 
-## Coverage ledger
+## Left out
 
-Every concept in the source material, and every gap the atlas demands, maps to a chapter.
-Nothing here may still be unchecked at hand-over.
-
-- [ ] … → `ch-1`
-
-## Later
-
-Chapters planned for a later phase, when the course is too big for one session. They stay in
-the syllabus; the final gate reports them as still owed instead of failing on them.
-
-## Deliberately out of scope
-
-- … — why, and where it is mentioned instead
+- … — why (say this in one line at hand-over too)
 """, encoding="utf-8")
         made.append("SYLLABUS.md")
 

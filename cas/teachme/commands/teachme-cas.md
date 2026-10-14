@@ -57,7 +57,7 @@ most five lines, then ask only what the request leaves open and would change the
 most three questions, each with your recommended option first:
 
 - **Current level** — what they already know (it decides where prerequisites stop)
-- **Depth** — `quick` (1–4 chapters, one sitting) / `standard` (5–16) / `deep` (14–24+)
+- **Depth** — `quick` (1–4 chapters, one sitting) / `standard` (3–8) / `deep` (6–16)
 - **Anything to leave out** — quizzes, exercises, visuals (multi-select; pass to the planner
   as `OMIT: quiz,exercise,visual` — exactly these keys)
 
@@ -93,7 +93,7 @@ planner flagged a size warning. Then ask once with `AskUserQuestion`: **Start wr
 (recommended) / **Phase it — first N chapters now** / **Change something** (free text).
 
 - Small changes (rename, drop, reorder, move to `## Later`): edit `SYLLABUS.md` yourself;
-  a dropped chapter goes under *Deliberately out of scope* with the reason.
+  a dropped chapter goes under `## Left out` with the reason.
 - Structural changes: re-dispatch the planner with the feedback under `DECISIONS`.
 
 ## Step 4 · Author, in parallel waves
@@ -121,7 +121,7 @@ After each wave, `ls COURSE_DIR/parts/`. Re-dispatch once for any assigned file 
 missing or whose author reported a failed `--part` check. Collect every author's
 **terms** list.
 
-Then, unless depth is `quick` or `appendix` is omitted, dispatch one more author:
+Then, only if the syllabus lists `ch-appendix`, dispatch one more author:
 
 ```
 SKILL_DIR / COURSE_DIR as above
@@ -148,6 +148,6 @@ python3 SKILL_DIR/scripts/assemble.py COURSE_DIR && python3 SKILL_DIR/scripts/ve
 ```
 
 Then send the file (`SendUserFile` where it exists) or give the absolute path of
-`index.html`, and report: chapters, words, visuals, quiz questions (from the gate's summary
-line), anything left out and why, anything under `## Later`, and any issue the reviewer could
+`index.html`, and report: chapters and reading time (from the gate's summary line), anything
+left out and why, anything under `## Later`, and any issue the reviewer could
 not close. Two lines on use: one file, works offline, tick chapters as you go, `/` searches.

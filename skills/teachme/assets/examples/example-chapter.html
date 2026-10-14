@@ -1,0 +1,94 @@
+<!--
+  TeachMe — the target style for one chapter. ~450 words of prose.
+  Notice: no intro paragraph about what the chapter will do, no objectives box, no recap.
+  It opens on the question, works one concrete example with real numbers, names the rule
+  only after the reader has seen it, draws the one picture that matters, names the one trap,
+  and ends with two questions that need the idea applied to a new case.
+-->
+<section class="chapter" id="ch-2" data-title="Why compound interest snowballs">
+  <header class="ch-head">
+    <div class="ch-label"></div>
+    <h1 class="ch-title">Why compound interest snowballs</h1>
+    <p class="ch-desc">Work out what a deposit grows to, and see why the last years add more than the first.</p>
+  </header>
+  <div class="ch-body">
+
+    <p>Put ฿10,000 in an account paying 10% a year and leave it. After 10 years you might expect
+    ฿20,000 — ten years of ฿1,000. You get ฿25,937. Where did the extra ฿5,937 come from?</p>
+
+    <div class="eg">
+      <span class="eg-h">Example — ฿10,000 at 10% a year</span>
+      <div class="tw"><table>
+        <thead><tr><th>Year</th><th>Start</th><th>Interest (10% of start)</th><th>End</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>10,000</td><td>1,000</td><td>11,000</td></tr>
+          <tr><td>2</td><td>11,000</td><td>1,100</td><td>12,100</td></tr>
+          <tr><td>3</td><td>12,100</td><td>1,210</td><td>13,310</td></tr>
+          <tr><td>10</td><td>23,579</td><td>2,358</td><td>25,937</td></tr>
+        </tbody>
+      </table></div>
+      <span class="res">Year 1 earns ฿1,000. Year 10 earns ฿2,358 — on the same 10%.</span>
+    </div>
+
+    <p>Look at the interest column. It grows every year because each year's 10% is taken of a
+    bigger number: last year's interest is now part of the balance and earns interest too.
+    That is all <strong>compound interest</strong> means — interest on interest.</p>
+
+    <h2>The rule, now that you've seen it</h2>
+
+    <p>Each year multiplies the balance by 1.10. Ten years multiply it by 1.10 ten times:</p>
+
+    <div class="math"><math display="block"><mrow><mi>A</mi><mo>=</mo><mi>P</mi><mo>×</mo>
+      <msup><mrow><mo>(</mo><mn>1</mn><mo>+</mo><mi>r</mi><mo>)</mo></mrow><mi>n</mi></msup></mrow></math></div>
+    <div class="where">
+      <div class="wh">where</div>
+      <div class="w"><b>P</b><span>what you put in — ฿10,000</span></div>
+      <div class="w"><b>r</b><span>rate per period as a decimal — 0.10</span></div>
+      <div class="w"><b>n</b><span>number of periods — 10 years</span></div>
+    </div>
+
+    <p>10,000 × 1.10¹⁰ = 25,937. The table and the formula are the same calculation; the
+    formula just skips the rows.</p>
+
+    <figure class="viz">
+      <div class="bars">
+        <div class="b"><span>Years 1–5</span><div class="bar"><i style="--p:39%"></i></div><span class="v">฿6,105</span></div>
+        <div class="b"><span>Years 6–10</span><div class="bar"><i style="--p:62%"></i></div><span class="v">฿9,832</span></div>
+        <div class="b"><span>Years 11–15</span><div class="bar"><i style="--p:100%"></i></div><span class="v">฿15,836</span></div>
+      </div>
+      <figcaption>Interest earned in each five-year block. Same rate, same deposit — the later
+      blocks earn more because the balance they start from is bigger.</figcaption>
+    </figure>
+
+    <h2>The trap: the rate and the period must match</h2>
+
+    <p>Banks quote yearly rates but often compound monthly. Then <em>r</em> is the monthly
+    rate (10% ÷ 12 ≈ 0.833%) and <em>n</em> is months (120), not years. Plugging the yearly
+    rate into a monthly <em>n</em> gives 10,000 × 1.10¹²⁰ — about ฿927 million.</p>
+
+    <div class="quiz">
+      <div class="quiz-h"><span>Quick check</span></div>
+      <div class="q">
+        <p class="q-t">You leave ฿5,000 at 4% a year for 2 years. How much interest do you earn in year 2?</p>
+        <ul class="opts">
+          <li><button class="opt" data-why="That is year 1's interest. Year 2 is 4% of the new balance, ฿5,200.">฿200</button></li>
+          <li><button class="opt" data-correct="true">฿208</button></li>
+          <li><button class="opt" data-why="That is the total interest over both years, not year 2 alone.">฿408</button></li>
+        </ul>
+        <div class="fb"><b>฿208.</b> Year 1 ends at ฿5,200, and 4% of ฿5,200 is ฿208 — the extra
+        ฿8 is interest on year 1's interest.</div>
+      </div>
+      <div class="q">
+        <p class="q-t">An account pays 12% a year compounded monthly. For 3 years, what are <em>r</em> and <em>n</em>?</p>
+        <ul class="opts">
+          <li><button class="opt" data-why="Yearly rate with monthly periods — the mismatch that produces absurd results.">r = 0.12, n = 36</button></li>
+          <li><button class="opt" data-why="This compounds yearly, which ignores the monthly compounding.">r = 0.12, n = 3</button></li>
+          <li><button class="opt" data-correct="true">r = 0.01, n = 36</button></li>
+        </ul>
+        <div class="fb"><b>r = 0.01, n = 36.</b> Rate and period must use the same unit: 12% ÷ 12
+        months = 1% per month, for 36 months.</div>
+      </div>
+    </div>
+
+  </div>
+</section>

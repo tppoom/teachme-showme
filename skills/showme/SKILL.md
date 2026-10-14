@@ -16,6 +16,24 @@ chosen to match how the user said it should look.
 Every occasion — a pitch, a thesis defence, an incident review, a cooking demo — is the same
 problem: an audience, a limited number of minutes, and one thing they should leave with.
 
+## What the user asked for comes first
+
+The deck should look like **a good designer made it for this person, for this room** — not
+like a template, and not like a machine. That means:
+
+- **Their words decide.** The content they want in, the look they described ("minimal",
+  "like our website", a colour, a reference deck), the length, the language, the tone. When
+  their request and a default in this skill disagree, the request wins — record it in
+  `meta.json` so the gate agrees.
+- **Professional means fitting, not formal.** A wedding toast, a class for teenagers and a
+  board review each have a right look. Choose it from the audience and occasion, and say what
+  you chose.
+- **Nothing generated-looking.** No icon on every card, no emoji, no label headlines
+  ("Overview", "สรุป", "Thank you"), no gradients-on-everything, no invented numbers, no
+  buzzwords. The full list and the alternatives: `references/design.md` → *The tells*.
+- **No rendering bugs.** Nothing clipped, overlapping or wrapping mid-number; check the
+  overview grid before handing over.
+
 ## The rule
 
 ```
@@ -93,6 +111,7 @@ says so, by deliberate choice where it doesn't — and state the ones you chose:
 
 | | |
 |---|---|
+| **What they asked for** | their exact wishes — content that must be in, length, look, tone, anything they said no to. Quote them to yourself; every later choice is checked against this |
 | **Audience** | who is in the room and what they already believe |
 | **Spine** | the one sentence they repeat tomorrow |
 | **Occasion** | what kind of event — find its row in `references/storyline.md` → *Occasions* |
@@ -142,7 +161,8 @@ in one line.
 <dir>/parts/01-opening.html, 02-evidence.html, …
 ```
 Copy layouts from **`assets/layouts.html`** (thirty working slides; the only class names the
-runtime knows) and replace the content. Craft — headline-as-claim, word ceilings, charts,
+runtime knows) and replace the content — grep it for the layouts the storyline names rather
+than reading all of it. Craft — headline-as-claim, word ceilings, charts,
 images, builds, notes: **`references/slides.md`**. Each slide needs an `id` matching
 `STORYLINE.md`, a `data-claim`, and `.notes` (unless omitted).
 
@@ -162,8 +182,10 @@ python3 $SKILL/scripts/verify.py  <dir>          # final gate — no --wip
 ```
 Then review as the audience: open `index.html` (Playwright or similar, if available), press
 `O` for the overview grid — a deck that looks monotonous as a grid *is* monotonous — step
-through two or three slides, and check one chart rendered. Read only the headlines in order:
-they should tell the whole argument.
+through two or three slides, and check one chart rendered. Look for anything clipped,
+overlapping or wrapping badly, and for any of the generated-deck tells. Read only the
+headlines in order: they should tell the whole argument. Then ask: is this what the user
+asked for — their content, their look, their length?
 
 Hand over: send the file (`SendUserFile` where it exists) or give the absolute path; report
 slides, appendix slides, estimated minutes, theme, and anything moved to the appendix or left
@@ -202,6 +224,9 @@ Decks fail like courses: the first six slides are considered, the last six are b
 | "The chart needs all twelve categories" | Top five plus "Other", or a table on purpose. |
 | "A placeholder chart with plausible numbers" | Real numbers or the honest `.ph` placeholder — invented data is this skill's worst failure. |
 | "Thank you / Questions? to close" | The closing slide states the ask: the decision, the action, or the idea to keep. |
+| "Three cards with an icon each looks polished" | It looks generated. Pick the layout from the idea; icons only when they mean something. |
+| "Add a stat row to make it look data-driven" | Only numbers from the source, each with its `.src`. |
+| "My default style is fine — they didn't object" | Use what they described. If they described nothing, choose for the room and say why. |
 
 Hard rules: one self-contained file (inline SVG and data URIs; the only network exception is
 `fonts.url` when the user asked for a typeface — say it then needs the network); no
