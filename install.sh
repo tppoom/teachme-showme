@@ -2,14 +2,15 @@
 # Install TeachMe and ShowMe as personal (global) skills for whichever of
 # Claude Code, Codex CLI and Antigravity are set up on this machine.
 #
-# Usage:  ./install.sh               skills + CAS mode (Claude Code commands/agents)
+# Usage:  ./install.sh               skills + the /teachme and /showme commands and agents
 #         ./install.sh --skills-only  skills only
 #
-# Two ways to run each skill once installed:
-#   plain skill — /teachme, /showme (or just describe the task) — Claude Code, Codex, Antigravity
-#   CAS mode    — /teachme-cas, /showme-cas — Claude Code only: Command → Agent → Skill,
-#                 with parallel authors and a reviewer. Links each file from cas/*/commands
-#                 into ~/.claude/commands/ and cas/*/agents into ~/.claude/agents/.
+# Two ways to run each once installed:
+#   /teachme, /showme             — the full build: planner → parallel agents → reviewer.
+#                                   Claude Code only. Links cas/*/commands into
+#                                   ~/.claude/commands/ and cas/*/agents into ~/.claude/agents/.
+#   teachme-quick, showme-quick   — the quick build in one session (or just describe the
+#                                   task) — Claude Code, Codex, Antigravity.
 #
 # You do NOT need this script just to try the skills: opening this cloned
 # repo directly in Claude Code, Codex or Antigravity already works, because
@@ -23,7 +24,8 @@
 set -euo pipefail
 cd "$(dirname "${BASH_SOURCE[0]}")"
 REPO="$(pwd -P)"
-SKILLS=(teachme showme)
+SKILLS=(teachme-quick showme-quick)
+CAS=(teachme showme)
 SKILLS_ONLY=0; [ "${1:-}" = "--skills-only" ] && SKILLS_ONLY=1
 linked=() skipped=() no_target=()
 
@@ -60,14 +62,25 @@ link_into() {
   done
 }
 
+# Links left by installs before the rename (skills/teachme, commands/teachme-cas.md) now point
+# at paths that no longer exist. Remove only those: broken, and pointing into this repo.
+for old in "$HOME/.claude/skills/teachme" "$HOME/.claude/skills/showme" \
+           "$HOME/.agents/skills/teachme" "$HOME/.agents/skills/showme" \
+           "$HOME/.claude/commands/teachme-cas.md" "$HOME/.claude/commands/showme-cas.md" \
+           "$HOME"/.gemini/antigravity*/skills/teachme "$HOME"/.gemini/antigravity*/skills/showme; do
+  if [ -L "$old" ] && [ ! -e "$old" ] && [[ "$(readlink "$old")" == "$REPO"/* ]]; then
+    rm -f "$old"; linked+=("removed stale ${old/#$HOME/~}")
+  fi
+done
+
 # Claude Code — personal skills
 [ -d "$HOME/.claude" ] && link_into "$HOME/.claude" "~/.claude"
 
-# Claude Code — CAS mode: the orchestrator commands and the agents they dispatch
+# Claude Code — /teachme and /showme: the orchestrator commands and the agents they dispatch
 if [ -d "$HOME/.claude" ] && [ "$SKILLS_ONLY" = 0 ]; then
   for kind in commands agents; do
     mkdir -p "$HOME/.claude/$kind" 2>/dev/null || { no_target+=("~/.claude/$kind"); continue; }
-    for name in "${SKILLS[@]}"; do
+    for name in "${CAS[@]}"; do
       for f in "$REPO/cas/$name/$kind"/*.md; do
         [ -f "$f" ] && link_file "$f" "$HOME/.claude/$kind" "~/.claude/$kind"
       done
@@ -105,8 +118,8 @@ echo
 echo "Repo-local use needs no install at all — .claude/skills/, .claude/commands/,"
 echo ".claude/agents/ and .agents/skills/ in this checkout already point at the sources."
 echo
-echo "Use:  /teachme or /showme      — plain skill (any tool)"
-echo "      /teachme-cas /showme-cas — CAS mode: parallel agents + reviewer (Claude Code)"
+echo "Use:  /teachme /showme             — full build: parallel agents + reviewer (Claude Code)"
+echo "      /teachme-quick /showme-quick — quick build in one session (any tool)"
 echo
 echo "Windows note: if these turned into plain text files instead of real"
 echo "symlinks/directories, your git checkout has symlinks disabled. Run"

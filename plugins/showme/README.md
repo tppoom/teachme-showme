@@ -8,9 +8,11 @@ One self-contained HTML deck that behaves like real presentation software.
 claude plugin install showme
 ```
 
-**Two ways to run it.** `/showme` (or just describe what you need) runs the skill in your
-session. `/showme-cas` runs CAS mode — Command → Agent → Skill: `showme-storyliner` writes the claim ladder and picks the theme, `showme-builder` agents build slide batches in parallel, `showme-reviewer` checks the deck as the audience sees it. Use CAS for big jobs where
-one context would start compressing the end.
+**Two ways to run it.** `/showme` runs the full build — Command → Agent → Skill:
+`showme-storyliner` writes the claim ladder and picks the theme, `showme-builder` agents build
+slide batches in parallel, `showme-reviewer` checks the deck as the audience sees it.
+`/showme-quick` (or just describe what you need) builds it in one session — faster, fewer
+tokens, right for decks up to ~20 slides.
 
 Say how it will be used — `live`, `remote`, `read` (emailed) or `kiosk` — and the word ceilings and notes rules adjust.
 
@@ -76,7 +78,7 @@ catches most decks made for it.
 ## Layout
 
 ```
-skills/showme/
+skills/showme-quick/
 ├── SKILL.md              workflow, the iron law, what it refuses to do
 ├── references/
 │   ├── storyline.md      finding the argument; the claim ladder; moves; occasions

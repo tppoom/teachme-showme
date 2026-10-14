@@ -1,11 +1,11 @@
 ---
-description: Build a ShowMe deck with a storyliner, parallel slide builders and an audience-eye reviewer (Command → Agent → Skill)
+description: Build a ShowMe deck the full way — a storyliner, parallel slide builders and a reviewer who checks it as the audience. For a fast single-session build use the showme-quick skill.
 argument-hint: "[what the talk is about | path to report/data/project]"
 disable-model-invocation: true
 allowed-tools: Agent, AskUserQuestion, Bash, Read, Glob, Grep, Edit, Write
 ---
 
-# ShowMe — CAS mode
+# ShowMe — full build (planner → parallel agents → reviewer)
 
 Request: $ARGUMENTS
 
@@ -14,7 +14,7 @@ dispatch agents, and keep the deck directory as the shared state. The agents do 
 `showme-storyliner` finds the argument, writes the claim ladder and picks the theme;
 `showme-builder` writes slide batches (several in parallel, each with a fresh context);
 `showme-reviewer` checks the whole deck as the audience will see it and fixes it. All three
-carry the `showme` skill as their standard.
+carry the `showme-quick` skill as their standard.
 
 ## Execution contract
 
@@ -22,8 +22,8 @@ carry the `showme` skill as their standard.
   rather than writing slides yourself.
 - Agent names: use `showme-storyliner` / `showme-builder` / `showme-reviewer`, or the
   plugin-namespaced `showme:showme-storyliner` etc. — whichever your Agent tool lists. If
-  neither is listed, tell the user CAS mode is not installed (`./install.sh`, or
-  `claude plugin install showme`), offer to run the plain `showme` skill instead, and stop.
+  neither is listed, tell the user the /showme agents are not installed (`./install.sh`, or
+  `claude plugin install showme`), offer to run the quick `showme-quick` skill instead, and stop.
 - The directory is the memory: `STORYLINE.md`, `BRIEF.md`, `meta.json`, `parts/`.
 
 ## Step 0 · Locate the skill
@@ -31,9 +31,9 @@ carry the `showme` skill as their standard.
 Run this once and keep the printed absolute path as `SKILL_DIR`:
 
 ```bash
-for d in "${CLAUDE_PLUGIN_ROOT:-/nonexistent}/skills/showme" "$PWD/.claude/skills/showme" \
-         "$HOME/.claude/skills/showme" "$HOME/.agents/skills/showme" \
-         "$HOME"/.claude/plugins/cache/*/showme/*/skills/showme; do
+for d in "${CLAUDE_PLUGIN_ROOT:-/nonexistent}/skills/showme-quick" "$PWD/.claude/skills/showme-quick" \
+         "$HOME/.claude/skills/showme-quick" "$HOME/.agents/skills/showme-quick" \
+         "$HOME"/.claude/plugins/cache/*/showme/*/skills/showme-quick; do
   [ -f "$d/scripts/verify.py" ] && { (cd "$d" && pwd -P); break; }
 done
 ```

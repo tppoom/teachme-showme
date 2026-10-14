@@ -5,8 +5,8 @@ dependencies, no network. Open it, keep it, send it.
 
 | Skill | Produces | Use it when |
 |---|---|---|
-| **[TeachMe](skills/teachme)** | A short course that makes you understand, fast | You want to actually get something, not just an answer |
-| **[ShowMe](skills/showme)** | A deck you present from | You have to present to a room |
+| **[TeachMe](skills/teachme-quick)** | A short course that makes you understand, fast | You want to actually get something, not just an answer |
+| **[ShowMe](skills/showme-quick)** | A deck you present from | You have to present to a room |
 
 Both share one discipline: **say less, show more.** TeachMe teaches each idea through a concrete
 worked example in short chapters, and its gate fails a chapter with no example and warns on
@@ -19,21 +19,22 @@ Both follow the open [Agent Skills](https://agentskills.io) format (`SKILL.md` +
 `references/` + `assets/`), so they work the same in **Claude Code**, **Codex CLI** and
 **Antigravity** — anything that reads that format.
 
-## Two ways to run each skill
+## Two ways to run each
 
-| | Plain skill | CAS mode |
+| | Full — `/teachme`, `/showme` | Quick — `teachme-quick`, `showme-quick` |
 |---|---|---|
-| **Start it** | `/teachme`, `/showme` — or just describe what you need | `/teachme-cas <topic>`, `/showme-cas <talk>` |
-| **How it works** | One session follows the skill end to end | **Command → Agent → Skill**: an orchestrator command interviews you, a planner agent writes the contract (`SYLLABUS.md` / `STORYLINE.md` + a shared `BRIEF.md`), author agents write chapters or slide batches **in parallel, each with a fresh context**, and a reviewer agent reads the whole thing as the learner/audience and fixes it |
-| **Best for** | Almost everything: explainers, courses, decks up to ~20 slides | Only big jobs — deep courses over ~10 chapters, long lectures and workshops |
-| **Asks you** | Once: it shows the brief it understood and asks only what would change the result | The same single confirmation; the plan is shown and only re-asked if it departs from what you confirmed |
-| **Works in** | Claude Code, Codex CLI, Antigravity | Claude Code |
+| **Start it** | `/teachme <topic>`, `/showme <talk>` | `/teachme-quick`, `/showme-quick` — or just describe what you need |
+| **How it works** | **Command → Agent → Skill**: an orchestrator command interviews you, a planner agent writes the contract (`SYLLABUS.md` / `STORYLINE.md` + a shared `BRIEF.md`), author agents write chapters or slide batches **in parallel, each with a fresh context**, and a reviewer agent reads the whole thing as the learner/audience and fixes it | One session follows the skill end to end — no subagents, fewer tokens, faster |
+| **Best for** | Big jobs and the most careful result — deep courses, long lectures and workshops, heavy source material | Explainers, short courses, decks up to ~20 slides |
+| **Asks you** | Once: the brief and only what would change the result; the plan is re-asked only if it departs from it | Once: the brief it understood and only what would change the result |
+| **Works in** | Claude Code | Claude Code, Codex CLI, Antigravity |
 
-CAS mode follows the pattern from
+The full mode follows the pattern from
 [claude-code-best-practice](https://github.com/shanraisshan/claude-code-best-practice)
 (orchestration workflow): the command owns user interaction, each agent preloads the skill as
 its standard via `skills:` in its frontmatter, and the skill holds the method, scripts and
-gate both modes share. Agents: `teachme-planner` · `teachme-author` · `teachme-reviewer` and
+gate both modes share (that is why the skills carry the `-quick` name: a skill and a command
+cannot share one). Agents: `teachme-planner` · `teachme-author` · `teachme-reviewer` and
 `showme-storyliner` · `showme-builder` · `showme-reviewer`.
 
 ## Fitting the output to the request
@@ -50,7 +51,7 @@ setting, not a fight with the checker. The user's explicit wishes beat the skill
 | ShowMe | `"omit"` | `notes` `title` `closing` |
 
 Both `verify.py` scripts also take `--part parts/NN-slug.html` to check one chapter or slide
-batch on its own — which is what lets CAS authors work in parallel without assembling.
+batch on its own — which is what lets the `/teachme` and `/showme` agents work in parallel without assembling.
 
 ## Install
 
@@ -72,7 +73,7 @@ cd teachme-showme
 
 It links `~/.claude/skills/`, `~/.agents/skills/` (Codex, and any other tool that reads the
 shared personal path) and Antigravity's global skills folder to this checkout, whichever of
-those you have installed — plus, for Claude Code, the CAS commands into `~/.claude/commands/`
+those you have installed — plus, for Claude Code, the `/teachme` and `/showme` commands into `~/.claude/commands/`
 and the agents into `~/.claude/agents/` (skip those with `./install.sh --skills-only`). Safe to re-run; `git pull` here keeps every install current since
 they're symlinks, not copies. See the header comment in `install.sh` for exactly what it
 touches; to undo, just delete the symlink it created — nothing else was written.
@@ -87,9 +88,10 @@ claude plugin install teachme
 claude plugin install showme
 ```
 
-Then start a new session and type `/teachme` or `/showme` — or just describe what you need and
-the skill triggers itself. The plugins also ship CAS mode: `/teachme:teachme-cas` and
-`/showme:showme-cas`. Update later with:
+Then start a new session and type `/teachme` or `/showme` for the full build (namespaced as
+`/teachme:teachme` and `/showme:showme` if another plugin uses the same name), or
+`/teachme-quick` / `/showme-quick` for the quick one — or just describe what you need and the
+quick skill triggers itself. Update later with:
 
 ```bash
 claude plugin marketplace update teachme-showme
@@ -100,10 +102,10 @@ claude plugin marketplace update teachme-showme
 Every skill is a self-contained folder — copy it wherever your tool reads skills from:
 
 ```bash
-cp -R skills/teachme skills/showme ~/.claude/skills/     # Claude Code, personal
-cp cas/*/commands/*.md ~/.claude/commands/               # Claude Code, CAS mode (optional)
+cp -R skills/teachme-quick skills/showme-quick ~/.claude/skills/   # Claude Code, personal
+cp cas/*/commands/*.md ~/.claude/commands/               # Claude Code, /teachme and /showme
 cp cas/*/agents/*.md   ~/.claude/agents/
-cp -R skills/teachme skills/showme ~/.agents/skills/     # Codex CLI, personal
+cp -R skills/teachme-quick skills/showme-quick ~/.agents/skills/   # Codex CLI, personal
 ```
 
 For Antigravity's current global path, check `antigravity.google/docs/` — it has moved more
@@ -155,24 +157,24 @@ sources are never translated.
 ```
 teachme-showme/
 ├── skills/                the real content — one copy of each skill, everything else
-│   ├── teachme/           points here via a symlink
-│   └── showme/
-├── cas/                   CAS mode (Claude Code): one orchestrator command + three agents per skill
-│   ├── teachme/           commands/teachme-cas.md · agents/teachme-{planner,author,reviewer}.md
-│   └── showme/            commands/showme-cas.md · agents/showme-{storyliner,builder,reviewer}.md
+│   ├── teachme-quick/     points here via a symlink
+│   └── showme-quick/
+├── cas/                   the full mode (Claude Code): one orchestrator command + three agents each
+│   ├── teachme/           commands/teachme.md · agents/teachme-{planner,author,reviewer}.md
+│   └── showme/            commands/showme.md · agents/showme-{storyliner,builder,reviewer}.md
 ├── .claude/skills/        symlinks → skills/*   (Claude Code, this repo open as a project)
 ├── .claude/commands/      symlinks → cas/*/commands/*.md
 ├── .claude/agents/        symlinks → cas/*/agents/*.md
 ├── .agents/skills/        symlinks → skills/*   (Codex CLI, Antigravity — same open standard)
 ├── plugins/               Claude Code plugin packaging (marketplace install)
-│   ├── teachme/           plugin.json + skills/teachme → ../../../skills/teachme,
+│   ├── teachme/           plugin.json + skills/teachme-quick → ../../../skills/teachme-quick,
 │   │                      commands/ → ../../cas/teachme/commands, agents/ → ../../cas/teachme/agents
 │   └── showme/
 ├── install.sh             personal/global install for whichever agents you have
 └── .claude-plugin/marketplace.json
 ```
 
-One real copy of each skill, at `skills/<name>/`, and of each CAS file, at `cas/`. Everything else — the plugin folders, the
+One real copy of each skill, at `skills/<name>/`, and of each command and agent, at `cas/`. Everything else — the plugin folders, the
 project-level agent directories — is a symlink to it, so there is nothing to keep in sync by
 hand and no risk of one copy silently drifting from another.
 

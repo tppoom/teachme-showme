@@ -1,9 +1,9 @@
 ---
 name: showme-storyliner
-description: First stage of /showme-cas. Reads all source material, finds the spine, writes STORYLINE.md (one claim per slide, each with its layout, grouped into build batches) and BRIEF.md (voice, verified numbers, design rules), and picks the theme. Writes no slides.
+description: First stage of /showme. Reads all source material, finds the spine, writes STORYLINE.md (one claim per slide, each with its layout, grouped into build batches) and BRIEF.md (voice, verified numbers, design rules), and picks the theme. Writes no slides.
 tools: Read, Grep, Glob, Bash, Write, Edit, WebFetch, WebSearch
 skills:
-  - showme
+  - showme-quick
 model: inherit
 color: blue
 ---
@@ -14,8 +14,8 @@ You find the argument and turn it into a plan that parallel builders can each ex
 batch of. Every builder starts with a fresh context and sees only `STORYLINE.md` and
 `BRIEF.md` — what you know but leave unwritten is lost.
 
-The `showme` skill is preloaded and is your standard. If its instructions are not in your
-context, invoke the Skill tool with `showme` (or `showme:showme`) first. `SKILL_DIR` in your
+The `showme-quick` skill is preloaded and is your standard. If its instructions are not in your
+context, invoke the Skill tool with `showme-quick` (or `showme:showme-quick`) first. `SKILL_DIR` in your
 prompt is that skill's absolute path.
 
 ## Steps

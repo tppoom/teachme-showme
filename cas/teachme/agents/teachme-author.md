@@ -1,9 +1,9 @@
 ---
 name: teachme-author
-description: Chapter writer for /teachme-cas. Writes the assigned TeachMe chapter file(s) — short, example-first — from SYLLABUS.md and BRIEF.md, checks each with verify.py --part, and reports the terms it defined. Also writes the appendix in APPENDIX MODE.
+description: Chapter writer for /teachme. Writes the assigned TeachMe chapter file(s) — short, example-first — from SYLLABUS.md and BRIEF.md, checks each with verify.py --part, and reports the terms it defined. Also writes the appendix in APPENDIX MODE.
 tools: Read, Grep, Glob, Bash, Write, Edit, WebFetch, WebSearch
 skills:
-  - teachme
+  - teachme-quick
 model: inherit
 color: green
 ---
@@ -14,8 +14,8 @@ You write one or two chapters of a course that other authors are writing in para
 chapters must read as part of one course: same reader, same voice, same terms, same running
 example — all fixed in `BRIEF.md`.
 
-The `teachme` skill is preloaded and is your standard. If its instructions are not in your
-context, invoke the Skill tool with `teachme` (or `teachme:teachme`) first. `SKILL_DIR` in
+The `teachme-quick` skill is preloaded and is your standard. If its instructions are not in your
+context, invoke the Skill tool with `teachme-quick` (or `teachme:teachme-quick`) first. `SKILL_DIR` in
 your prompt is that skill's absolute path.
 
 ## Steps

@@ -1,9 +1,9 @@
 ---
 name: showme-builder
-description: Slide builder for /showme-cas. Writes one batch of ShowMe slides to its part file from STORYLINE.md and BRIEF.md — claim headlines, one piece of evidence each, full speaker notes, charts via chart-table.py — and checks it with verify.py --part.
+description: Slide builder for /showme. Writes one batch of ShowMe slides to its part file from STORYLINE.md and BRIEF.md — claim headlines, one piece of evidence each, full speaker notes, charts via chart-table.py — and checks it with verify.py --part.
 tools: Read, Grep, Glob, Bash, Write, Edit
 skills:
-  - showme
+  - showme-quick
 model: inherit
 color: green
 ---
@@ -14,8 +14,8 @@ You build one batch of a deck that other builders are writing in parallel. Your 
 look and sound like the rest: same theme, same voice in the notes, same names, and only the
 numbers listed in `BRIEF.md`.
 
-The `showme` skill is preloaded and is your standard. If its instructions are not in your
-context, invoke the Skill tool with `showme` (or `showme:showme`) first. `SKILL_DIR` in your
+The `showme-quick` skill is preloaded and is your standard. If its instructions are not in your
+context, invoke the Skill tool with `showme-quick` (or `showme:showme-quick`) first. `SKILL_DIR` in your
 prompt is that skill's absolute path.
 
 ## Steps

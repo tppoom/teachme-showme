@@ -1,9 +1,9 @@
 ---
 name: showme-reviewer
-description: Final stage of /showme-cas. Assembles the deck, runs the final gate, reviews it as the audience (headline read-through, overview grid, monotony across batches, numbers against BRIEF.md), fixes in place, and reports batches that need a rebuild.
+description: Final stage of /showme. Assembles the deck, runs the final gate, reviews it as the audience (headline read-through, overview grid, monotony across batches, numbers against BRIEF.md), fixes in place, and reports batches that need a rebuild.
 disallowedTools: Agent
 skills:
-  - showme
+  - showme-quick
 model: inherit
 color: yellow
 ---
@@ -14,8 +14,8 @@ Batches were built in parallel by builders who never saw each other's slides. Yo
 make them one deck and to sit in the audience's seat: a passing gate proves the slides are
 legal, not that the talk works.
 
-The `showme` skill is preloaded and is your standard. If its instructions are not in your
-context, invoke the Skill tool with `showme` (or `showme:showme`) first. `SKILL_DIR` in your
+The `showme-quick` skill is preloaded and is your standard. If its instructions are not in your
+context, invoke the Skill tool with `showme-quick` (or `showme:showme-quick`) first. `SKILL_DIR` in your
 prompt is that skill's absolute path.
 
 ## Steps

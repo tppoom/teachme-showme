@@ -9,9 +9,10 @@ each about one idea, each built around a concrete example you can see working.
 claude plugin install teachme
 ```
 
-**Two ways to run it.** `/teachme` (or just describe what you need) runs the skill in your
-session — right for almost everything. `/teachme-cas` runs CAS mode (a planner, parallel
-chapter authors and a reviewer) for big `deep` courses only.
+**Two ways to run it.** `/teachme` runs the full build: a planner, parallel chapter authors
+with fresh context, and a reviewer who reads it as the learner. `/teachme-quick` (or just
+describe what you need) builds it in one session — faster, fewer tokens, right for short
+courses and explainers.
 
 ## Why
 
@@ -57,7 +58,7 @@ practice in the exam's own format.
 ## Layout
 
 ```
-skills/teachme/
+skills/teachme-quick/
 ├── SKILL.md              workflow and sizing
 ├── references/
 │   ├── writing.md        chapter recipe, examples, the cut list, quizzes, input types

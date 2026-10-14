@@ -1,11 +1,11 @@
 ---
-description: Build a TeachMe course with a planner, parallel chapter authors and a reviewer (Command → Agent → Skill)
+description: Build a TeachMe course the full way — a planner, parallel chapter authors with fresh context, and a reviewer who reads it as the learner. For a fast single-session build use the teachme-quick skill.
 argument-hint: "[what to learn | path to slides/PDFs/notes | repo path]"
 disable-model-invocation: true
 allowed-tools: Agent, AskUserQuestion, Bash, Read, Glob, Grep, Edit, Write
 ---
 
-# TeachMe — CAS mode
+# TeachMe — full build (planner → parallel agents → reviewer)
 
 Request: $ARGUMENTS
 
@@ -13,7 +13,7 @@ You are the **orchestrator**. You talk to the user, make the decisions only they
 dispatch agents, and keep the course directory as the shared state. The agents do the
 writing: `teachme-planner` builds the syllabus, `teachme-author` writes chapters (many run in
 parallel, each with a fresh context), `teachme-reviewer` reads the whole course as a learner
-and fixes it. All three carry the `teachme` skill as their standard.
+and fixes it. All three carry the `teachme-quick` skill as their standard.
 
 ## Execution contract
 
@@ -21,8 +21,8 @@ and fixes it. All three carry the `teachme` skill as their standard.
   rather than writing the content yourself.
 - Agent names: use `teachme-planner` / `teachme-author` / `teachme-reviewer`, or the
   plugin-namespaced `teachme:teachme-planner` etc. — whichever your Agent tool lists. If
-  neither is listed, tell the user CAS mode is not installed (`./install.sh`, or
-  `claude plugin install teachme`), offer to run the plain `teachme` skill instead, and stop.
+  neither is listed, tell the user the /teachme agents are not installed (`./install.sh`, or
+  `claude plugin install teachme`), offer to run the quick `teachme-quick` skill instead, and stop.
 - The directory is the memory: `SYLLABUS.md`, `BRIEF.md`, `meta.json`, `parts/`. After any
   interruption, re-read them and resume at the first missing chapter.
 
@@ -31,9 +31,9 @@ and fixes it. All three carry the `teachme` skill as their standard.
 Run this once and keep the printed absolute path as `SKILL_DIR`:
 
 ```bash
-for d in "${CLAUDE_PLUGIN_ROOT:-/nonexistent}/skills/teachme" "$PWD/.claude/skills/teachme" \
-         "$HOME/.claude/skills/teachme" "$HOME/.agents/skills/teachme" \
-         "$HOME"/.claude/plugins/cache/*/teachme/*/skills/teachme; do
+for d in "${CLAUDE_PLUGIN_ROOT:-/nonexistent}/skills/teachme-quick" "$PWD/.claude/skills/teachme-quick" \
+         "$HOME/.claude/skills/teachme-quick" "$HOME/.agents/skills/teachme-quick" \
+         "$HOME"/.claude/plugins/cache/*/teachme/*/skills/teachme-quick; do
   [ -f "$d/scripts/verify.py" ] && { (cd "$d" && pwd -P); break; }
 done
 ```

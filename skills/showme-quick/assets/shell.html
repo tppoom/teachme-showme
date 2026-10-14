@@ -445,6 +445,15 @@ kbd{font-family:var(--font-mono);font-size:11.5px;background:var(--chrome-key);
 :is(:lang(th),:lang(lo),:lang(my),:lang(km)) .slide.statement h2{line-height:1.32}
 :is(:lang(th),:lang(lo),:lang(my),:lang(km)) .slide.quote blockquote{line-height:1.45}
 :is(:lang(th),:lang(lo),:lang(my),:lang(km)) :is(.slide p,.slide li,.slide .lead){line-height:1.6}
+/* These scripts sit visibly smaller than Latin at the same size, so the small text that is
+   comfortable in English (15-19px on the canvas) becomes unreadable from the back of the room. */
+:is(:lang(th),:lang(lo),:lang(my),:lang(km)) :is(.eyebrow,.slide .xs){font-size:19px}
+:is(:lang(th),:lang(lo),:lang(my),:lang(km)) :is(.slide.statement .attrib,.slide .pts li .sub,.bignum .ctx,.ph .t){font-size:23px}
+:is(:lang(th),:lang(lo),:lang(my),:lang(km)) :is(.stats .st .d,.slide .src,.kv dt,.fig figcaption,.ph .d,.slide th,.chips span,.checks li span,.kv dd small){font-size:18px}
+:is(:lang(th),:lang(lo),:lang(my),:lang(km)) :is(.cmp .side li,.slide.title .meta){font-size:22px}
+:is(:lang(th),:lang(lo),:lang(my),:lang(km)) :is(.tline .mi p,.flow .node small){font-size:20px}
+:is(:lang(th),:lang(lo),:lang(my),:lang(km)) .flow .arrow b{font-size:16px}
+:is(:lang(th),:lang(lo),:lang(my),:lang(km)) .s-foot{font-size:15.5px}
 </style>
 <style>
 /* ══════════════════ DIAGRAMS & DATA ══════════════════ */

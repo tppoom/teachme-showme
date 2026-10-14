@@ -1,7 +1,7 @@
 {
   "name": "teachme",
   "description": "Teach a subject fast as one self-contained HTML course — short chapters that each teach one idea through a concrete worked example, with diagrams, optional quick checks, progress tracking, search and offline reading.",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "author": {
     "name": "tppoom"
   },

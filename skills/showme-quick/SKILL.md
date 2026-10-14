@@ -1,9 +1,9 @@
 ---
-name: showme
-description: Builds a presentation as one self-contained HTML deck — fullscreen slides, builds, speaker notes with presenter view and timer, overview grid, read mode, print-to-PDF, charts from real data, fifteen themes. Use whenever someone has to present to an audience — "make me a deck", "slides for X", "turn this report/project/paper into a presentation", "I'm pitching on Friday", a defence, lecture, workshop, board or status update, incident review, lightning talk — or describes a room they must convince or brief without saying "slides". Also for decks that get emailed and read, looped on a screen, or restyled to a described look.
+name: showme-quick
+description: Quick ShowMe — builds the deck in this one session, no subagents. Builds a presentation as one self-contained HTML deck — fullscreen slides, builds, speaker notes with presenter view and timer, overview grid, read mode, print-to-PDF, charts from real data, fifteen themes. Use whenever someone has to present to an audience — "make me a deck", "slides for X", "turn this report/project/paper into a presentation", "I'm pitching on Friday", a defence, lecture, workshop, board or status update, incident review, lightning talk — or describes a room they must convince or brief without saying "slides". Also for decks that get emailed and read, looped on a screen, or restyled to a described look. For a long deck built by parallel agents with a reviewer, the user runs the /showme command.
 ---
 
-# ShowMe
+# ShowMe — quick
 
 > **SHOW only what matters — and have everything else ready.**
 
@@ -92,9 +92,9 @@ one exists; still write `STORYLINE.md` first — the method here applies either 
 
 ## Two ways to run it
 
-- **This skill, in the current session** — the default. Works in Claude Code, Codex and
-  Antigravity. Best for decks up to ~20 slides.
-- **`/showme-cas` (Claude Code only)** — Command → Agent → Skill: a storyliner agent writes
+- **This skill (`showme-quick`)** — one session, no subagents. Works in Claude Code, Codex and
+  Antigravity. Fast and cheap; best for decks up to ~20 slides.
+- **`/showme` (Claude Code command)** — the full build: a storyliner agent writes
   the claim ladder and picks the theme, builder agents write slide batches in parallel, and a
   reviewer agent checks the whole deck as the audience would see it. Best for long decks
   (lectures, workshops) and heavy source material. Suggest it for those when it is available.

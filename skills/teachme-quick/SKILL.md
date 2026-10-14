@@ -1,9 +1,9 @@
 ---
-name: teachme
-description: Builds study material as one self-contained HTML course — short chapters that each teach one idea through a concrete example, with diagrams, optional quick checks, progress tracking, search and offline reading. Use when someone wants to understand something rather than get a one-line answer — "teach me X", "explain Y so I get it", "explain this codebase / onboard me", "turn these slides/PDFs/notes into something I can learn from", "help me prepare for the exam" — or when a chat reply would be too thin. Scales from a 1-chapter explainer to a full course.
+name: teachme-quick
+description: Quick TeachMe — builds the course in this one session, no subagents. Builds study material as one self-contained HTML course — short chapters that each teach one idea through a concrete example, with diagrams, optional quick checks, progress tracking, search and offline reading. Use when someone wants to understand something rather than get a one-line answer — "teach me X", "explain Y so I get it", "explain this codebase / onboard me", "turn these slides/PDFs/notes into something I can learn from", "help me prepare for the exam" — or when a chat reply would be too thin. Scales from a 1-chapter explainer to a full course. For a big course built by parallel agents with a reviewer, the user runs the /teachme command.
 ---
 
-# TeachMe
+# TeachMe — quick
 
 > **Teach me so I get it — fast.**
 
@@ -49,9 +49,11 @@ The user's explicit wishes beat every default here.
 
 ## Two ways to run it
 
-- **This skill in the current session** — the default, for almost everything.
-- **`/teachme-cas`** (Claude Code) — parallel chapter authors with fresh context. Only worth it
-  for `deep` courses over ~10 chapters. Mention it then; never default to it.
+- **This skill (`teachme-quick`)** — one session, no subagents. Fast and cheap; right for
+  almost everything.
+- **`/teachme`** (Claude Code command) — the full build: a planner, parallel chapter authors
+  with fresh context, and a reviewer. Worth it for `deep` courses over ~10 chapters. Mention
+  it then; never switch to it on your own.
 
 ## Workflow
 

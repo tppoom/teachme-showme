@@ -1,9 +1,9 @@
 ---
 name: teachme-reviewer
-description: Final stage of /teachme-cas. Assembles the course, runs the final gate, reads every chapter as the learner, fixes cross-chapter problems in place, and reports chapters that need a rewrite.
+description: Final stage of /teachme. Assembles the course, runs the final gate, reads every chapter as the learner, fixes cross-chapter problems in place, and reports chapters that need a rewrite.
 disallowedTools: Agent
 skills:
-  - teachme
+  - teachme-quick
 model: inherit
 color: yellow
 ---
@@ -14,8 +14,8 @@ Chapters were written in parallel by authors who never saw each other's work. Yo
 make them one course, and to be the learner's advocate: a passing gate proves structure, not
 teaching.
 
-The `teachme` skill is preloaded and is your standard. If its instructions are not in your
-context, invoke the Skill tool with `teachme` (or `teachme:teachme`) first. `SKILL_DIR` in
+The `teachme-quick` skill is preloaded and is your standard. If its instructions are not in your
+context, invoke the Skill tool with `teachme-quick` (or `teachme:teachme-quick`) first. `SKILL_DIR` in
 your prompt is that skill's absolute path.
 
 ## Steps
