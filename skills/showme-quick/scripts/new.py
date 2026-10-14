@@ -90,9 +90,10 @@ def main():
     print(f"scaffolded {d}  (theme: {theme} — {themes[theme]['use'][:70]}…)")
     print("  created: " + (", ".join(made) if made else "nothing new — files already existed"))
     print("  next:    write the claim ladder in STORYLINE.md, then parts/01-<slug>.html")
-    sc = HERE / "scripts"
+    sc = pathlib.Path(__file__).absolute().parent      # as invoked, not the symlink target
     print(f"  check:   python3 {sc}/verify.py {d} --part parts/01-<slug>.html")
-    print(f"  build:   python3 {sc}/assemble.py {d} && python3 {sc}/verify.py {d} --wip")
+    print(f"  build:   python3 {sc}/assemble.py {d} && python3 {sc}/verify.py {d}")
+    print(f"  look:    node {sc}/look.js {d}")
 
 if __name__ == "__main__":
     main()

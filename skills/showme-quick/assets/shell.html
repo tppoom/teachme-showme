@@ -34,7 +34,7 @@ button{font:inherit;cursor:pointer;color:inherit}
 :root{--pad:64px;--padx:88px;--padb:76px}
 :root{--rule-c:var(--ink)}
 /* declared on the element, not :root, so a modifier that changes --rule-c recolours the stripe */
-.card,.cmp .side,.flow .node{--rule-top:linear-gradient(var(--rule-c),var(--rule-c)) top/100% 3px no-repeat}
+.card,.cmp .side,.flow .node{--rule-top:linear-gradient(var(--rule-c),var(--rule-c)) top center/calc(100% - 2 * min(var(--radius),24px)) 3px no-repeat}
 /* Auto-fit wrapper. The runtime moves every flow child of a slide into .sfit and, only
    when the content would overflow the fixed canvas, scales it down so nothing is ever
    silently clipped. It inherits the slide's own alignment so centred layouts stay centred. */
@@ -320,7 +320,7 @@ kbd{font-family:var(--font-mono);font-size:11.5px;background:var(--chrome-key);
 .dg{flex:1;min-height:0;margin:0;display:flex;align-items:center;justify-content:center}
 .dg svg{width:100%;height:auto;max-height:360px;display:block;overflow:visible}
 .dg svg text{fill:var(--ink);font-family:var(--font-body);font-size:24px}
-.dg .d-box{fill:var(--surface);stroke:var(--line);stroke-width:2}
+.dg .d-box{fill:var(--surface);stroke:color-mix(in srgb,var(--ink-3) 55%,var(--surface));stroke-width:2}
 .dg .d-box.hi{fill:var(--accent);stroke:var(--accent)}
 .dg .d-box.alt{fill:var(--accent-2);stroke:var(--accent-2)}
 .dg .d-box.dim{fill:none;stroke:var(--ink-3);stroke-dasharray:8 6}
@@ -545,8 +545,10 @@ kbd{font-family:var(--font-mono);font-size:11.5px;background:var(--chrome-key);
 .cmp .side ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:12px}
 .cmp .side li{position:relative;padding-inline-start:24px}
 .cmp .side li::before{content:"";position:absolute;inset-inline-start:0;top:.62em;width:9px;height:2px;background:var(--ink-3)}
-.cmp .side.bad{--rule-c:var(--bad)}
-.cmp .side.bad li::before{background:var(--bad)}
+.cmp .side.bad{--rule-c:var(--ink-3)}
+.cmp .side.bad h3{color:var(--ink-2)}
+.cmp .side.bad li{color:var(--ink-2)}
+.cmp .side.bad li::before{background:var(--ink-3)}
 .cmp .side.good{--rule-c:var(--accent);background:var(--rule-top),color-mix(in srgb,var(--accent) 7%,var(--surface))}
 .cmp .side.good li::before{background:var(--accent)}
 .cmp .vs{display:grid;place-items:center;align-self:center;width:52px;height:52px;border-radius:50%;

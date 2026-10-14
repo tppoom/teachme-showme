@@ -348,7 +348,7 @@ def main():
         if o != c: fail(f"<{t}> open/close mismatch: {o} open vs {c} close")
 
     # ---- report --------------------------------------------------------------
-    lang = (re.search(r'<html[^>]*\blang="([^"]*)"', doc) or [None, "?"])[1]
+    lang = (re.search(r'<html[^>]*\blang="([^"]*)"', doc) or [None, meta.get("lang", "?")])[1]
     n_chart = len(re.findall(r'class="chart"', doc))
     n_note  = len(re.findall(r'class="notes"', doc))
     prof = f"delivery={delivery} density={density}" + (f" omit={','.join(sorted(omit))}" if omit else "")

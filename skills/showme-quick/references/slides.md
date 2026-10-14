@@ -53,6 +53,9 @@ which nobody heard you.
 | A bullet list | 5 bullets, ~12 words each |
 | Speaker notes | no ceiling — this is where it all goes |
 
+Scripts without word spaces count about 5 characters (Thai, Lao, Khmer, Burmese) or 2.5
+(Chinese, Japanese, Korean) as one word, so a 55-word slide is roughly 275 Thai characters.
+
 These are the `live` numbers. `"delivery": "read"` (or `"density": "dense"`) raises them by
 about 1.8× and allows 7 bullets, for a deck that has to make its case with nobody presenting;
 `kiosk` lowers them. The principle holds at every density: one claim per slide.
@@ -116,7 +119,11 @@ theme colours it and a restyle restyles it. Keep it to the few boxes that matter
 19–34px, everything inside the viewBox. Never pass a drawing through `embed-image.py`: as an
 image it is cropped by `.fig` and its colours are frozen.
 
-A caption that is not a source (scale, a note) uses `<p class="src nolabel">`.
+A caption that is not a source (scale, a note) uses `<p class="src nolabel">` — for a number
+that only illustrates, say so there: `<p class="src nolabel">ตัวอย่างประกอบ ไม่ใช่ค่าที่วัดจริง</p>`.
+
+**Text placeholders** for facts only the presenter has — `[ชื่อผู้นำเสนอ]`, `[วันที่]` — go in
+square brackets, and every one is listed at hand-over. Images use `.ph`.
 
 ## Evidence that is actually evidence
 

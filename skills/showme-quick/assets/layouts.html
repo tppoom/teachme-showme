@@ -234,7 +234,10 @@
      restyle restyles the drawing too:
        boxes  .d-box (.hi accent · .alt second accent · .dim dashed)   lines .d-line (.dash)
        arrows .d-arrow (.dim · .alt) — arrowheads are built in and stay the same size
-       text   default ink · .d-on (on an accent box) · .d-dim · .d-accent · .d-alt · .d-big · .d-sm
+       text   default ink 24px · .d-on (on an accent box) · .d-dim (muted, 19px) · .d-accent ·
+              .d-alt · .d-big (34px bold) · .d-sm (19px)
+       a circle is <circle class="d-box">; a soft highlight behind a group is <rect class="d-fill">
+       data-build works on a <g> inside the drawing, to reveal it part by part
      viewBox ~1100 wide; keep every x/y inside it. Text 19-34px reads from the back.
      Fewer, bigger labels: four boxes that matter, not fourteen that exist. -->
 <section id="s-13x" class="slide" data-claim="The account is handed over twice and owned in neither handover.">

@@ -131,7 +131,8 @@ wait for the reply:
 - **Nothing open?** Then it is a single choice: *start* / *adjust something*.
 
 Skip it only when the user already said to go ahead without questions, or when you are
-restyling or editing an existing deck. This is the one planned stop: after it, decide the rest
+restyling or editing an existing deck — then put the brief at the top of `STORYLINE.md` and
+repeat it in two lines at hand-over, so the choices you made are on the record. This is the one planned stop: after it, decide the rest
 yourself and say what you chose.
 
 **Where it goes:** the path they named; otherwise `./<slug>/` — or the parent / `~/Desktop/`
