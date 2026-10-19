@@ -288,7 +288,7 @@ def main():
         if re.search(r"<h3\b", body): warn(f"{tag} uses <h3> — fold it into the section above")
         n_box = len(re.findall(r'<div class="(?:callout|objective|recap)\b', body))
         if n_box > 2: warn(f"{tag} has {n_box} boxes (callout/objective/recap) — keep the one or two that matter")
-        long_p = [p for p in re.findall(r"<p[^>]*>([\s\S]*?)</p>", body) if count_words(text_of(p)) > 110]
+        long_p = [p for p in re.findall(r"<p\b[^>]*>([\s\S]*?)</p>", body) if count_words(text_of(p)) > 110]
         if long_p: warn(f"{tag} has {len(long_p)} paragraph(s) over ~110 words — split or cut")
         hits = []
         for pat in FILLER:
@@ -311,7 +311,7 @@ def main():
                     warn(f"{tag} label {lt!r} is in English but the course is lang={lang} — translate it "
                          f"(an empty <div class=\"quiz-h\"></div> gets the interface's own word)")
         if lang in ("th", "ja", "zh", "ko", "ar", "he", "ru", "hi", "el", "uk", "fa"):
-            for p in re.findall(r"<p[^>]*>([\s\S]*?)</p>", prose):
+            for p in re.findall(r"<p\b[^>]*>([\s\S]*?)</p>", prose):
                 t = text_of(p)
                 if count_words(t) >= 25 and not re.search(r"[^\x00-ɏ -⁯₠-⃏←-⋿]", t):
                     warn(f"{tag} a paragraph is entirely in English but the course is lang={lang}: "
