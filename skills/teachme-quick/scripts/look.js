@@ -49,12 +49,20 @@ function load() {
            pieces so each image stays readable: phone-ch2-1.png, phone-ch2-2.png, … */
         const box = await page.evaluate(i => { const r = document.querySelectorAll(".chapter")[i].getBoundingClientRect();
           return { top: r.top + scrollY, h: r.height }; }, i);
-        for (let k = 0, y = box.top; y < box.top + box.h; k++, y += 1400) {
+        /* scroll and photograph the viewport: a fullPage capture of a long course times out */
+        await page.setViewportSize({ width: vp.width, height: 1400 });
+        for (let k = 0, y = box.top; y < box.top + box.h; k++, y += 1340) {
           const g = f.replace(/\.png$/, `-${k + 1}.png`);
-          await page.screenshot({ path: g, fullPage: true, clip: { x: 0, y, width: vp.width, height: Math.min(1400, box.top + box.h - y) } });
-          shots.push(g);
+          await page.evaluate(y => window.scrollTo(0, y - 60), y);
+          await page.waitForTimeout(80);
+          try { await page.screenshot({ path: g, timeout: 15000 }); shots.push(g); }
+          catch (e) { problems.push(`[${name}] could not photograph ${path.basename(g)}: ${e.message.split("\n")[0]}`); }
         }
-      } else { await page.screenshot({ path: f }); shots.push(f); }
+        await page.setViewportSize(vp);
+      } else {
+        try { await page.screenshot({ path: f, timeout: 15000 }); shots.push(f); }
+        catch (e) { problems.push(`[${name}] could not photograph ${path.basename(f)}: ${e.message.split("\n")[0]}`); }
+      }
     }
     const r = await page.evaluate(() => {
       const res = { over: [], tiny: [] }, W = innerWidth;
@@ -65,7 +73,9 @@ function load() {
             res.over.push((e.closest(".chapter") || {}).id + " <" + e.tagName.toLowerCase() + "> " + (e.textContent || "").trim().slice(0, 50));
         });
       }
-      if (W < 500) document.querySelectorAll(".code pre").forEach(p => {
+      /* real code may scroll (wrapping would break its indentation); a URL or a line of output
+         in a plain block should not */
+      if (W < 500) document.querySelectorAll(".code.plain pre").forEach(p => {
         /* highlighted code is one span.ln per line, with no newline characters left in it */
         const lines = p.querySelectorAll(".ln").length || (p.textContent || "").trim().split("\n").length;
         if (lines <= 3 && p.scrollWidth > p.clientWidth + 4)
