@@ -40,6 +40,12 @@ context, invoke the Skill tool with `teachme-quick` (or `teachme:teachme-quick`)
    What you leave out goes under `## Left out` with one line of reason. If the honest size
    is much larger than the depth, put the rest under `## Later` and say so in your report.
 
+4b. **Write the shared code and data first.** Authors run in parallel and cannot wait for
+   each other: if several chapters build on one function or dataset (a feature builder, a
+   helper module, sample data), write it now under `COURSE_DIR/data/` or `COURSE_DIR/code/`,
+   run it, and record its exact name, signature and key outputs in `BRIEF.md`. Otherwise every
+   author rewrites it and the course ends up with four slightly different versions.
+
 5. **Write `COURSE_DIR/BRIEF.md`** — the shared standard for every author:
 
    ```markdown
