@@ -44,6 +44,8 @@ prompt is that skill's absolute path.
 
 Done when the file passes `--part` and step 5 holds.
 
+Keep scratch work in `DECK_DIR/.work/<your batch name>/` — other builders run at the same time.
+
 Write only your batch file — other builders are writing theirs at the same time, so leave
 `index.html`, `STORYLINE.md`, `BRIEF.md`, `meta.json` and other parts untouched. If a claim or
 layout seems wrong, build it as assigned and raise it in your report.

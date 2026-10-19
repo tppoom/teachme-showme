@@ -45,6 +45,9 @@ your prompt is that skill's absolute path.
 Done when every assigned file exists, passes `--part` with no WARN lines (or each remaining
 one is explained in your report), and survives step 6.
 
+Keep scratch work (test scripts, a partial build for look.js) in `COURSE_DIR/.work/<your chapter id>/` —
+other authors run at the same time and a shared folder name gets overwritten.
+
 Write only your assigned files — other authors are writing the rest at the same time, so
 leave `index.html`, `SYLLABUS.md`, `BRIEF.md` and other chapters untouched. If the syllabus
 seems wrong for your chapter, write the chapter as assigned and raise it in your report.
