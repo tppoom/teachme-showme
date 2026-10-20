@@ -293,7 +293,7 @@ def main():
         long_p = [p for p in re.findall(r"<p\b[^>]*>([\s\S]*?)</p>", body) if count_words(text_of(p)) > 60]
         if long_p: warn(f"{tag} has {len(long_p)} paragraph(s) over ~60 words, e.g. {snip(long_p[0])!r}… — "
                         "split it, or turn its reasons/options/numbers into a list or table")
-        walls = [r for r in re.findall(r"(?:<p\b[^>]*>[\s\S]*?</p>\s*){3,}", body) if words(r) > 100]
+        walls = [r for r in re.findall(r"(?:<p\b[^>]*>(?:(?!</p>)[\s\S])*</p>\s*){3,}", body) if words(r) > 100]
         if walls: warn(f"{tag} has {len(walls)} run(s) of 3+ paragraphs in a row, e.g. from {snip(walls[0])!r}… — "
                        "break each with a list, table, code, figure or .eg")
         long_li = [li for li in re.findall(r"<li\b[^>]*>([\s\S]*?)</li>", body)
