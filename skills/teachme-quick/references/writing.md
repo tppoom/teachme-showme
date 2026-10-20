@@ -21,8 +21,53 @@ explain it. Everything in this file serves that.
   two ideas — split it, or cut what repeats.
 - **0–3 `<h2>`**, each a short phrase that says the point ("Why the tail, not the point"),
   never a label ("Overview", "Introduction", "Summary").
-- **Paragraphs of 1–4 sentences.** Lead with the answer, then the reason.
+- **Short paragraphs, and structure wherever the content has it** — see *Make it scannable*.
 - The hook needs no heading; the first paragraph *is* the hook.
+
+## Make it scannable
+
+Readers skim first and read second. A page of paragraphs gives the eye nowhere to land: to
+find the one fact they need, they must read every word. This is the most common way a
+course gets hard to read — not wrong, just a wall. Let the shape of the text show the shape
+of the idea:
+
+| When the text holds… | Write it as |
+|---|---|
+| 2+ reasons, causes, symptoms, conditions or options | a list, each item led by a **bold key phrase** |
+| an order (do this, then this) | `.steps` or `<ol>` |
+| items compared on the same attributes | a table (≤ 4 columns) |
+| right vs wrong, before vs after | `.cmp` |
+| a number being worked out | `.eg`, one line per step |
+| a single *because* (A, so B) | a short paragraph |
+
+- **A paragraph is at most 3 lines on a laptop** — about 45 words, or ~220 characters of
+  Thai. One point per paragraph, the point first.
+- **Never three paragraphs in a row.** After two, the next block is a list, a table, code,
+  a figure or an `.eg`. If nothing fits, one of the paragraphs is padding.
+- **List items are short.** Lead with the key phrase in bold, then at most a line of
+  explanation; 3–6 items. An item that runs past two lines is a paragraph in disguise.
+- **Start each `<h2>` section with its takeaway in one line**, then the support.
+- **Numbers go in a table or an `.eg`**, not in a sentence that carries five figures.
+
+The same content, as a wall and as something you can learn from:
+
+```html
+<!-- before: one paragraph, five numbers, three ideas -->
+<p>แต่โมเดลของบทที่ 14 ให้ขอนแก่น 0.522 และสงขลา 0.445 ต่างกัน 0.077 ทั้งที่ make_data.py ไม่ได้ให้จังหวัด
+มีผลต่อการหายเลย ในชุดฝึก ขอนแก่นหาย 33.5% สงขลา 28.2% จากคนแค่ 571 กับ 386 คน ระยะห่างแค่นี้เกิดจาก
+การสุ่มได้สบายๆ โมเดลจึงจำ noise มา พอลบ province ออกจาก config.json test ผ่านทั้งสาม และ AUC ยังเท่าเดิม</p>
+
+<!-- after: the claim, then labelled points -->
+<p>โมเดลให้คะแนนต่างกันตามจังหวัด ทั้งที่ข้อมูลไม่ได้ให้จังหวัดมีผลต่อการหายเลย</p>
+<ul>
+  <li><strong>ที่เห็น:</strong> ขอนแก่น 0.522 สงขลา 0.445 ต่างกัน 0.077 เกินเพดาน 0.03</li>
+  <li><strong>สาเหตุ:</strong> ชุดฝึกมีแค่ 571 กับ 386 คน ส่วนต่าง 33.5% กับ 28.2% เกิดจากการสุ่มได้ โมเดลจึงจำ noise</li>
+  <li><strong>แก้:</strong> ลบ <code>province</code> ออกจาก <code>config.json</code> test ผ่าน AUC เท่าเดิม</li>
+</ul>
+```
+
+`verify.py` warns on paragraphs over ~60 words, on three or more paragraphs in a row that
+add up to a wall, and on list items over ~45 words.
 
 There is no objectives box, no recap and no glossary unless they earn their place: a recap is
 worth it after a long `deep` chapter; a glossary appendix is worth it when the course coins
@@ -88,8 +133,8 @@ Delete on sight. The gate warns on many of these.
   look at.
 - **Define a term where it is first used**, in one clause. Original term first when the course
   is not in English: `**closure** (ฟังก์ชันที่จำตัวแปรรอบตัวไว้ได้)` — then keep using the original.
-- Bullets only for genuinely parallel items (≤ 6). A list that is secretly a paragraph is a
-  paragraph.
+- A list for parallel items (3–6), each short — see *Make it scannable*. Do not turn a
+  chain of reasoning (A, so B, so C) into bullets: that is a short paragraph or `.steps`.
 - A table when items share attributes — at most 4 short columns, or it scrolls sideways on a
   phone. Define a term before the table that uses it as a header. A figure when the point is a
   shape. Prose when the point is a *because*. A diagram that flows left to right stacks

@@ -40,7 +40,9 @@ your prompt is that skill's absolute path.
    more room, say so in your report so the orchestrator can split it.
 6. **Re-read it once as the reader in `BRIEF.md`**: after one read, could they explain the
    idea to a friend? Is any term used before it is explained? Is any sentence there only to
-   sound thorough? Fix what fails.
+   sound thorough? Skim it the way a reader does — headings, bold phrases, lists, figures:
+   does the point still come through, or is it buried in a wall of paragraphs? Fix what fails
+   (`references/writing.md` → *Make it scannable*).
 
 Done when every assigned file exists, passes `--part` with no WARN lines (or each remaining
 one is explained in your report), and survives step 6.

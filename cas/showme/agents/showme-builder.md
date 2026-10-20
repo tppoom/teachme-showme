@@ -28,7 +28,8 @@ prompt is that skill's absolute path.
    the content. No icon-on-every-card, emoji, label headlines or buzzwords.
 3. **Write the batch straight to its file** (`BATCH` names it). For each slide: the `id` from
    the storyline, `data-claim` = its claim, the layout the storyline assigned, one piece of
-   evidence, and `.notes` with what the presenter would actually say — opening line, the
+   evidence, and `.notes` written in short beats (`references/slides.md` → *Speaker notes*)
+   with what the presenter would actually say — opening line, the
    number behind the number, the objection this audience will raise and the answer, the
    hand-off to the next slide (`NEIGHBOURS` tells you what comes before and after).
    Charts from a data file go through

@@ -23,6 +23,9 @@ excellent example beats a long one that circles the idea.
   a situation — and names the rule only once the reader has seen it work.
 - **Pictures for mechanisms.** If the idea is a flow, a shape, a comparison or something
   that changes over time, draw it.
+- **Scannable, not a wall.** Short paragraphs; reasons, options and symptoms as lists with a
+  bold key phrase; orders as steps; comparisons as tables. Never three paragraphs in a row.
+  (`references/writing.md` → *Make it scannable*.)
 - **No filler.** No "in this chapter we will", no restating, no generic advice, no boxes that
   repeat the paragraph above. Every sentence either explains, shows or warns.
 - **Clean, bug-free page.** The gate fails anything that renders wrong (stray markdown, code

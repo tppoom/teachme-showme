@@ -202,6 +202,8 @@ The runtime does the scaling; you control the rest.
 - Keep contrast high — pale grey on white looks refined on your laptop and disappears on a
   projector in a lit room.
 - Two type sizes per slide is usually enough; three is the maximum before it reads as noise.
+- A paragraph on a slide is one sentence. Two points are two bullets, a `cols` pair or a
+  `stats` row — never a block of text the room has to read while you talk.
 - Line length for anything paragraph-shaped: 24–34 characters at display sizes. The layouts
   already cap this; don't override it.
 - **Thai, Lao, Khmer and Burmese have no spaces between words.** In headlines, takeaways and
@@ -219,6 +221,21 @@ Write what you would actually say, not a summary of the slide. Good notes contai
 - the objection you expect from this specific audience, and your answer
 - what to cut if you are running short
 
+**Write them in beats, not one block.** Mid-talk the presenter glances down for two seconds;
+a 100-word paragraph gives them nowhere to find their place. Each beat is its own short `<p>`
+of one or two sentences, in the order you say them — or a `<ul>` when they are parallel
+points. Bold the one phrase or number you must not forget.
+
+```html
+<div class="notes">
+  <p>Open on the number: <strong>churn doubled in small accounts</strong>, flat everywhere else.</p>
+  <p>Why it matters here — small accounts are 60% of next year's growth plan.</p>
+  <p>If asked about enterprise: two losses, both named in the appendix.</p>
+  <p>Hand-off: "So where are they leaving from?"</p>
+</div>
+```
+
 They are also what makes the deck useful to someone reading it alone — the runtime shows them
-in Read mode. Roughly 40–120 words per slide. `verify.py` fails a content slide with none,
+in Read mode, where the same beats make the page skimmable. Roughly 40–120 words per slide,
+no beat over ~45 words. `verify.py` fails a content slide with none,
 because an empty note means the thinking either didn't happen or got left on the slide.

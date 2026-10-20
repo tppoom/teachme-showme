@@ -288,8 +288,18 @@ def main():
         if re.search(r"<h3\b", body): warn(f"{tag} uses <h3> — fold it into the section above")
         n_box = len(re.findall(r'<div class="(?:callout|objective|recap)\b', body))
         if n_box > 2: warn(f"{tag} has {n_box} boxes (callout/objective/recap) — keep the one or two that matter")
-        long_p = [p for p in re.findall(r"<p\b[^>]*>([\s\S]*?)</p>", body) if count_words(text_of(p)) > 110]
-        if long_p: warn(f"{tag} has {len(long_p)} paragraph(s) over ~110 words — split or cut")
+        # walls of text: the reader skims first, so long or stacked paragraphs hide the point
+        def snip(f): return " ".join(text_of(f).split())[:40]
+        long_p = [p for p in re.findall(r"<p\b[^>]*>([\s\S]*?)</p>", body) if count_words(text_of(p)) > 60]
+        if long_p: warn(f"{tag} has {len(long_p)} paragraph(s) over ~60 words, e.g. {snip(long_p[0])!r}… — "
+                        "split it, or turn its reasons/options/numbers into a list or table")
+        walls = [r for r in re.findall(r"(?:<p\b[^>]*>[\s\S]*?</p>\s*){3,}", body) if words(r) > 100]
+        if walls: warn(f"{tag} has {len(walls)} run(s) of 3+ paragraphs in a row, e.g. from {snip(walls[0])!r}… — "
+                       "break each with a list, table, code, figure or .eg")
+        long_li = [li for li in re.findall(r"<li\b[^>]*>([\s\S]*?)</li>", body)
+                   if 'class="opt"' not in li and count_words(text_of(li)) > 45]
+        if long_li: warn(f"{tag} has {len(long_li)} list item(s) over ~45 words, e.g. {snip(long_li[0])!r}… — "
+                         "lead with the key phrase, keep the rest to a line")
         hits = []
         for pat in FILLER:
             for m in re.finditer(pat, ptxt, re.I):

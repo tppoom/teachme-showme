@@ -61,7 +61,7 @@ what they asked, and record it in `meta.json` so the gate agrees.
 |---|---|---|
 | `live` (default) | presented in a room | standard ceilings (~55 words, 5 bullets) |
 | `remote` | presented over a video call | same ceilings; bigger type, ≤ 3 builds per slide |
-| `read` | emailed, pre-read, "send me the deck" | slides may carry ~1.8× the words; headlines must carry the argument alone; notes are written as prose paragraphs |
+| `read` | emailed, pre-read, "send me the deck" | slides may carry ~1.8× the words; headlines must carry the argument alone; notes are short paragraphs and lists a reader can skim |
 | `kiosk` | lobby loop, booth, event screen | notes optional; `"advance"` + `"loop": true`; one message per slide, readable in five seconds |
 
 `"density": "sparse" | "normal" | "dense"` overrides the ceiling multiplier directly when the

@@ -15,7 +15,7 @@ notes or the appendix, split the slide, or cut it. It never means relax the chec
 
 meta.json tunes the gate to how the deck will be used:
   "delivery": "live" (default) | "remote" | "read" | "kiosk"
-      read   — emailed / read alone: slides may carry ~1.8x the words, notes become prose
+      read   — emailed / read alone: slides may carry ~1.8x the words, notes are read as the text
       remote — over a video call: same ceilings, warns on builds that need a pointer
       kiosk  — unattended loop: notes not required (same as "advance" + "loop")
   "density": "sparse" | "normal" | "dense"   — overrides the ceiling multiplier directly
@@ -191,6 +191,9 @@ def main():
             elif nw < NOTE_MIN:
                 fail(f"{tag} notes are {nw} words — say what you would actually say (aim {NOTE_MIN}-{NOTE_MAX})")
             elif nw > note_max: warn(f"{tag} notes are {nw} words — long enough that you will not read them live")
+            if nt and any(wc(text_of(p)) > 60 for p in re.findall(r"<p\b[^>]*>([\s\S]*?)</p>", nt.group(1))):
+                warn(f"{tag} notes have a paragraph over ~60 words — split it into beats of one or two "
+                     "sentences so the presenter can find their place at a glance")
 
         # chart data is drawn, not read, and code is measured in lines — neither is prose
         prose = re.sub(r'<div class="chart"[\s\S]*?</table>', " ", body)
@@ -200,6 +203,12 @@ def main():
         if w > ceil:
             fail(f"{tag} has {w} words on the slide (ceiling {ceil} for {lay}) — "
                  f"move it to the notes, split the slide, or cut it")
+
+        for para in re.findall(r'<p\b(?![^>]*class="src)[^>]*>([\s\S]*?)</p>', prose):
+            if wc(text_of(para)) > round(30 * mult):
+                warn(f"{tag} a paragraph on the slide is {wc(text_of(para))} words — the room reads it instead of "
+                     "listening; make it one sentence, or two bullets / a cols pair")
+                break
 
         for ul in re.findall(r'<ul class="pts">[\s\S]*?</ul>', body):
             lis = re.findall(r"<li[\s\S]*?</li>", ul)
