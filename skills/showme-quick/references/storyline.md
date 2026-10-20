@@ -92,7 +92,7 @@ them somewhere other than the slide. Three tiers, and the discipline is knowing 
 | Tier | Holds | Rule |
 |---|---|---|
 | **The slide** | The claim and the single thing that proves it | If it isn't the claim or the proof, it isn't on the slide |
-| **Speaker notes** | Everything you'd actually say — the nuance, the number behind the number, the objection you expect and your answer, the transition into the next slide | Every slide gets them. This is where the depth lives |
+| **Speaker notes** | Everything you'd actually say — the nuance, the number behind the number, the objection you expect and your answer, the transition into the next slide | Every slide but the title gets them. This is where the depth lives |
 | **Appendix** | The backup slide you flip to when someone asks | Detail that would derail the main line but that you must have ready |
 
 This is why the deck can be sparse and complete at the same time, and why `verify.py` requires

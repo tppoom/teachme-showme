@@ -40,12 +40,17 @@ of the idea:
 | a number being worked out | `.eg`, one line per step |
 | a single *because* (A, so B) | a short paragraph |
 
-- **A paragraph is at most 3 lines on a laptop** — about 45 words, or ~220 characters of
-  Thai. One point per paragraph, the point first.
+- **A paragraph is at most 3 lines on a laptop** — aim for ~45 words (Thai, Lao, Khmer and
+  Burmese count 5 characters as a word, so ~220 characters). One point per paragraph, the
+  point first.
 - **Never three paragraphs in a row.** After two, the next block is a list, a table, code,
-  a figure or an `.eg`. If nothing fits, one of the paragraphs is padding.
+  a figure or an `.eg` — any block that is not a `<p>` resets the count; a one-line lead-in
+  before a list is still a paragraph. If nothing fits, one of the paragraphs is padding.
 - **List items are short.** Lead with the key phrase in bold, then at most a line of
-  explanation; 3–6 items. An item that runs past two lines is a paragraph in disguise.
+  explanation; 3–6 items. An item that runs past two lines is a paragraph in disguise. When
+  the item defines a term, the term *is* the key phrase — one bold per item.
+- **Separate reasons are a list; a chain is not.** Three independent causes → bullets. A
+  chain where each step follows from the last (A, so B, so C) → a short paragraph or `.steps`.
 - **Start each `<h2>` section with its takeaway in one line**, then the support.
 - **Numbers go in a table or an `.eg`**, not in a sentence that carries five figures.
 
@@ -66,8 +71,9 @@ The same content, as a wall and as something you can learn from:
 </ul>
 ```
 
-`verify.py` warns on paragraphs over ~60 words, on three or more paragraphs in a row that
-add up to a wall, and on list items over ~45 words.
+The numbers above are what to aim for. `verify.py` warns only past a ceiling — paragraphs
+over ~60 words, three or more paragraphs in a row over ~100 words, list items over ~45 words
+— so passing the gate is not the target; the aims are.
 
 There is no objectives box, no recap and no glossary unless they earn their place: a recap is
 worth it after a long `deep` chapter; a glossary appendix is worth it when the course coins
@@ -129,8 +135,8 @@ Delete on sight. The gate warns on many of these.
 ## Prose
 
 - **Second person, present tense, plain words.** "You call `fetch` and get a promise back."
-- **Bold** only the term being defined, once — and in a table, the one figure the reader should
-  look at.
+- **Bold** the term being defined, once; the key phrase that leads a list item; and in a
+  table, the one figure the reader should look at. Nothing else.
 - **Define a term where it is first used**, in one clause. Original term first when the course
   is not in English: `**closure** (ฟังก์ชันที่จำตัวแปรรอบตัวไว้ได้)` — then keep using the original.
 - A list for parallel items (3–6), each short — see *Make it scannable*. Do not turn a

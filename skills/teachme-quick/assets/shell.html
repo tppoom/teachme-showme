@@ -922,8 +922,8 @@ function hlLines(src,lang){
     }
   }
   if(plain){add(null,src);return lines}
-  var parts=["(/\\*[\\s\\S]*?\\*/|//[^\\n]*"];
-  if(hash) parts.push("|#[^\\n]*");
+  /* '#'-comment languages have no '//' comments: a URL in yaml or a path in sh is not one */
+  var parts=[hash?"(#[^\\n]*":"(/\\*[\\s\\S]*?\\*/|//[^\\n]*"];
   if(dash) parts.push("|--[^\\n]*");
   parts.push(")|(\"(?:\\\\.|[^\"\\\\\\n])*\"|'(?:\\\\.|[^'\\\\\\n])*'|`(?:\\\\.|[^`\\\\])*`)");
   parts.push("|\\b(0[xXbBoO][0-9a-fA-F_]+|\\d[\\d_]*(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)\\b");

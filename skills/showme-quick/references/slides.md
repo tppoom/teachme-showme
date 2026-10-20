@@ -236,6 +236,10 @@ points. Bold the one phrase or number you must not forget.
 ```
 
 They are also what makes the deck useful to someone reading it alone — the runtime shows them
-in Read mode, where the same beats make the page skimmable. Roughly 40–120 words per slide,
-no beat over ~45 words. `verify.py` fails a content slide with none,
+in Read mode, where the same beats make the page skimmable. Aim for 40–120 words per slide
+and no beat over ~45 (Thai and similar scripts: 5 characters count as a word). Across the
+deck, the notes should add up to about what you can say in the slot — roughly 120–150
+spoken words a minute, so a 5-minute talk carries ~600–750 words of notes in total.
+`verify.py` only enforces the edges: it fails notes under 20 words and warns over 220 or on
+any beat over ~60. `verify.py` fails a content slide with none,
 because an empty note means the thinking either didn't happen or got left on the slide.
