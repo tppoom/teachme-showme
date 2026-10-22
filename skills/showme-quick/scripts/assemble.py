@@ -71,9 +71,14 @@ def main():
     tokens = dict(base["tokens"]); tokens.update(tspec.get("tokens", {}))
     missing = [t for t in themes["_contract"]["tokens"] if t not in tokens]
     if missing: die(f"theme is missing tokens: {', '.join(missing)}")
+    thai = HERE / "assets" / "fonts-th.css" if str(meta.get("lang", "")).split("-")[0].lower() == "th" else None
     for f in ("font-display", "font-body", "font-mono"):
         if FALLBACK.split(",")[0] not in tokens[f]:
             tokens[f] = tokens[f].rstrip().rstrip(",") + "," + FALLBACK
+        # Thai letters come from the inlined face (its unicode-range is Thai only), so a Thai deck
+        # looks the same on every laptop while Latin text keeps the theme's own font
+        if thai and thai.exists() and f != "font-mono" and "ShowMe Thai" not in tokens[f]:
+            tokens[f] = "'ShowMe Thai'," + tokens[f]
     theme_css = "\n".join(f"  --{k}:{v};" for k, v in tokens.items())
     motif = tspec.get("motif", base.get("motif", "none"))
 
@@ -107,11 +112,11 @@ def main():
         if len(logo) > 200_000: print("assemble: note — the logo is over 150 KB; it is repeated on no "
                                       "slide but still weighs the file. A small PNG or SVG is plenty.", file=sys.stderr)
 
-    fonts = ""
+    fonts = f"<style>\n{thai.read_text(encoding='utf-8')}</style>" if thai and thai.exists() else ""
     if meta.get("fonts", {}).get("url"):
         u = meta["fonts"]["url"]
-        fonts = ('<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
-                 f'<link rel="stylesheet" href="{u}">')
+        fonts += ('\n<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
+                  f'<link rel="stylesheet" href="{u}">')
 
     out = shell.read_text(encoding="utf-8")
     repl = {"LANG": lang, "DIR": meta.get("dir") or ("rtl" if baselang in RTL else "ltr"),
@@ -135,7 +140,7 @@ def main():
     print(f"built {dest}")
     print(f"  theme={preset} motif={motif}  {W}x{H} ({ratio})  lang={lang} dir={repl['DIR']}")
     print(f"  {len(parts)} part files -> {n} slides ({n-apx} main + {apx} appendix), "
-          f"{len(out)/1024:.0f} KB" + ("  [needs network for fonts]" if fonts else "")
+          f"{len(out)/1024:.0f} KB" + ("  [needs network for fonts]" if "<link" in fonts else "")
           + (f"  [auto-advance {meta['advance']}s{' loop' if meta.get('loop') else ''}]" if meta.get("advance") else ""))
 
 if __name__ == "__main__":

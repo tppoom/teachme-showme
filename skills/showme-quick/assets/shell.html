@@ -510,7 +510,8 @@ kbd{font-family:var(--font-mono);font-size:11.5px;background:var(--chrome-key);
 .matrix{display:grid;grid-template-columns:auto 1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:12px;flex:1;min-height:0}
 .matrix .ax{display:grid;place-items:center;font-size:15px;font-weight:800;letter-spacing:.1em;
   text-transform:uppercase;color:var(--ink-3)}
-.matrix .ax.y{writing-mode:vertical-rl;transform:rotate(180deg)}
+/* row labels stay horizontal: sideways text is slow to read, and unreadable in Thai or CJK */
+.matrix .ax.y{max-width:170px;text-align:end;place-items:center end;letter-spacing:0;line-height:1.35}
 .matrix .q{border-radius:var(--radius);background:var(--surface);padding:24px 26px}
 .matrix .q b{display:block;font-size:21px;margin-bottom:8px}
 .matrix .q p{font-size:16px;color:var(--ink-2);line-height:1.5}
