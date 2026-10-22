@@ -34,7 +34,8 @@ your prompt is that skill's absolute path.
    explanations (writing.md → *How to explain a hard part*); *Supporting* points get a line
    each; *Facts on hand* are there to draw from, not to empty onto the page. Open on the
    example its notes name, and stop when the takeaway is earned. Build on the `NEIGHBOURS`
-   and the running example; use each term with the gloss in the terminology list.
+   and the running example; use each term with the gloss in the terminology list. If
+   `SYLLABUS.md` groups chapters into parts, put the part name in your section's `data-part`.
 5. **Check it** until it prints PASS with **zero WARN lines**:
    ```bash
    python3 SKILL_DIR/scripts/verify.py COURSE_DIR --part parts/NN-slug.html

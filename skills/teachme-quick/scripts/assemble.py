@@ -66,6 +66,9 @@ def main():
     for k in keys: repl["T_" + k.upper()] = ui[k]
 
     out = out.replace("<!--@@CHAPTERS@@-->", body)
+    # the reading fonts ship inside the file so the course looks the same offline
+    fonts = shell.parent / "fonts.css"
+    out = out.replace("/*@@FONTS@@*/", fonts.read_text(encoding="utf-8") if fonts.exists() else "")
     for k, v in repl.items():
         out = out.replace("@@%s@@" % k, str(v))
 

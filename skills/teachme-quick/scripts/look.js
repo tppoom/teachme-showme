@@ -36,64 +36,67 @@ function load() {
     await page.goto("file://" + file);
     await page.waitForTimeout(500);
     const n = await page.evaluate(() => document.querySelectorAll(".chapter").length);
+    const r = { over: [], tiny: [], hidden: [], wide: [] };
+    /* the reader shows one view at a time: the contents (#home), then each chapter by its id */
     for (let i = -1; i < n; i++) {
       await page.evaluate(i => {
         document.documentElement.style.scrollBehavior = "auto";
-        const el = i < 0 ? document.querySelector(".cover") : document.querySelectorAll(".chapter")[i];
-        if (el) window.scrollTo(0, el.getBoundingClientRect().top + scrollY - 60);
+        const ch = document.querySelectorAll(".chapter")[i];
+        location.hash = i < 0 ? "home" : ch.id;
       }, i);
-      await page.waitForTimeout(150);
+      await page.waitForTimeout(200);
       const f = path.join(out, `${name}-${i < 0 ? "cover" : "ch" + (i + 1)}.png`);
       if (name === "phone" && i >= 0) {
-        /* the whole chapter at full page width (gutters included), cut into screen-sized
-           pieces so each image stays readable: phone-ch2-1.png, phone-ch2-2.png, … */
-        const box = await page.evaluate(i => { const r = document.querySelectorAll(".chapter")[i].getBoundingClientRect();
-          return { top: r.top + scrollY, h: r.height }; }, i);
-        /* scroll and photograph the viewport: a fullPage capture of a long course times out */
+        /* the whole chapter, cut into screen-sized pieces so each image stays readable:
+           phone-ch2-1.png, phone-ch2-2.png, … — scroll and photograph the viewport, since a
+           fullPage capture of a long page times out */
         await page.setViewportSize({ width: vp.width, height: 1400 });
-        for (let k = 0, y = box.top; y < box.top + box.h; k++, y += 1340) {
+        const h = await page.evaluate(() => document.documentElement.scrollHeight);
+        for (let k = 0, y = 0; y < h; k++, y += 1340) {
           const g = f.replace(/\.png$/, `-${k + 1}.png`);
-          await page.evaluate(y => window.scrollTo(0, y - 60), y);
+          await page.evaluate(y => window.scrollTo(0, y), y);
           await page.waitForTimeout(80);
           try { await page.screenshot({ path: g, timeout: 15000 }); shots.push(g); }
           catch (e) { problems.push(`[${name}] could not photograph ${path.basename(g)}: ${e.message.split("\n")[0]}`); }
         }
         await page.setViewportSize(vp);
+        await page.evaluate(() => window.scrollTo(0, 0));
       } else {
         try { await page.screenshot({ path: f, timeout: 15000 }); shots.push(f); }
         catch (e) { problems.push(`[${name}] could not photograph ${path.basename(f)}: ${e.message.split("\n")[0]}`); }
       }
-    }
-    const r = await page.evaluate(() => {
-      const res = { over: [], tiny: [] }, W = innerWidth;
-      if (document.documentElement.scrollWidth > W + 1) {
-        document.querySelectorAll("main *").forEach(e => {
-          const b = e.getBoundingClientRect();
-          if (b.right > W + 1 && !e.closest("pre,.tw,figure,.tree,.math,.derive,.annot,.tabs-h") && e.children.length === 0)
-            res.over.push((e.closest(".chapter") || {}).id + " <" + e.tagName.toLowerCase() + "> " + (e.textContent || "").trim().slice(0, 50));
+      const got = await page.evaluate(() => {
+        const res = { over: [], tiny: [], hidden: [], wide: [] }, W = innerWidth;
+        const view = document.querySelector(".chapter.on") || document.querySelector(".cover");
+        const where = e => (e.closest(".chapter") || {}).id || "contents";
+        if (document.documentElement.scrollWidth > W + 1) {
+          view.querySelectorAll("*").forEach(e => {
+            const b = e.getBoundingClientRect();
+            if (b.right > W + 1 && !e.closest("pre,.tw,figure,.tree,.math,.derive,.annot,.tabs-h") && e.children.length === 0)
+              res.over.push(where(e) + " <" + e.tagName.toLowerCase() + "> " + (e.textContent || "").trim().slice(0, 50));
+          });
+        }
+        /* real code may scroll (wrapping would break its indentation); a URL or a line of output
+           in a plain block should not */
+        if (W < 500) view.querySelectorAll(".code.plain pre").forEach(p => {
+          /* highlighted code is one span.ln per line, with no newline characters left in it */
+          const lines = p.querySelectorAll(".ln").length || (p.textContent || "").trim().split("\n").length;
+          if (lines <= 3 && p.scrollWidth > p.clientWidth + 4) res.hidden.push(where(p) + ": " + (p.textContent || "").trim().slice(0, 40));
         });
-      }
-      /* real code may scroll (wrapping would break its indentation); a URL or a line of output
-         in a plain block should not */
-      if (W < 500) document.querySelectorAll(".code.plain pre").forEach(p => {
-        /* highlighted code is one span.ln per line, with no newline characters left in it */
-        const lines = p.querySelectorAll(".ln").length || (p.textContent || "").trim().split("\n").length;
-        if (lines <= 3 && p.scrollWidth > p.clientWidth + 4)
-          res.hidden = (res.hidden || []).concat((p.closest(".chapter") || {}).id + ": " + (p.textContent || "").trim().slice(0, 40));
+        if (W < 500) view.querySelectorAll(".tw").forEach(t => {
+          if (t.scrollWidth > t.clientWidth + 4) res.wide.push(where(t) + " (" + t.querySelectorAll("tr:first-child > *").length + " columns)");
+        });
+        view.querySelectorAll("figure svg text").forEach(t => {
+          const h = t.getBoundingClientRect().height;
+          if (h && h < 9) res.tiny.push(where(t) + ": " + t.textContent.trim().slice(0, 30));
+        });
+        return res;
       });
-      if (W < 500) document.querySelectorAll(".tw").forEach(t => {
-        if (t.scrollWidth > t.clientWidth + 4)
-          res.wide = (res.wide || []).concat((t.closest(".chapter") || {}).id + " (" + t.querySelectorAll("tr:first-child > *").length + " columns)");
-      });
-      document.querySelectorAll("figure svg text").forEach(t => {
-        const h = t.getBoundingClientRect().height;
-        if (h && h < 9) res.tiny.push((t.closest(".chapter") || {}).id + ": " + t.textContent.trim().slice(0, 30));
-      });
-      return res;
-    });
+      for (const k of Object.keys(r)) r[k].push(...got[k]);
+    }
     [...new Set(r.over)].slice(0, 6).forEach(o => problems.push(`[${name}] page scrolls sideways — widened by ${o}`));
-    if (r.hidden) problems.push(`[${name}] short code block(s) scroll sideways on a phone and hide their end: ${r.hidden.join(" | ")} — use inline <code> (it wraps) or lang-text`);
-    if (r.wide) problems.push(`[${name}] table(s) scroll sideways on a phone: ${r.wide.join(", ")} — readers miss the right-hand columns; use ≤4 short columns or split the table`);
+    if (r.hidden.length) problems.push(`[${name}] short code block(s) scroll sideways on a phone and hide their end: ${r.hidden.join(" | ")} — use inline <code> (it wraps) or lang-text`);
+    if (r.wide.length) problems.push(`[${name}] table(s) scroll sideways on a phone: ${r.wide.join(", ")} — readers miss the right-hand columns; use ≤4 short columns or split the table`);
     if (r.tiny.length) problems.push(`[${name}] ${r.tiny.length} diagram label(s) render under 9px, e.g. ${r.tiny.slice(0, 3).join(" | ")} — draw fewer, bigger labels`);
     await page.close();
   }

@@ -33,7 +33,9 @@ context, invoke the Skill tool with `teachme-quick` (or `teachme:teachme-quick`)
    ```
 
 4. **Write `SYLLABUS.md`**: chapters in dependency order, one idea each, ids `ch-1 … ch-N`
-   (plus `ch-appendix` only if the course coins more than ~10 terms). Size to the request,
+   (plus `ch-appendix` only if the course coins more than ~10 terms). A course of more than
+   ~8 chapters is easier to find your way around in parts: group them under `## Part …`
+   headings, and tell authors to put the part name in each chapter's `data-part`. Size to the request,
    not to everything adjacent: stay inside the depth's chapter band (quick 1–4, standard 3–8,
    deep 6–16) and merge any two chapters that teach one idea. Source material gets a
    `## Coverage` list mapping each important source point to a chapter id, all checked.
