@@ -31,6 +31,10 @@ like a template, and not like a machine. That means:
 - **Nothing generated-looking.** No icon on every card, no emoji, no label headlines
   ("Overview", "สรุป", "Thank you"), no gradients-on-everything, no invented numbers, no
   buzzwords. The full list and the alternatives: `references/design.md` → *The tells*.
+- **Words go where the room will struggle.** The headline states the claim in plain words —
+  jargon only if this audience uses it. The notes spend their words on what needs explaining:
+  what the number means, why it matters here, the objection and its answer — not on reciting
+  more figures, ids or methodology the room will never ask about.
 - **No rendering bugs.** Nothing clipped, overlapping or wrapping mid-number; check the
   overview grid before handing over.
 

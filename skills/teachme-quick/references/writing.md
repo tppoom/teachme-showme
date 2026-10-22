@@ -1,7 +1,101 @@
 # Writing chapters that land
 
-The goal of every chapter: the reader understands **one idea** quickly and could use it or
+The goal of every chapter: the reader understands **one idea** well enough to use it and
 explain it. Everything in this file serves that.
+
+## Spend words where understanding is made
+
+This is the rule that decides whether a course is worth reading. **Depth follows difficulty,
+not data.** A chapter gets long where the idea is hard for *this* reader, and stays short
+everywhere else, however many facts you happen to have about those parts.
+
+Courses fail in two directions at once, and usually in the same chapter:
+
+- **Long where it should be short.** The run log narrated in prose (0.7761 → 0.7764, 104
+  customers, 4,307 rows), file names and ids from the running example, library versions,
+  every option and parameter range, a tokenizer quirk. The reader wades through it looking
+  for the point.
+- **Short where it should be long.** The idea the chapter exists for gets one clause in
+  brackets — "vector store (ที่เก็บ embedding ที่ค้นได้เร็ว)" — or a bullet with no *because*.
+  The reader finishes it able to repeat the words, not to explain them.
+
+So before writing a chapter, settle three things (in your head or in `.work/`, not on the page):
+
+1. **The takeaway** — the one sentence the reader should be able to say afterwards.
+2. **The hard parts** — the one to three places where this reader will get stuck: a
+   mechanism they can't picture, a *why* that isn't obvious, a step that looks wrong. These
+   get the words.
+3. **Everything else is supporting** — one line each, or cut.
+
+| Give it room | Keep it to a line | Cut, or move to a `.more` |
+|---|---|---|
+| The mechanism behind the takeaway: what happens, step by step, on one concrete case | Setup: which data, which library, how to install | How the sample data was generated, seeds, run logs |
+| Why it works — and why the obvious alternative doesn't | A term the reader will use but doesn't need to understand deeply | Library versions, ids, file paths (unless the reader types them) |
+| The point where beginners go wrong, and how they'd notice | A fact that matters but needs no explaining | Every option, parameter range or alternative tool |
+| The picture or analogy that makes it click — and where it breaks | A pointer to another chapter | Exact measurements beyond the one that makes the point |
+
+### How to explain a hard part
+
+Write it the way a good senior explains at a whiteboard — in full sentences, joined by the
+words that carry the logic (*because, so, but, which means, unless* — in Thai เพราะ, จึง,
+แต่, แปลว่า, ถ้า…ก็…). Bullets delete those words; that is why a chapter of bullets reads
+like notes instead of teaching. A good explanation usually runs:
+
+1. **The problem it solves**, in the reader's terms, before what it is.
+2. **A mental model** — a plain-language picture or an analogy closer to the reader's life
+   than the real thing.
+3. **The real mechanism on one small case** — the actual steps, with the numbers that show
+   it working.
+4. **Why it works, and why not the obvious alternative** — answer the question the reader is
+   about to ask ("แล้วทำไมไม่…?").
+5. **Where the model breaks**, if an analogy was used.
+
+Not every part needs all five. The takeaway's mechanism almost always needs 2–4.
+
+### Numbers
+
+A number is there to make a point visible. Keep the one that does; drop the rest.
+
+- **One or two numbers per point.** "สองตัวที่ต่างกันแค่จังหวัดได้คะแนนห่างกันเกือบ 0.08" — not
+  five figures in a row.
+- **Round in prose** to what the reader can hold: 0.776 → about 0.78, 33.5% → about a third.
+  Exact values stay where they came from: the code output, a table, a worked `.eg`.
+- **Never narrate a log.** If the output block already shows it, the prose says what it
+  *means*, not what it *says*.
+
+### The running example is a backdrop
+
+Reusing one scenario across chapters is good; making the reader track its inventory is not.
+Refer to it in plain words ("นโยบายคืนสินค้า", "ลูกค้าที่ซื้อบ่อย"), not by its ids
+(`returns.md#2`, `c26`, order 100247) — ids belong in code. Point to another chapter only
+when the reader should actually go back to it; a chapter studded with "บทที่ N" sends the
+reader away instead of teaching them here.
+
+### The same passage, done badly and done well
+
+```html
+<!-- before: the ids, the tokenizer and the library version get the room;
+     the idea the section exists for (why embedding search finds meaning) gets one clause -->
+<p>ชิ้นที่ตอบได้คือ returns.md#2 แต่มันหลุดจาก top-3 เพราะการค้นด้วยคำเห็นแค่ตัวอักษร</p>
+<ul>
+  <li><strong>คำต่างกัน:</strong> "พัง" กับ "ชำรุด"</li>
+  <li><strong>ตัดคำไม่ตรง:</strong> ตัวตัดคำแยก "ขนส่ง" กับ "การขนส่ง" เป็นสอง token</li>
+</ul>
+<p>embedding แก้จุดนี้ได้ เพราะประโยคความหมายใกล้กันได้เวกเตอร์ใกล้กัน ระบบจริงเก็บไว้ใน vector store
+(ที่เก็บ embedding ที่ค้นได้เร็ว) ตัวอย่างนี้ใช้ chromadb 1.5</p>
+
+<!-- after: the problem in the reader's terms, then the mechanism, with its why -->
+<p>ลูกค้าพิมพ์ว่า "ของพังมาจากขนส่ง" แต่เอกสารของร้านเขียนว่า "สินค้าชำรุดจากการขนส่ง" การค้นด้วยคำ
+เทียบตัวอักษรตรงๆ เมื่อไม่มีคำว่า "พัง" ในเอกสาร ย่อหน้าที่ถูกจึงได้คะแนนต่ำจนหลุดอันดับ ทั้งที่คนอ่าน
+รู้ทันทีว่าพูดเรื่องเดียวกัน</p>
+<p><strong>embedding</strong> แก้ตรงนี้ เพราะมันไม่ได้เก็บตัวอักษร แต่แปลงความหมายของประโยคเป็นตัวเลขชุดหนึ่ง
+โมเดลที่สร้างตัวเลขนี้ถูกฝึกจากข้อความจำนวนมาก จนเห็นว่า "พัง" กับ "ชำรุด" ถูกใช้ในบริบทเดียวกัน
+ประโยคที่พูดเรื่องเดียวกันจึงได้ตัวเลขใกล้กัน แม้ไม่มีคำซ้ำกันสักคำ</p>
+<p>การค้นจึงเปลี่ยนจาก "หาย่อหน้าที่มีคำเดียวกับคำถาม" เป็น "หาย่อหน้าที่ตัวเลขใกล้กับคำถามที่สุด"
+ที่เก็บตัวเลขพวกนี้และหาตัวที่ใกล้ที่สุดได้เร็วเรียกว่า <strong>vector store</strong></p>
+```
+
+The "after" is longer where the idea is, and has no ids, no tokenizer detail and no version.
 
 ## The chapter recipe
 
@@ -9,71 +103,51 @@ explain it. Everything in this file serves that.
 <section class="chapter" id="ch-N" data-title="Short title">
   header: title + .ch-desc (one sentence: what the reader can do after this)
   1. The hook        1–3 sentences: the question or problem, in the reader's terms
-  2. The example     a concrete case, worked through, with real numbers or real output
-  3. The idea        now name the rule — it should feel obvious after the example
+  2. The example     a concrete case, worked through, that shows the problem or the idea
+  3. The idea        the takeaway explained — this is where the chapter's words go
   4. The picture     a figure, if the idea is a flow, shape, comparison or change over time
-  5. The trap        the one mistake people actually make, and how to spot it
-  6. Quick check     optional: 1–3 questions that need the idea, not the wording
+  5. Using it        how it is applied for real: the code, the steps, the decision
+  6. The trap        the one mistake people actually make, and how to spot it
+  7. Quick check     optional: 1–3 questions that need the idea, not the wording
 </section>
 ```
 
 - **150–700 words of prose** (see the depth table in SKILL.md). A chapter that needs more is
-  two ideas — split it, or cut what repeats.
+  two ideas — split it — or carries supporting detail that should be cut.
 - **0–3 `<h2>`**, each a short phrase that says the point ("Why the tail, not the point"),
   never a label ("Overview", "Introduction", "Summary").
-- **Short paragraphs, and structure wherever the content has it** — see *Make it scannable*.
 - The hook needs no heading; the first paragraph *is* the hook.
+- **End on the takeaway** in one memorable line when it helps — a rule of thumb the reader
+  can act on ("ตอบผิดเมื่อไร ดูขั้นค้นก่อนเปลี่ยนโมเดล"), not a recap paragraph.
 
-## Make it scannable
+## Shape: prose reasons, structure holds parallel things
 
-Readers skim first and read second. A page of paragraphs gives the eye nowhere to land: to
-find the one fact they need, they must read every word. This is the most common way a
-course gets hard to read — not wrong, just a wall. Let the shape of the text show the shape
-of the idea:
+Explanation is **prose** — short paragraphs of two to four sentences, one point each, the
+point first. Structure is for content that really has that shape:
 
 | When the text holds… | Write it as |
 |---|---|
-| 2+ reasons, causes, symptoms, conditions or options | a list, each item led by a **bold key phrase** |
+| a *because* — A, so B, so C | prose |
+| 3+ separate options, symptoms, checks — each a complete thought | a list |
 | an order (do this, then this) | `.steps` or `<ol>` |
 | items compared on the same attributes | a table (≤ 4 columns) |
 | right vs wrong, before vs after | `.cmp` |
 | a number being worked out | `.eg`, one line per step |
-| a single *because* (A, so B) | a short paragraph |
+| optional depth only some readers want | `.more` (collapsed), at most two per chapter |
 
-- **A paragraph is at most 3 lines on a laptop** — aim for ~45 words (Thai, Lao, Khmer and
-  Burmese count 5 characters as a word, so ~220 characters). One point per paragraph, the
-  point first.
-- **Never three paragraphs in a row.** After two, the next block is a list, a table, code,
-  a figure or an `.eg` — any block that is not a `<p>` resets the count; a one-line lead-in
-  before a list is still a paragraph. If nothing fits, one of the paragraphs is padding.
-- **List items are short.** Lead with the key phrase in bold, then at most a line of
-  explanation; 3–6 items. An item that runs past two lines is a paragraph in disguise. When
-  the item defines a term, the term *is* the key phrase — one bold per item.
-- **Separate reasons are a list; a chain is not.** Three independent causes → bullets. A
-  chain where each step follows from the last (A, so B, so C) → a short paragraph or `.steps`.
-- **Start each `<h2>` section with its takeaway in one line**, then the support.
-- **Numbers go in a table or an `.eg`**, not in a sentence that carries five figures.
+- **Paragraphs stay under ~60 words** (Thai, Lao, Khmer and Burmese count 5 characters as a
+  word, so ~300 characters). Three short paragraphs in a row are fine; a run of long ones
+  needs the example, the code or the figure between them.
+- **No "label: fragment" bullets for a story.** "ที่เห็น: … / สาเหตุ: … / แก้: …" chops one
+  chain of reasoning into notes and deletes the *because*. Write it as two or three sentences.
+- **A list item is a complete thought**, not a key phrase with a number after a colon.
+- **`.more` is not a dumping ground.** Most detail should simply go. Use it for depth a
+  motivated reader will want (how to choose the parameter, the edge case, the formal
+  version) — never for the takeaway itself.
 
-The same content, as a wall and as something you can learn from:
-
-```html
-<!-- before: one paragraph, five numbers, three ideas -->
-<p>แต่โมเดลของบทที่ 14 ให้ขอนแก่น 0.522 และสงขลา 0.445 ต่างกัน 0.077 ทั้งที่ make_data.py ไม่ได้ให้จังหวัด
-มีผลต่อการหายเลย ในชุดฝึก ขอนแก่นหาย 33.5% สงขลา 28.2% จากคนแค่ 571 กับ 386 คน ระยะห่างแค่นี้เกิดจาก
-การสุ่มได้สบายๆ โมเดลจึงจำ noise มา พอลบ province ออกจาก config.json test ผ่านทั้งสาม และ AUC ยังเท่าเดิม</p>
-
-<!-- after: the claim, then labelled points -->
-<p>โมเดลให้คะแนนต่างกันตามจังหวัด ทั้งที่ข้อมูลไม่ได้ให้จังหวัดมีผลต่อการหายเลย</p>
-<ul>
-  <li><strong>ที่เห็น:</strong> ขอนแก่น 0.522 สงขลา 0.445 ต่างกัน 0.077 เกินเพดาน 0.03</li>
-  <li><strong>สาเหตุ:</strong> ชุดฝึกมีแค่ 571 กับ 386 คน ส่วนต่าง 33.5% กับ 28.2% เกิดจากการสุ่มได้ โมเดลจึงจำ noise</li>
-  <li><strong>แก้:</strong> ลบ <code>province</code> ออกจาก <code>config.json</code> test ผ่าน AUC เท่าเดิม</li>
-</ul>
-```
-
-The numbers above are what to aim for. `verify.py` warns only past a ceiling — paragraphs
-over ~60 words, three or more paragraphs in a row over ~100 words, list items over ~45 words
-— so passing the gate is not the target; the aims are.
+`verify.py` warns past a ceiling — paragraphs over ~60 words, long runs of paragraphs,
+chapters dense with figures in prose, "label:" lists, many chapter references — so passing
+the gate is not the target; reading well is.
 
 There is no objectives box, no recap and no glossary unless they earn their place: a recap is
 worth it after a long `deep` chapter; a glossary appendix is worth it when the course coins
@@ -82,8 +156,8 @@ says it again.
 
 ## Examples are the explanation
 
-The single most important thing in a chapter. A reader who sees the idea work once
-understands it; a reader given only a definition memorises words.
+A reader who sees the idea work once understands it; a reader given only a definition
+memorises words.
 
 A good example is:
 
@@ -94,6 +168,8 @@ A good example is:
   `.code-out`. For a calculation, show each line.
 - **Followed by one variation.** Change one thing and show what changes — that is where the
   rule becomes visible.
+- **Talked through.** After the output, say what it shows and why — the reader should not
+  have to reverse-engineer the lesson from a printout.
 
 Use the `.eg` block for a worked example that is not just a code block:
 
@@ -125,6 +201,10 @@ Delete on sight. The gate warns on many of these.
 | "In today's fast-moving world…", "ในยุคปัจจุบัน…", "ในโลกยุคดิจิทัล…" | Says nothing. |
 | "As we saw earlier…", "อย่างที่กล่าวไปแล้ว…" | Either it is needed (say it) or it isn't (cut it). |
 | A closing paragraph that restates the section | The reader just read it. |
+| Prose that re-reads the code output aloud | Say what it means, once. |
+| A run log in prose: every measured value, count and decimal | Keep the number that makes the point. |
+| Ids, file names, versions and seeds of the running example in prose | They belong in code; say it in plain words. |
+| Every option, parameter range or alternative tool | Teach the default and when to change it; the rest is docs. |
 | Lists of terms or features with one-line glosses | An index is not a lesson. Teach the two that matter. |
 | Background/history that doesn't explain *why* it works this way | Cut, or one sentence. |
 | Generic advice ("practise regularly", "read the docs", "ฝึกฝนอย่างสม่ำเสมอ") | Not specific to this idea. |
@@ -135,30 +215,32 @@ Delete on sight. The gate warns on many of these.
 ## Prose
 
 - **Second person, present tense, plain words.** "You call `fetch` and get a promise back."
-- **Bold** the term being defined, once; the key phrase that leads a list item; and in a
-  table, the one figure the reader should look at. Nothing else.
-- **Define a term where it is first used**, in one clause. Original term first when the course
+- **Bold** the term being defined, once, and in a table the one figure the reader should
+  look at. Nothing else.
+- **Introduce a central term properly** — what problem it solves, what it is, one concrete
+  instance — in a sentence or three, where it is first used. A bracketed gloss is only for
+  terms the reader needs to recognise, not understand. Original term first when the course
   is not in English: `**closure** (ฟังก์ชันที่จำตัวแปรรอบตัวไว้ได้)` — then keep using the original.
-- A list for parallel items (3–6), each short — see *Make it scannable*. Do not turn a
-  chain of reasoning (A, so B, so C) into bullets: that is a short paragraph or `.steps`.
 - A table when items share attributes — at most 4 short columns, or it scrolls sideways on a
   phone. Define a term before the table that uses it as a header. A figure when the point is a
-  shape. Prose when the point is a *because*. A diagram that flows left to right stacks
-  vertically on a phone; keep it to 3–5 boxes.
+  shape. A diagram that flows left to right stacks vertically on a phone; keep it to 3–5 boxes.
 - One closing line that bridges to the next chapter is fine; a paragraph previewing it is not.
 - Never say "left" / "right" / "above" about a `.cmp`, `.flow` or table: on a phone they stack.
   Name the box instead ("the http:// box").
 - A URL, a filename or one line someone sees goes in inline `<code>` (it wraps). A `.code`
   block is for real code or output of several lines.
 - Never translate code, commands, file paths, error messages or product names.
-- Write the language natively — its own rhythm, register and established technical terms —
-  not English sentence structure in another language. In Thai, prefer short sentences, use
-  the common Thai term where one exists and give the English once in brackets, and don't
-  open paragraphs with stacked connectors (นอกจากนี้ / อย่างไรก็ตาม / ดังนั้น) by habit.
+- **Write the language natively** — its own rhythm, register and established technical
+  terms — not English sentence structure in another language. In Thai: complete sentences
+  with a subject and a verb, the way a senior colleague explains out loud; keep the English
+  for terms the field really uses (embedding, prompt, API) and say everything else in Thai —
+  not "ห่อ chunk ด้วย id แล้ว retrieve top-k" but "แนบหมายเลขกำกับแต่ละชิ้น แล้วดึงชิ้นที่ใกล้ที่สุด
+  สามชิ้น". Give the English once in brackets for a Thai term, and don't open paragraphs with
+  stacked connectors (นอกจากนี้ / อย่างไรก็ตาม / ดังนั้น) by habit. The Thai target style is
+  `assets/examples/example-chapter-th.html`.
 - **Every label in the course language** — example titles, box titles, `.cmp` headings. Leave
-  `.quiz-h` empty; the page fills it. Thai, Lao, Burmese and Khmer take no full stop: the
-  English examples end sentences with `.`, a Thai course does not: end a Thai sentence with a
-  space, or start a new paragraph.
+  `.quiz-h` and `.ch-label` empty; the page fills them. Thai, Lao, Burmese and Khmer take no
+  full stop: end a Thai sentence with a space, or start a new paragraph.
 
 ## Markup traps that show up as bugs
 
@@ -182,7 +264,8 @@ Use a quiz when the idea can be misapplied — 1–3 questions per chapter, neve
   sentence on why it is tempting and where it breaks.
 - Options of similar length and tone. The page shuffles them; never write "all of the above"
   or refer to option letters.
-- `.fb` explains the right answer in one or two sentences.
+- `.fb` explains the right answer in one or two sentences — the reasoning, not a measured
+  decimal.
 
 An exercise (`.ex`) is better than a quiz when the skill is *doing* something (write the
 query, solve the problem). Put the solution in `<details>` with one line on why it works.

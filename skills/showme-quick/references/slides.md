@@ -235,6 +235,12 @@ points. Bold the one phrase or number you must not forget.
 </div>
 ```
 
+**Spend them on meaning, not on more data.** One figure per beat, rounded, followed by what it
+means for this room. The beat a presenter most often lacks is the *why* — why this number
+matters, why the obvious alternative fails — so write that one out in full. Write them the way
+you would say them: full spoken sentences in the deck's language, English only for the terms
+the audience itself uses.
+
 They are also what makes the deck useful to someone reading it alone — the runtime shows them
 in Read mode, where the same beats make the page skimmable. Aim for 40–120 words per slide
 and no beat over ~45 (Thai and similar scripts: 5 characters count as a word). Across the

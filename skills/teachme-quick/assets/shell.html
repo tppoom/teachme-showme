@@ -295,6 +295,17 @@ kbd{font-family:var(--mono);font-size:11.5px;background:var(--sunken);border:1px
 .ex details>div{margin-top:14px}
 .ex details>div>:last-child{margin-bottom:0}
 
+/* ---------- more: optional depth, collapsed ---------- */
+details.more{margin:32px 0;border:1px solid var(--line);border-radius:var(--r);background:var(--elev)}
+details.more>summary{cursor:pointer;padding:14px 20px;font-weight:700;font-size:14px;line-height:1.5;
+  color:var(--muted);list-style:none;display:flex;gap:10px;align-items:baseline;user-select:none}
+details.more>summary::-webkit-details-marker{display:none}
+details.more>summary::before{content:"▶";font-size:9px;color:var(--accent);transition:.2s;flex:none}
+details.more[open]>summary::before{transform:rotate(90deg)}
+details.more>summary:hover{color:var(--fg)}
+details.more>div{padding:2px 20px 18px;font-size:14.5px}
+details.more>div>:last-child{margin-bottom:0}
+
 /* ---------- quiz ---------- */
 .quiz{margin:44px 0;border:1.5px solid var(--line2);border-radius:var(--r);overflow:hidden;background:var(--elev)}
 .quiz-h{padding:12px 18px;background:var(--accent-soft);border-bottom:1px solid var(--line);
@@ -739,6 +750,8 @@ rt{font-size:.55em;color:var(--muted);font-weight:500}
 [dir="rtl"] .flow.v .arrow::after{content:"↓"}
 [dir="rtl"] .ex summary::before{content:"◀"}
 [dir="rtl"] .ex details[open] summary::before{transform:rotate(-90deg)}
+[dir="rtl"] details.more>summary::before{content:"◀"}
+[dir="rtl"] details.more[open]>summary::before{transform:rotate(-90deg)}
 /* Code, formulas and technical diagrams are always read left-to-right. */
 .code,.code pre,.math,.derive,.tree,.seq,.lanes,.cells,figure.viz svg{direction:ltr}
 .code pre,.tree{text-align:left}
@@ -1195,6 +1208,8 @@ function spy(){
 }
 var tick=false;
 window.addEventListener("scroll",function(){if(!tick){tick=true;requestAnimationFrame(function(){spy();tick=false})}},{passive:true});
+/* a printed page cannot be clicked open */
+window.addEventListener("beforeprint",function(){document.querySelectorAll("details.more").forEach(function(d){d.open=true})});
 
 /* ---------------- search ---------------- */
 var q=$("#q"), sr=$("#sr");

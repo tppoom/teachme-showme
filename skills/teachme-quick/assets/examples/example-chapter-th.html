@@ -1,0 +1,136 @@
+<!--
+  TeachMe — the Thai target style for one chapter (~650 words of prose). Read it with
+  writing.md → "Spend words where understanding is made".
+
+  Notice where the words go. The hard part — why a sorted copy turns a million checks into
+  about twenty — gets three paragraphs, a worked example and a table. Setup gets a line. The
+  B-tree detail a curious reader may want sits in a collapsed .more. Prose carries every
+  "because"; the only list holds steps of one worked example. Numbers are the few that make
+  the point, and the exact query plans stay in the code output.
+
+  The Thai is the target too: full sentences a senior colleague would say out loud, English
+  only for words the field really uses (index, query), no full stops.
+-->
+<section class="chapter" id="ch-3" data-title="index ทำให้ค้นเร็วได้อย่างไร">
+  <header class="ch-head">
+    <div class="ch-label"></div>
+    <h1 class="ch-title">index ทำให้ค้นเร็วขึ้นหลายร้อยเท่าได้อย่างไร</h1>
+    <p class="ch-desc">อธิบายได้ว่า index ทำงานอย่างไร รู้ว่า query แบบไหนใช้มันไม่ได้ และเช็กเองได้ว่าฐานข้อมูลใช้มันจริงหรือเปล่า</p>
+  </header>
+  <div class="ch-body">
+
+    <p>ตาราง <code>orders</code> มีหนึ่งล้านแถว คุณอยากได้ออเดอร์ทั้งหมดของลูกค้าหมายเลข 4821 คำสั่งนี้ใช้เวลาราว 50 มิลลิวินาที
+    พอสร้าง index เพิ่มบรรทัดเดียว เวลาเหลือราว 0.1 มิลลิวินาที ข้อมูลเท่าเดิม คำสั่งเท่าเดิม อะไรเปลี่ยนไป</p>
+
+    <div class="code" data-file="orders.sql">
+<pre><code class="lang-sql">SELECT * FROM orders WHERE customer_id = 4821;
+
+CREATE INDEX idx_orders_customer ON orders(customer_id);</code></pre>
+    </div>
+
+    <p>ก่อนมี index ฐานข้อมูลไม่รู้เลยว่าแถวของลูกค้า 4821 อยู่ตรงไหน วิธีเดียวที่แน่ใจว่าไม่พลาดคือหยิบทุกแถวขึ้นมาดูทีละแถว
+    ครบหนึ่งล้านครั้ง เหมือนหาชื่อเพื่อนในสมุดรายชื่อที่หน้ากระดาษถูกสลับมั่ว</p>
+
+    <h2>สำเนาที่เรียงไว้ ทำให้ตัดทิ้งได้ทีละครึ่ง</h2>
+
+    <p><strong>index</strong> คือสำเนาของคอลัมน์ที่เรียงจากน้อยไปมาก แต่ละค่ามีตัวชี้กลับไปยังแถวจริงในตาราง ตัวตารางเองไม่ได้ถูกเรียงใหม่
+    ฐานข้อมูลเก็บสำเนานี้แยกไว้ และอัปเดตให้เองทุกครั้งที่ข้อมูลเปลี่ยน</p>
+
+    <p>หัวใจอยู่ที่คำว่าเรียง เพราะเมื่อค่าเรียงกันแล้ว การดูค่าตรงกลางเพียงครั้งเดียวก็บอกได้ว่าสิ่งที่หาอยู่ครึ่งไหน
+    อีกครึ่งตัดทิ้งได้ทั้งหมดโดยไม่ต้องเปิดดู เหมือนเปิดพจนานุกรมหาคำว่า "แมว" แล้วเจอหมวด น ตรงกลางเล่ม คุณรู้ทันทีว่าต้องพลิกไปข้างหลัง</p>
+
+    <div class="eg">
+      <span class="eg-h">ตัวอย่าง — หา 4821 ในค่าที่เรียงแล้วตั้งแต่ 1 ถึง 1,000,000</span>
+      <ol>
+        <li>ดูค่ากลาง 500,000 มากกว่า 4821 จึงตัดครึ่งหลังทิ้ง เหลือห้าแสนค่า</li>
+        <li>ดูค่ากลางของส่วนที่เหลือ 250,000 ยังมากกว่า เหลือสองแสนห้าหมื่นค่า</li>
+        <li>ทำซ้ำไปเรื่อยๆ ทุกครั้งที่ดู ส่วนที่ต้องค้นจะหายไปครึ่งหนึ่ง</li>
+      </ol>
+      <span class="res">ดูราว 20 ครั้งก็เจอ เพราะหนึ่งล้านหารสองได้ราว 20 รอบก่อนจะเหลือค่าเดียว</span>
+    </div>
+
+    <p>สิ่งที่ทำให้ index คุ้มจริงๆ คือมันโตช้ามาก ทุกครั้งที่ข้อมูลเพิ่มเป็นสองเท่า การค้นต้องดูเพิ่มแค่หนึ่งครั้ง
+    ข้อมูลโตขึ้นพันเท่า จึงดูเพิ่มเพียงราวสิบครั้ง ขณะที่การอ่านทุกแถวช้าลงพันเท่าตามข้อมูล</p>
+
+    <div class="tw"><table>
+      <thead><tr><th>จำนวนแถว</th><th>ไม่มี index</th><th>มี index</th></tr></thead>
+      <tbody>
+        <tr><td>1,000</td><td>ดู 1,000 ครั้ง</td><td>ราว 10 ครั้ง</td></tr>
+        <tr><td>1,000,000</td><td>ดู 1,000,000 ครั้ง</td><td>ราว 20 ครั้ง</td></tr>
+        <tr><td>1,000,000,000</td><td>ดู 1,000,000,000 ครั้ง</td><td><strong>ราว 30 ครั้ง</strong></td></tr>
+      </tbody>
+    </table></div>
+
+    <details class="more">
+      <summary>ลงลึก: ทำไมฐานข้อมูลเก็บ index เป็น B-tree ไม่ใช่รายการที่เรียงไว้เฉยๆ</summary>
+      <div>
+        <p>รายการที่เรียงไว้ค้นเร็วก็จริง แต่เพิ่มข้อมูลช้า เพราะการแทรกค่าใหม่ตรงกลางต้องเลื่อนทุกค่าที่อยู่ข้างหลังออกไป
+        ฐานข้อมูลจึงแบ่งค่าที่เรียงแล้วเป็นก้อนเล็กๆ ก้อนละหลายร้อยค่า แล้วซ้อนก้อนพวกนี้เป็นชั้นๆ เรียกว่า B-tree</p>
+        <p>การค้นยังตัดทิ้งได้ทีละมากเหมือนเดิม แต่การแทรกค่าใหม่แก้แค่ก้อนเดียว และเพราะแต่ละก้อนมีหลายร้อยค่า
+        ตารางหนึ่งล้านแถวจึงมี B-tree สูงแค่สามถึงสี่ชั้น</p>
+      </div>
+    </details>
+
+    <h2>ไม่ต้องเดา ถามฐานข้อมูลได้เลย</h2>
+
+    <p>ใส่ <code>EXPLAIN QUERY PLAN</code> นำหน้า query แล้ว SQLite จะบอกแผนที่มันจะใช้ก่อนรันจริง (PostgreSQL และ MySQL ใช้คำว่า
+    <code>EXPLAIN</code>) คำแรกของผลลัพธ์คือสิ่งที่ต้องดู</p>
+
+    <div class="cmp">
+      <div><h5>ก่อนสร้าง index</h5>
+        <div class="code"><pre><code class="lang-sql">EXPLAIN QUERY PLAN
+SELECT * FROM orders WHERE customer_id = 4821;</code></pre>
+        <div class="code-out">SCAN orders</div></div></div>
+      <div><h5>หลังสร้าง index</h5>
+        <div class="code"><pre><code class="lang-sql">EXPLAIN QUERY PLAN
+SELECT * FROM orders WHERE customer_id = 4821;</code></pre>
+        <div class="code-out">SEARCH orders USING INDEX idx_orders_customer (customer_id=?)</div></div></div>
+    </div>
+
+    <p><code>SCAN</code> แปลว่าอ่านทุกแถว <code>SEARCH … USING INDEX</code> แปลว่ากระโดดไปหาค่าผ่าน index
+    index ไม่ได้มาฟรี ทุกครั้งที่เพิ่มหรือแก้แถว ฐานข้อมูลต้องอัปเดต index ทุกตัวของตารางนั้นด้วย จึงสร้างเฉพาะคอลัมน์ที่ใช้ค้นบ่อยจริง</p>
+
+    <h2>กับดัก: ครอบคอลัมน์ด้วยฟังก์ชันแล้ว index ใช้ไม่ได้</h2>
+
+    <p>สมมติมี index บนคอลัมน์ <code>email</code> แล้ว แต่คุณอยากค้นโดยไม่สนตัวพิมพ์ใหญ่เล็ก จึงเขียน <code>lower(email)</code>
+    แผนของ query กลับเป็นอ่านทุกแถวเหมือนไม่มี index</p>
+
+    <div class="code" data-file="email.sql">
+<pre><code class="lang-sql">EXPLAIN QUERY PLAN SELECT * FROM orders WHERE email = 'nok@mail.com';
+EXPLAIN QUERY PLAN SELECT * FROM orders WHERE lower(email) = 'nok@mail.com';</code></pre>
+<div class="code-out">SEARCH orders USING INDEX idx_orders_email (email=?)
+SCAN orders</div>
+    </div>
+
+    <p>เหตุผลอยู่ที่สิ่งที่ index เรียงไว้ มันเรียงตามค่า email ตามที่บันทึก ไม่ได้เรียงตามค่าหลังผ่าน <code>lower()</code>
+    ฐานข้อมูลจึงตัดครึ่งไม่ได้ ต้องคำนวณ <code>lower()</code> ทีละแถวจนครบ ทางแก้คือบันทึก email เป็นตัวพิมพ์เล็กตั้งแต่แรก
+    หรือสร้าง index บนตัวฟังก์ชันเลย <code>CREATE INDEX … ON orders(lower(email))</code> ซึ่ง SQLite และ PostgreSQL รองรับ</p>
+
+    <div class="callout key"><div class="co">
+      <div class="ct">จำไว้ข้อเดียว</div>
+      <p>query ช้าเมื่อไร ให้ดู EXPLAIN ก่อน ถ้าเห็น SCAN บนตารางใหญ่ แปลว่าฐานข้อมูลกำลังอ่านทุกแถว</p></div></div>
+
+    <div class="quiz">
+      <div class="quiz-h"></div>
+      <div class="q">
+        <p class="q-t">ตาราง <code>users</code> มีหนึ่งล้านแถวและมี index บนคอลัมน์ <code>phone</code> เงื่อนไขไหนจะได้แผนแบบ SEARCH</p>
+        <ul class="opts">
+          <li><button class="opt" data-correct="true"><code>WHERE phone = '0812345678'</code></button></li>
+          <li><button class="opt" data-why="index เรียงตามเบอร์เต็ม ไม่ได้เรียงตามสามตัวแรกที่ตัดออกมา จึงตัดครึ่งไม่ได้"><code>WHERE substr(phone, 1, 3) = '081'</code></button></li>
+          <li><button class="opt" data-why="ไม่รู้ว่าเบอร์ขึ้นต้นด้วยอะไร ก็ไม่รู้ว่าจะเริ่มตัดครึ่งจากตรงไหน ต้องอ่านทุกแถว"><code>WHERE phone LIKE '%5678'</code></button></li>
+        </ul>
+        <div class="fb"><b>เทียบค่าเต็มตรงๆ</b> เงื่อนไขที่ใช้ค่าแบบเดียวกับที่ index เรียงไว้เท่านั้น ที่ให้ฐานข้อมูลตัดครึ่งได้</div>
+      </div>
+      <div class="q">
+        <p class="q-t">ตาราง orders โตจากหนึ่งล้านเป็นหนึ่งพันล้านแถว query ที่ใช้ index ต้องดูเพิ่มขึ้นราวเท่าไร</p>
+        <ul class="opts">
+          <li><button class="opt" data-correct="true">ราว 10 ครั้ง จาก 20 เป็น 30</button></li>
+          <li><button class="opt" data-why="นั่นคือการอ่านทุกแถว index ตัดครึ่งทุกครั้งที่ดู จึงไม่โตตามข้อมูลตรงๆ">มากขึ้นพันเท่า</button></li>
+          <li><button class="opt" data-why="ข้อมูลมากขึ้นก็ต้องตัดครึ่งเพิ่มอีกหลายรอบกว่าจะเหลือค่าเดียว">เท่าเดิม</button></li>
+        </ul>
+        <div class="fb"><b>ราว 10 ครั้ง</b> ข้อมูลเพิ่มเป็นสองเท่า ต้องดูเพิ่มหนึ่งครั้ง พันเท่าคือเพิ่มเป็นสองเท่าราวสิบรอบ</div>
+      </div>
+    </div>
+
+  </div>
+</section>

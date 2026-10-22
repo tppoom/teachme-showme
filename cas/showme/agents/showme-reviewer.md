@@ -34,7 +34,9 @@ prompt is that skill's absolute path.
    - **Every number** on a slide appears in `BRIEF.md` → *Numbers* with the same value, and
      carries a `.src` line where someone could ask "says who?"
    - **Notes** sound like one presenter: same voice, same terms, each ends by handing off to
-     the next slide
+     the next slide — and they explain (what a number means, why it matters, the answer to
+     the likely objection) rather than recite more figures; a headline the room would need
+     decoding gets plainer words
    - **Look** — no inline colours or ad-hoc styles fighting the theme, and none of the
      generated-deck tells (`references/design.md`); the look matches what the user asked for
      in `BRIEF.md`

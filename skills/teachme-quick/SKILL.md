@@ -23,9 +23,13 @@ excellent example beats a long one that circles the idea.
   a situation — and names the rule only once the reader has seen it work.
 - **Pictures for mechanisms.** If the idea is a flow, a shape, a comparison or something
   that changes over time, draw it.
-- **Scannable, not a wall.** Short paragraphs; reasons, options and symptoms as lists with a
-  bold key phrase; orders as steps; comparisons as tables. Never three paragraphs in a row.
-  (`references/writing.md` → *Make it scannable*.)
+- **Depth follows difficulty, not data.** The words go to the part this reader finds hard —
+  the mechanism, the *why*, the step where beginners go wrong — explained in full sentences.
+  Setup, run logs, ids, versions and every-option lists get a line or nothing. (`references/
+  writing.md` → *Spend words where understanding is made* — the most important section.)
+- **Prose reasons, structure holds parallel things.** Short paragraphs joined by *because* and
+  *so*; lists only for separate items; steps for an order; tables for comparisons. A chapter
+  of "label: fragment" bullets reads like notes, not teaching.
 - **No filler.** No "in this chapter we will", no restating, no generic advice, no boxes that
   repeat the paragraph above. Every sentence either explains, shows or warns.
 - **Clean, bug-free page.** The gate fails anything that renders wrong (stray markdown, code
@@ -88,8 +92,13 @@ land in some chapter — add a `## Coverage` list mapping source points to chapt
 for each input type is in `references/writing.md` → *Input types*.
 
 ### 3 · Write the chapters
-Read **`references/writing.md`** once (the chapter recipe, examples, the cut list) and look at
-**`assets/examples/example-chapter.html`** (the target style). Copy block markup from
+Read **`references/writing.md`** once (where words go, the recipe, examples, the cut list) and
+look at **`assets/examples/example-chapter.html`** — and for a Thai course
+**`assets/examples/example-chapter-th.html`** — the target style.
+
+Before each chapter, settle its **takeaway** (one sentence) and its **hard parts** (the one to
+three places this reader will get stuck). Write those parts at full length; keep everything
+else to a line. Copy block markup from
 `assets/blocks.html` — grep it for the block you need rather than reading it whole. Choose
 visuals with `references/visuals.md` only when you are drawing something non-trivial.
 
@@ -97,7 +106,10 @@ Write each chapter to `<dir>/parts/NN-slug.html`, then check it:
 ```bash
 python3 $SKILL/scripts/verify.py <dir> --part parts/NN-slug.html
 ```
-Fix every FAIL and WARN before moving on.
+Fix every FAIL and WARN before moving on. Then read the chapter once **as the reader**, not
+the author, and mark two kinds of place:
+- **Lost** — a term or step they can't follow, a *why* they would ask: explain it there.
+- **Skimmed** — a number, id, option or aside they would skip: cut it, or move it to a `.more`.
 
 ### 4 · Build, check, look
 ```bash
@@ -133,6 +145,9 @@ parts from it.
 | "Add an objectives box, a key-points box and a recap" | One home per idea. Boxes are for the one thing the reader must not miss. |
 | "Picture this / imagine…" | That's a figure you haven't drawn. Draw it. |
 | "Pad the chapter so it feels substantial" | Short and clear is the goal. The gate warns on length, not brevity. |
+| "Show every measured number — it proves the work is real" | Keep the number that makes the point, rounded. The rest stays in the code output. |
+| "Gloss the key term in brackets and move on" | The key term is the chapter. Explain what it solves, how it works, and why. |
+| "Bullet it so it's scannable" | Only parallel items. A chain of reasoning in bullets loses its *because*. |
 | "Write it in Markdown inside the HTML" | Markdown does not render here. `**x**` shows as asterisks — use `<strong>`. |
 | "Paste the code as is" | Escape `<`, `>` and `&` inside `<code>`, or the browser eats them as tags. |
 
@@ -149,6 +164,6 @@ never invent a source.
 | Chapter recipe, examples, cut list, quizzes, input types, languages | `references/writing.md` |
 | Which visual for which idea; SVG rules | `references/visuals.md` |
 | Every block's markup | `assets/blocks.html` (grep it) |
-| The target style, one whole chapter | `assets/examples/example-chapter.html` |
+| The target style, one whole chapter | `assets/examples/example-chapter.html` · Thai: `example-chapter-th.html` |
 | Scaffold · check one chapter · build · gate · look | `new.py` · `verify.py --part` · `assemble.py` · `verify.py` · `node look.js` |
 | Inline an image | `scripts/embed-image.py <img> "caption"` |

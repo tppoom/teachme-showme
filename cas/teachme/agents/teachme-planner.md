@@ -56,8 +56,8 @@ context, invoke the Skill tool with `teachme-quick` (or `teachme:teachme-quick`)
    **Depth / omit:** standard / none
    **Running example:** one realistic scenario reused across chapters (e.g. "an invoice
    service for a small clinic"), so chapters build on each other instead of restarting
-   **Style:** example first, then the idea; 150–700 words per chapter; no filler (see
-   writing.md → The cut list)
+   **Style:** example first, then the idea; depth follows difficulty — words go to each
+   chapter's hard parts, a line to everything else; no filler (see writing.md)
 
    ## Terminology
    - **goroutine** — <the one-line gloss every chapter uses, in the course language> (introduced in ch-3)
@@ -65,13 +65,20 @@ context, invoke the Skill tool with `teachme-quick` (or `teachme:teachme-quick`)
 
    ## Chapter notes
    ### ch-3 — Your first goroutine
-   - After it the reader can: … (1 line)
+   - Takeaway: the one sentence the reader should be able to say afterwards
+   - Hard parts: the 1–3 places THIS reader will get stuck — these get the chapter's words
    - The example: the concrete case that carries the chapter (numbers, snippet, scenario)
-   - Must cover: the points this chapter owns
+   - Supporting: at most 4 points the chapter mentions in a line each
+   - Not here: what an author might be tempted to include and should leave out or point to
+   - Facts on hand: verified numbers and outputs the author MAY use — only those that make a point
    - Sources: exact files / pages / slides to read for this chapter (codebase: paths + lines)
    - Builds on: ch-2 (stack vs heap); sets up: ch-6 (channels)
    - Likely misconception: the wrong intuition to name
    ```
+
+   Keep each notes block short. A block that lists ten things to cover is two chapters, or a
+   list of trivia — an author handed it will cram every item in and explain none of them.
+   Facts go under *Facts on hand*, never as a must-cover list.
 
    Done when every chapter in the syllabus has its notes block and every term an author
    might gloss differently is in the terminology list.

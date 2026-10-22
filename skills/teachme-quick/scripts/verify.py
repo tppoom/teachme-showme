@@ -81,6 +81,22 @@ def count_words(t):
 
 def words(frag): return count_words(text_of(frag))
 
+def drop_div(frag, cls):
+    """Remove every <div class="cls …">…</div>, nested divs included."""
+    out, i = [], 0
+    for m in re.finditer(rf'<div class="{cls}\b[^"]*"[^>]*>', frag):
+        if m.start() < i: continue
+        depth, j = 1, m.end()
+        for t in re.finditer(r"<(/?)div\b[^>]*>", frag[m.end():]):
+            depth += -1 if t.group(1) else 1
+            if depth == 0:
+                j = m.end() + t.end(); break
+        out.append(frag[i:m.start()]); i = j
+    return "".join(out) + frag[i:]
+
+# a figure in prose: 12, 4,307, 0.776, 33.5% — not "บทที่ 4" or "ch-4"
+FIGURE = re.compile(r"(?<!บทที่ )(?<!ch-)(?<![\w.])\d[\d,]*(?:\.\d+)?%?")
+
 def strip_code(frag):
     return re.sub(r"<(pre|code|math|svg)\b[\s\S]*?</\1>", " ", frag, flags=re.I)
 
@@ -277,7 +293,12 @@ def main():
 
         # --- length & padding ---
         # the budget is for prose: code and its output are read differently and are not padding
-        w_read = words(re.sub(r"<pre\b[\s\S]*?</pre>|<div class=\"code-out\">[\s\S]*?</div>", " ",
+        mores = re.findall(r'<details class="more"[\s\S]*?</details>', body)
+        if len(mores) > 2: warn(f"{tag} has {len(mores)} .more blocks — keep the one or two a curious reader would open; cut the rest")
+        for m in mores:
+            if words(m) > 180: warn(f"{tag} a .more block is {words(m)} words — optional depth, not a second chapter; cut it to ~150")
+        # optional depth is collapsed, so it is not part of the reading budget
+        w_read = words(re.sub(r"<pre\b[\s\S]*?</pre>|<div class=\"code-out\">[\s\S]*?</div>|<details class=\"more\"[\s\S]*?</details>", " ",
                               re.sub(r'<div class="quiz">[\s\S]*$', "", body)))
         if w_read < floor:
             warn(f"{tag} is only {w_read} words — check the example is worked through, not just named")
@@ -292,14 +313,32 @@ def main():
         def snip(f): return " ".join(text_of(f).split())[:40]
         long_p = [p for p in re.findall(r"<p\b[^>]*>([\s\S]*?)</p>", body) if count_words(text_of(p)) > 60]
         if long_p: warn(f"{tag} has {len(long_p)} paragraph(s) over ~60 words, e.g. {snip(long_p[0])!r}… — "
-                        "split it, or turn its reasons/options/numbers into a list or table")
-        walls = [r for r in re.findall(r"(?:<p\b[^>]*>(?:(?!</p>)[\s\S])*</p>\s*){3,}", body) if words(r) > 100]
-        if walls: warn(f"{tag} has {len(walls)} run(s) of 3+ paragraphs in a row, e.g. from {snip(walls[0])!r}… — "
-                       "break each with a list, table, code, figure or .eg")
+                        "one point per paragraph; split it, or cut the detail that isn't the point")
+        walls = [r for r in re.findall(r"(?:<p\b[^>]*>(?:(?!</p>)[\s\S])*</p>\s*){3,}", body) if words(r) > 170]
+        if walls: warn(f"{tag} has {len(walls)} long run(s) of paragraphs, e.g. from {snip(walls[0])!r}… — "
+                       "put the example, the code or the figure where the reader needs to see it")
         long_li = [li for li in re.findall(r"<li\b[^>]*>([\s\S]*?)</li>", body)
                    if 'class="opt"' not in li and count_words(text_of(li)) > 45]
         if long_li: warn(f"{tag} has {len(long_li)} list item(s) over ~45 words, e.g. {snip(long_li[0])!r}… — "
-                         "lead with the key phrase, keep the rest to a line")
+                         "a list holds short parallel items; an explanation belongs in a paragraph")
+        # words spent on data instead of on the idea: worked examples, tables and output may be dense
+        plain = drop_div(re.sub(r"<pre\b[\s\S]*?</pre>|<table\b[\s\S]*?</table>|<svg\b[\s\S]*?</svg>|"
+                                r'<div class="code-out">[\s\S]*?</div>', " ", body), "eg")
+        dense = [b for b in re.findall(r"<(?:p|li)\b[^>]*>([\s\S]*?)</(?:p|li)>", plain)
+                 if len(FIGURE.findall(text_of(b))) >= 5]
+        if len(dense) >= 3:
+            warn(f"{tag} has {len(dense)} paragraphs or items carrying 5+ figures, e.g. {snip(dense[0])!r}… — "
+                 "keep the one or two numbers that make the point, rounded; exact values stay in the output or a table")
+        label_lists = [u for u in re.findall(r"<ul>([\s\S]*?)</ul>", body)
+                       if len(re.findall(r"<li\b", u)) >= 2 and all(re.match(r"\s*<strong>[^<]{1,40}:?\s*</strong>", li)
+                       for li in re.findall(r"<li\b[^>]*>([\s\S]*?)</li>", u))]
+        if len(label_lists) > 2:
+            warn(f"{tag} has {len(label_lists)} lists of \"label: fragment\" bullets — that reads as notes; "
+                 "where the items are one chain of reasoning, write it as sentences joined by because/so")
+        refs = len(re.findall(r"บทที่ \d+|[Cc]hapter \d+", text_of(body)))
+        if refs > 6:
+            warn(f"{tag} refers to other chapters {refs} times — point back only where the reader should go back; "
+                 "otherwise just use the term (a capstone chapter that ties the course together is the exception)")
         hits = []
         for pat in FILLER:
             for m in re.finditer(pat, ptxt, re.I):

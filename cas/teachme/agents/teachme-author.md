@@ -23,26 +23,31 @@ your prompt is that skill's absolute path.
 1. **Read the contract**: `COURSE_DIR/BRIEF.md`, `COURSE_DIR/SYLLABUS.md`, `COURSE_DIR/meta.json`
    (depth and omit).
 2. **Read the standard**: `SKILL_DIR/references/writing.md` and
-   `SKILL_DIR/assets/examples/example-chapter.html` (the target style). Grep
+   `SKILL_DIR/assets/examples/example-chapter.html` (the target style; for a Thai course
+   also `example-chapter-th.html`). Grep
    `SKILL_DIR/assets/blocks.html` for the markup of each block you use;
    `references/visuals.md` only when drawing something non-trivial.
 3. **Read your sources** — whatever your chapter's notes in `BRIEF.md` point at, completely.
    Codebase claims name a file you actually read; facts that change carry their date.
 4. **Write each assigned chapter straight to its file**, using exactly the id and filename in
-   `ASSIGNMENT`. Open on the example its notes name, cover what the notes say it owns, and
-   stop. Build on the `NEIGHBOURS` and the running example; use each term with the gloss in
-   the terminology list.
+   `ASSIGNMENT`. Start from its *Takeaway* and *Hard parts*: the hard parts get full
+   explanations (writing.md → *How to explain a hard part*); *Supporting* points get a line
+   each; *Facts on hand* are there to draw from, not to empty onto the page. Open on the
+   example its notes name, and stop when the takeaway is earned. Build on the `NEIGHBOURS`
+   and the running example; use each term with the gloss in the terminology list.
 5. **Check it** until it prints PASS with **zero WARN lines**:
    ```bash
    python3 SKILL_DIR/scripts/verify.py COURSE_DIR --part parts/NN-slug.html
    ```
    A length warning means cut — repetition and filler first. If the chapter genuinely needs
    more room, say so in your report so the orchestrator can split it.
-6. **Re-read it once as the reader in `BRIEF.md`**: after one read, could they explain the
-   idea to a friend? Is any term used before it is explained? Is any sentence there only to
-   sound thorough? Skim it the way a reader does — headings, bold phrases, lists, figures:
-   does the point still come through, or is it buried in a wall of paragraphs? Fix what fails
-   (`references/writing.md` → *Make it scannable*).
+6. **Re-read it once as the reader in `BRIEF.md`** — not as its author — and mark:
+   - **Lost:** a term or step they can't follow, a *why* they would ask, a hard part
+     answered in a bracket or a bullet. Explain it there, in sentences.
+   - **Skimmed:** a number, id, version, option or aside they would skip. Cut it, or move
+     real optional depth into one `.more`.
+   Then the final test: after one read, could they explain the takeaway to a friend, in
+   their own words? Fix until yes.
 
 Done when every assigned file exists, passes `--part` with no WARN lines (or each remaining
 one is explained in your report), and survives step 6.

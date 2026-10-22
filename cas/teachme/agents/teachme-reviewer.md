@@ -35,9 +35,14 @@ your prompt is that skill's absolute path.
    - voice, register or language switching between chapters
    - a chapter that explains in the abstract before (or instead of) showing an example;
      an example without real output or real numbers
+   - **where the words went** — the most important check. Mark each place the learner would
+     be *lost* (a central idea glossed in a bracket or a bullet, a *why* left unanswered) and
+     each place they would *skim* (run logs, ids, versions, every-option lists, numbers that
+     make no point). Explain the first in sentences; cut the second
+     (`references/writing.md` → *Spend words where understanding is made*)
    - padding: filler sentences, restated paragraphs, boxes that repeat the prose — cut them
-   - walls of text: long or stacked paragraphs whose reasons, options or numbers should be a
-     list, table or `.steps` (`references/writing.md` → *Make it scannable*) — restructure them
+   - shape: walls of long paragraphs, or the opposite — a chain of reasoning chopped into
+     "label: fragment" bullets that read like notes
    - every syllabus chapter and coverage item actually taught where it says
 4. **Look at it**: `node SKILL_DIR/scripts/look.js COURSE_DIR` writes desktop and phone
    screenshots and prints a `LOOK` line for each layout bug (sideways scroll, unreadable
