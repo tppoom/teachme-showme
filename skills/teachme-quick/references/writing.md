@@ -74,6 +74,11 @@ good chapters:
 - **Code the reader may copy runs as shown**, or says in a comment where its setup comes
   from (`# client and MODEL as set up in บทที่ 10`). A line that looks odd
   (`token_pattern=None`) gets its reason, in a comment or a sentence.
+- **Every flag and new command in a block the reader will run is explained where it first
+  appears** — `-t myapp .`, `-it`, `--build` — in a comment or a sentence. If it isn't worth
+  explaining, it isn't in the block.
+- **Say when you're showing the toy version.** A development server, a password in a file, a
+  shortcut that only works on one machine: one line on what to use for real.
 - **Numbers earn their place when the comparison is the point.** "The off-topic question
   scores 0.24, the right paragraph only 0.22 — no cut-off separates them" makes the point in
   one line; the same idea without the two numbers asks the reader to take it on trust.
@@ -170,6 +175,12 @@ point first. Structure is for content that really has that shape:
 - **`.more` is not a dumping ground.** Most detail should simply go. Use it for depth a
   motivated reader will want (how to choose the parameter, the edge case, the formal
   version) — never for the takeaway itself.
+
+**One home per point.** Explaining fully is not explaining twice. Once a paragraph has made a
+point, the caption says what to look at in the figure, not the point again; no callout
+repeats it; the quiz asks the reader to apply it, not to recall the sentence above. A rule
+stated three times — in the text, a caption and a box — is the most common padding in a
+chapter that otherwise explains well.
 
 `verify.py` warns past a ceiling — paragraphs over ~60 words, long runs of paragraphs,
 chapters dense with figures in prose, "label:" lists, many chapter references — so passing
@@ -285,7 +296,7 @@ Use a quiz when the idea can be misapplied — 1–3 questions per chapter, neve
 
 - Ask the reader to **apply** the idea to a **new case**: predict an output, spot the bug,
   pick the right option for a situation. If the answer can be found by searching the text for
-  the question's words, rewrite it.
+  the question's words, or is the paragraph just above restated, rewrite it.
 - Every wrong option is a mistake someone would really make, and carries `data-why` — one
   sentence on why it is tempting and where it breaks.
 - Options of similar length and tone. The page shuffles them; never write "all of the above"
@@ -300,6 +311,8 @@ query, solve the problem). Put the solution in `<details>` with one line on why 
 
 **A topic** ("teach me X"): what it is for (the hook of chapter 1) → the core idea with the
 best example → the 1–3 ideas that build on it → how it is used for real / the common traps.
+A course on a tool the reader will use at work ends with a one-screen recipe for their own
+case — the steps and commands in order, each pointing back to the chapter that explains it.
 
 **Source material** (slides, PDF, notes): follow the source's order, one chapter per major
 section, but write what the lecturer would *say* around each slide — slides are headings.

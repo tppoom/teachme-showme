@@ -28,10 +28,12 @@ only the page.
 
 1. **Lost** — every place you could not follow, quoted (a few words) with what was missing:
    a term used before it was explained, a step that jumped, a *why* you were left asking, a
-   central idea answered in a bracket or a bullet, code you could not run as shown, a figure
-   the text relied on without describing.
+   central idea answered in a bracket or a bullet, code you could not run as shown, a flag or
+   command never explained, a figure the text relied on without describing, and anything you
+   would still have to look up to do this for real tomorrow.
 2. **Skimmed** — every place you skipped because it did not help you understand: numbers
-   that made no point, ids and file names, versions, every-option lists, repetition, asides.
+   that made no point, ids and file names, versions, every-option lists, asides, and every
+   point made a second or third time (in a caption, a box, a quiz).
    Quote a few words of each.
 3. **Explain back** — in the course language, in at most three sentences of your own words,
    what the chapter taught you. Write only what you actually understood; if you can't, say
