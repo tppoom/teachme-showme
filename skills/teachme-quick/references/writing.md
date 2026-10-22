@@ -68,6 +68,15 @@ good chapters:
   disagree.
 - **Don't contradict your own advice.** A chapter that says "open the test set once" cannot
   run its calibration check on the test set without saying why that one look is allowed.
+- **Cutting the options is not cutting the default.** "Measure it" needs a place to start:
+  give the usual starting value (chunks of ~200–500 tokens, k of 3–8) and what makes you move
+  it, even when every other option is cut.
+- **Code the reader may copy runs as shown**, or says in a comment where its setup comes
+  from (`# client and MODEL as set up in บทที่ 10`). A line that looks odd
+  (`token_pattern=None`) gets its reason, in a comment or a sentence.
+- **Numbers earn their place when the comparison is the point.** "The off-topic question
+  scores 0.24, the right paragraph only 0.22 — no cut-off separates them" makes the point in
+  one line; the same idea without the two numbers asks the reader to take it on trust.
 
 ### Numbers
 
