@@ -769,11 +769,11 @@ function phrases(root){
      later var assignment in this script has executed */
   if(!/^(th|lo|km|my)\b/i.test(document.documentElement.lang||""))return;
   $$("h1,h2,h3,.take,.lead,.attrib,.kv dd b,.card h3,.cmp .side h3",root).forEach(function(h){
-    if(h.querySelector(".nw,.nwa"))return;          /* the author already decided */
+    if(h.querySelector(".nwa"))return;              /* already done */
     var tw=document.createTreeWalker(h,NodeFilter.SHOW_TEXT,null), t, list=[];
     while((t=tw.nextNode()))list.push(t);
     list.forEach(function(t){
-      if(!/[\u0e00-\u0eff\u1000-\u109f\u1780-\u17ff]/.test(t.nodeValue)||t.parentNode.closest("code,.nw"))return;
+      if(!/[\u0e00-\u0eff\u1000-\u109f\u1780-\u17ff]/.test(t.nodeValue)||t.parentNode.closest("code,.nw"))return;   /* an author's .nw group stays whole; the rest still wraps at spaces */
       var f=document.createDocumentFragment();
       t.nodeValue.split(/( +)/).forEach(function(part){
         if(!part)return;

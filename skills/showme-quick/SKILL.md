@@ -134,8 +134,9 @@ wait for the reply:
   room, how it will be delivered, the look.
 - **Nothing open?** Then it is a single choice: *start* / *adjust something*.
 
-Skip it only when the user already said to go ahead without questions, or when you are
-restyling or editing an existing deck — then put the brief at the top of `STORYLINE.md` and
+Skip it only when the user already said to go ahead without questions, when nobody can
+answer (a headless or delegated run), or when you are restyling or editing an existing deck —
+then put the brief at the top of `STORYLINE.md` (a `## Brief` section under the title) and
 repeat it in two lines at hand-over, so the choices you made are on the record. This is the one planned stop: after it, decide the rest
 yourself and say what you chose.
 

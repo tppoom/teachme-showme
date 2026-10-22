@@ -135,6 +135,8 @@ Before you build, delete from the storyline:
 **They should leave:** knowing / feeling / doing …
 **Slot:** 20 minutes + 10 Q&A
 
+## Brief            ← only when nobody confirmed it: occasion, delivery, look, language, left out
+
 ## Slides
 
 - `s-1` — title — *We grew 41% and still lost the enterprise deal*
