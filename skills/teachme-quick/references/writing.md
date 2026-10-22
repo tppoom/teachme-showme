@@ -52,6 +52,23 @@ like notes instead of teaching. A good explanation usually runs:
 
 Not every part needs all five. The takeaway's mechanism almost always needs 2–4.
 
+Then close each hard part properly — these are the gaps a reader trial found in otherwise
+good chapters:
+
+- **State the rule exactly once you've explained it.** The intuition comes first, then the
+  precise form the reader will need later — the formula (`precision = TP ÷ (TP + FP)`), the
+  signature, the definition. Words are not a substitute for the formula; the formula is not a
+  substitute for the words.
+- **Never let the text lean on the picture.** Say in the prose what the axis is and which way
+  "left" or "up" goes. On a phone the figure is small, or scrolled past.
+- **A summary number says what it computes.** "PR-AUC is roughly the average precision as
+  recall goes from 0 to 100%", not "it summarises precision and recall".
+- **When you show two ways, say which to use.** The formula or the scan? The default or the
+  tuned value? End with the rule a practitioner follows, and what it means when the two
+  disagree.
+- **Don't contradict your own advice.** A chapter that says "open the test set once" cannot
+  run its calibration check on the test set without saying why that one look is allowed.
+
 ### Numbers
 
 A number is there to make a point visible. Keep the one that does; drop the rest.
