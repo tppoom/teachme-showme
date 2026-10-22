@@ -551,11 +551,12 @@ figure.viz svg text,figure.diagram svg text{fill:var(--fg);font-family:var(--fon
 .d-arrow{stroke:var(--accent);stroke-width:2;fill:none;marker-end:url(#ah)}
 .d-arrow.dim{stroke:var(--faint);marker-end:url(#ah-dim)}
 .d-fill{fill:var(--accent-soft)}
-.d-dim{fill:var(--faint);font-size:11.5px}
+/* these sit on <text>, so they must outrank "figure svg text" above */
+figure svg text.d-dim,.d-dim{fill:var(--faint);font-size:11.5px}
 .d-accent{fill:var(--accent)}
 .d-ok{fill:var(--ok)} .d-bad{fill:var(--bad)}
-.d-mono{font-family:var(--mono);font-size:12px}
-.d-sm{font-size:11px}
+figure svg text.d-mono,.d-mono{font-family:var(--mono);font-size:12px}
+figure svg text.d-sm,.d-sm{font-size:11px}
 #ah path{fill:var(--accent)}
 #ah-dim path{fill:var(--faint)}
 
@@ -1378,12 +1379,15 @@ document.addEventListener("keydown",function(e){
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(release);
 })();
 
-/* ---------------- diagrams on phones ----------------
-   A 640-wide drawing squeezed into a 340px column renders its labels at about 6px. Below the
-   drawing's natural width, keep it at ~85% of that width and let the figure scroll sideways. */
+/* ---------------- diagrams at their own size ----------------
+   A drawing shows at about its natural size on a laptop instead of ballooning to the column.
+   Up to ~480 wide it shrinks into a phone column with labels still readable; a wider one would
+   drop its labels to ~6px, so it keeps ~72% of its width and the figure scrolls sideways. */
 $$("figure.viz svg[viewBox],figure.diagram svg[viewBox]").forEach(function(sv){
   var vb=(sv.getAttribute("viewBox")||"").trim().split(/[\s,]+/), w=parseFloat(vb[2]);
-  if(w>360)sv.style.minWidth=Math.round(Math.min(w,700)*.85)+"px";
+  if(!w)return;
+  sv.style.maxWidth=Math.round(w*1.15)+"px";
+  if(w>500)sv.style.minWidth=Math.round(Math.min(w,700)*.72)+"px";
 });
 
 /* ---------------- shared SVG arrowheads ---------------- */

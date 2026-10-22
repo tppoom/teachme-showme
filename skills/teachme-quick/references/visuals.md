@@ -39,7 +39,12 @@ with another.
 
 ## Inline SVG
 
-- `viewBox="0 0 640 H"`; keep every `x`/`y` inside it (anything outside is silently clipped).
+- **`viewBox="0 0 480 H"` or narrower** — it shows at about its own size on a laptop and shrinks
+  into a phone column with labels still readable. Go up to 640 only for a drawing that truly
+  needs the width: on a phone it then scrolls sideways inside its frame, and `look.js` reports
+  it. Often the better answer is a taller drawing, or an HTML block (`.flow`, `.steps`,
+  `.lanes`) that stacks on a phone by itself. Keep every `x`/`y` inside the viewBox (anything
+  outside is silently clipped).
 - Classes: `.d-box` (`.hi .ok .bad .dim`), `.d-line` (`.dim`), `.d-arrow` (`.dim`, arrowheads
   are built in), `.d-fill`, `.d-dim` (muted text), `.d-accent`, `.d-ok`, `.d-bad`, `.d-mono`,
   `.d-sm`.

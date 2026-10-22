@@ -410,7 +410,8 @@ def main():
         b = re.sub(r'<div class="quiz">[\s\S]*$', "", c.split('class="ch-body"', 1)[-1])
         return words(re.sub(r"<pre\b[\s\S]*?</pre>|<div class=\"code-out\">[\s\S]*?</div>", " ", b))
     tw = sum(prose_words(c) for c in chaps)
-    n_eg = len(re.findall(r'class="eg"', doc))
+    # a worked example is any case shown working: .eg, a before/after, a walk-through, code with its output
+    n_eg = len(re.findall(r'class="(?:eg|cmp|walk|code-out)"', doc))
     n_code = len(re.findall(r'class="code"', doc))
     n_viz = len(re.findall(r'<figure[^>]*class="(?:viz|diagram)', doc)) + len(re.findall(r'class="walk"', doc))
     n_q = len(re.findall(r'<div class="q"[ >]', doc))

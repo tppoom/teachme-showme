@@ -36,7 +36,7 @@ function load() {
     await page.goto("file://" + file);
     await page.waitForTimeout(500);
     const n = await page.evaluate(() => document.querySelectorAll(".chapter").length);
-    const r = { over: [], tiny: [], hidden: [], wide: [] };
+    const r = { over: [], tiny: [], hidden: [], wide: [], figs: [] };
     /* the reader shows one view at a time: the contents (#home), then each chapter by its id */
     for (let i = -1; i < n; i++) {
       await page.evaluate(i => {
@@ -66,7 +66,7 @@ function load() {
         catch (e) { problems.push(`[${name}] could not photograph ${path.basename(f)}: ${e.message.split("\n")[0]}`); }
       }
       const got = await page.evaluate(() => {
-        const res = { over: [], tiny: [], hidden: [], wide: [] }, W = innerWidth;
+        const res = { over: [], tiny: [], hidden: [], wide: [], figs: [] }, W = innerWidth;
         const view = document.querySelector(".chapter.on") || document.querySelector(".cover");
         const where = e => (e.closest(".chapter") || {}).id || "contents";
         if (document.documentElement.scrollWidth > W + 1) {
@@ -86,6 +86,11 @@ function load() {
         if (W < 500) view.querySelectorAll(".tw").forEach(t => {
           if (t.scrollWidth > t.clientWidth + 4) res.wide.push(where(t) + " (" + t.querySelectorAll("tr:first-child > *").length + " columns)");
         });
+        /* a drawing wider than the phone hides part of itself until the reader scrolls inside it */
+        if (W < 500) view.querySelectorAll("figure.viz,figure.diagram").forEach(f => {
+          if (f.querySelector("svg") && f.scrollWidth > f.clientWidth + 4)
+            res.figs.push(where(f) + ": " + ((f.querySelector("figcaption") || {}).textContent || "").trim().slice(0, 40));
+        });
         view.querySelectorAll("figure svg text").forEach(t => {
           const h = t.getBoundingClientRect().height;
           if (h && h < 9) res.tiny.push(where(t) + ": " + t.textContent.trim().slice(0, 30));
@@ -97,6 +102,7 @@ function load() {
     [...new Set(r.over)].slice(0, 6).forEach(o => problems.push(`[${name}] page scrolls sideways — widened by ${o}`));
     if (r.hidden.length) problems.push(`[${name}] short code block(s) scroll sideways on a phone and hide their end: ${r.hidden.join(" | ")} — use inline <code> (it wraps) or lang-text`);
     if (r.wide.length) problems.push(`[${name}] table(s) scroll sideways on a phone: ${r.wide.join(", ")} — readers miss the right-hand columns; use ≤4 short columns or split the table`);
+    if (r.figs.length) problems.push(`[${name}] ${r.figs.length} diagram(s) scroll sideways on a phone, e.g. ${r.figs.slice(0, 3).join(" | ")} — redraw at viewBox width ≤ 480 (taller, not wider), or use a block that stacks (.flow, .steps)`);
     if (r.tiny.length) problems.push(`[${name}] ${r.tiny.length} diagram label(s) render under 9px, e.g. ${r.tiny.slice(0, 3).join(" | ")} — draw fewer, bigger labels`);
     await page.close();
   }

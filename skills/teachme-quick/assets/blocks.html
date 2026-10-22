@@ -244,7 +244,7 @@ func main() {
      Use the d-* classes so both themes work; never hard-code colours.
      .d-box (+.hi/.dim) · .d-line · .d-arrow (+.dim, arrowheads are predefined) ·
      .d-dim (muted text) · .d-accent (accent fill) · .d-mono (monospace text)
-     Always give role="img" and aria-label. viewBox width ~700 fills the column. -->
+     Always give role="img" and aria-label. viewBox width 480 or less fits a phone with readable labels; 640 is the most, and scrolls on a phone. -->
 <figure class="viz">
   <svg viewBox="0 0 640 190" role="img" aria-label="Two goroutines sharing one variable">
     <rect class="d-box" x="20" y="20" width="150" height="54" rx="9"/>
