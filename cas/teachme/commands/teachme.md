@@ -1,26 +1,31 @@
 ---
-description: Build a TeachMe course the full way — a planner, parallel chapter authors with fresh context, and a reviewer who reads it as the learner. For a fast single-session build use the teachme-quick skill.
+description: Build a TeachMe course the full way — a planner, parallel chapter authors with fresh context, a cold reader trial that sends weak chapters back, and a reviewer. For a fast single-session build use the teachme-quick skill.
 argument-hint: "[what to learn | path to slides/PDFs/notes | repo path]"
 disable-model-invocation: true
 allowed-tools: Agent, AskUserQuestion, Bash, Read, Glob, Grep, Edit, Write
 ---
 
-# TeachMe — full build (planner → parallel agents → reviewer)
+# TeachMe — full build (planner → parallel authors → reader trial → reviewer)
 
 Request: $ARGUMENTS
 
 You are the **orchestrator**. You talk to the user, make the decisions only they can make,
 dispatch agents, and keep the course directory as the shared state. The agents do the
 writing: `teachme-planner` builds the syllabus, `teachme-author` writes chapters (many run in
-parallel, each with a fresh context), `teachme-reviewer` reads the whole course as a learner
-and fixes it. All three carry the `teachme-quick` skill as their standard.
+parallel, each with a fresh context), `teachme-reader` reads them cold as the learner and
+reports where they got lost or bored, and `teachme-reviewer` makes the whole course one
+course. The writers carry the `teachme-quick` skill as their standard.
+
+The reader trial is what makes the course good without the user having to ask for rewrites:
+authors cannot see their own chapters as a newcomer does, and a reader with fresh context
+can. Never skip it.
 
 ## Execution contract
 
 - Chapters are written only by `teachme-author` agents. When a step fails, report it and stop
   rather than writing the content yourself.
-- Agent names: use `teachme-planner` / `teachme-author` / `teachme-reviewer`, or the
-  plugin-namespaced `teachme:teachme-planner` etc. — whichever your Agent tool lists. If
+- Agent names: use `teachme-planner` / `teachme-author` / `teachme-reader` /
+  `teachme-reviewer`, or the plugin-namespaced `teachme:teachme-planner` etc. — whichever your Agent tool lists. If
   neither is listed, tell the user the /teachme agents are not installed (`./install.sh`, or
   `claude plugin install teachme`), offer to run the quick `teachme-quick` skill instead, and stop.
 - The directory is the memory: `SYLLABUS.md`, `BRIEF.md`, `meta.json`, `parts/`. After any
@@ -129,7 +134,22 @@ ASSIGNMENT: ch-appendix → parts/99-appendix.html  (APPENDIX MODE)
 TERMS: <the merged terms lists from all authors>
 ```
 
-## Step 5 · Review
+## Step 5 · Reader trial
+
+Dispatch `teachme-reader` agents, all in one message: one per 4–6 consecutive chapters (not
+the appendix), each with
+
+```
+COURSE_DIR: <abs path>
+CHAPTERS: parts/01-<slug>.html, parts/02-<slug>.html, …
+```
+
+For every chapter a reader marks `needs-revision`, dispatch a `teachme-author` with
+`ASSIGNMENT` for that chapter and the reader's *Lost*, *Skimmed* and *Top fixes* for it,
+verbatim, under `FEEDBACK:` — several chapters may go to one author. One revision round;
+anything a reader flagged that is still open goes into the hand-over.
+
+## Step 6 · Review
 
 Dispatch one `teachme-reviewer` with `SKILL_DIR` and `COURSE_DIR`. It assembles, runs the
 final gate, reads the course as the learner, fixes what it can in place, and returns a report
@@ -139,7 +159,7 @@ If it lists chapters as `needs-rewrite`, dispatch an author for each with the re
 notes under `FEEDBACK:`, then run the reviewer once more. Two review rounds at most; anything
 still open goes into the hand-over.
 
-## Step 6 · Hand over
+## Step 7 · Hand over
 
 Run the final gate yourself so the result you report is one you saw:
 
@@ -149,5 +169,5 @@ python3 SKILL_DIR/scripts/assemble.py COURSE_DIR && python3 SKILL_DIR/scripts/ve
 
 Then send the file (`SendUserFile` where it exists) or give the absolute path of
 `index.html`, and report: chapters and reading time (from the gate's summary line), anything
-left out and why, anything under `## Later`, and any issue the reviewer could
-not close. Two lines on use: one file, works offline, tick chapters as you go, `/` searches.
+left out and why, anything under `## Later`, the reader trial's scores (before → after
+revision), and any issue the reviewer could not close. Two lines on use: one file, works offline, tick chapters as you go, `/` searches.

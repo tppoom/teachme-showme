@@ -8,9 +8,11 @@ dependencies, no network. Open it, keep it, send it.
 | **[TeachMe](skills/teachme-quick)** | A short course that makes you understand, fast | You want to actually get something, not just an answer |
 | **[ShowMe](skills/showme-quick)** | A deck you present from | You have to present to a room |
 
-Both share one discipline: **say less, show more.** TeachMe teaches each idea through a concrete
-worked example in short chapters, and its gate fails a chapter with no example and warns on
-padding. ShowMe puts one claim and one piece of evidence on each slide, and its gate fails a
+Both share one discipline: **words go where understanding is made.** TeachMe teaches each
+idea through a concrete worked example, spends its words on the part the reader finds hard —
+the mechanism, the *why*, the step beginners get wrong — and keeps run logs, ids and every-option
+lists out of the way; its gate fails a chapter with no example and warns on padding,
+figure-dense prose and note-like bullets. ShowMe puts one claim and one piece of evidence on each slide, and its gate fails a
 slide that says too much and warns on the patterns that make a deck look machine-made. Both
 gates also fail anything that would render broken — stray Markdown, code swallowed as tags,
 clipped or overflowing content — and both refuse placeholder text and invented numbers.
@@ -24,7 +26,7 @@ Both follow the open [Agent Skills](https://agentskills.io) format (`SKILL.md` +
 | | Full — `/teachme`, `/showme` | Quick — `teachme-quick`, `showme-quick` |
 |---|---|---|
 | **Start it** | `/teachme <topic>`, `/showme <talk>` | `/teachme-quick`, `/showme-quick` — or just describe what you need |
-| **How it works** | **Command → Agent → Skill**: an orchestrator command interviews you, a planner agent writes the contract (`SYLLABUS.md` / `STORYLINE.md` + a shared `BRIEF.md`), author agents write chapters or slide batches **in parallel, each with a fresh context**, and a reviewer agent reads the whole thing as the learner/audience and fixes it | One session follows the skill end to end — no subagents, fewer tokens, faster |
+| **How it works** | **Command → Agent → Skill**: an orchestrator command interviews you, a planner agent writes the contract (`SYLLABUS.md` / `STORYLINE.md` + a shared `BRIEF.md`), author agents write chapters or slide batches **in parallel, each with a fresh context**, a reader agent with fresh context goes through it cold as the learner/audience and sends weak chapters or slides back, and a reviewer makes it one piece | One session follows the skill end to end — no subagents, fewer tokens, faster |
 | **Best for** | Big jobs and the most careful result — deep courses, long lectures and workshops, heavy source material | Explainers, short courses, decks up to ~20 slides |
 | **Asks you** | Once: the brief and only what would change the result; the plan is re-asked only if it departs from it | Once: the brief it understood and only what would change the result |
 | **Works in** | Claude Code | Claude Code, Codex CLI, Antigravity |
@@ -34,8 +36,9 @@ The full mode follows the pattern from
 (orchestration workflow): the command owns user interaction, each agent preloads the skill as
 its standard via `skills:` in its frontmatter, and the skill holds the method, scripts and
 gate both modes share (that is why the skills carry the `-quick` name: a skill and a command
-cannot share one). Agents: `teachme-planner` · `teachme-author` · `teachme-reviewer` and
-`showme-storyliner` · `showme-builder` · `showme-reviewer`.
+cannot share one). Agents: `teachme-planner` · `teachme-author` · `teachme-reader` ·
+`teachme-reviewer` and `showme-storyliner` · `showme-builder` · `showme-audience` ·
+`showme-reviewer`.
 
 ## Fitting the output to the request
 

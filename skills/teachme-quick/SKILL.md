@@ -59,7 +59,7 @@ The user's explicit wishes beat every default here.
 - **This skill (`teachme-quick`)** — one session, no subagents. Fast and cheap; right for
   almost everything.
 - **`/teachme`** (Claude Code command) — the full build: a planner, parallel chapter authors
-  with fresh context, and a reviewer. Worth it for `deep` courses over ~10 chapters. Mention
+  with fresh context, a cold reader trial that sends weak chapters back, and a reviewer. Worth it for `deep` courses over ~10 chapters. Mention
   it then; never switch to it on your own.
 
 ## Workflow
@@ -110,6 +110,10 @@ Fix every FAIL and WARN before moving on. Then read the chapter once **as the re
 the author, and mark two kinds of place:
 - **Lost** — a term or step they can't follow, a *why* they would ask: explain it there.
 - **Skimmed** — a number, id, option or aside they would skip: cut it, or move it to a `.more`.
+
+Then the test that matters: write, in the reader's words, the three sentences they would use
+to explain the chapter to a friend. If those sentences miss the takeaway, or you had to reach
+for words the chapter never explained, the chapter is not done.
 
 ### 4 · Build, check, look
 ```bash

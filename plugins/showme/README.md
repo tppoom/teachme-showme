@@ -10,7 +10,8 @@ claude plugin install showme
 
 **Two ways to run it.** `/showme` runs the full build — Command → Agent → Skill:
 `showme-storyliner` writes the claim ladder and picks the theme, `showme-builder` agents build
-slide batches in parallel, `showme-reviewer` checks the deck as the audience sees it.
+slide batches in parallel, `showme-audience` sits through it cold as the room and sends
+unclear slides back, and `showme-reviewer` checks the deck as the audience sees it.
 `/showme-quick` (or just describe what you need) builds it in one session — faster, fewer
 tokens, right for decks up to ~20 slides.
 

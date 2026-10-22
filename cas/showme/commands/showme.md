@@ -1,11 +1,11 @@
 ---
-description: Build a ShowMe deck the full way — a storyliner, parallel slide builders and a reviewer who checks it as the audience. For a fast single-session build use the showme-quick skill.
+description: Build a ShowMe deck the full way — a storyliner, parallel slide builders, a cold audience trial that sends weak slides back, and a reviewer. For a fast single-session build use the showme-quick skill.
 argument-hint: "[what the talk is about | path to report/data/project]"
 disable-model-invocation: true
 allowed-tools: Agent, AskUserQuestion, Bash, Read, Glob, Grep, Edit, Write
 ---
 
-# ShowMe — full build (planner → parallel agents → reviewer)
+# ShowMe — full build (storyline → parallel builders → audience trial → reviewer)
 
 Request: $ARGUMENTS
 
@@ -13,15 +13,16 @@ You are the **orchestrator**. You talk to the user, make the decisions only they
 dispatch agents, and keep the deck directory as the shared state. The agents do the work:
 `showme-storyliner` finds the argument, writes the claim ladder and picks the theme;
 `showme-builder` writes slide batches (several in parallel, each with a fresh context);
-`showme-reviewer` checks the whole deck as the audience will see it and fixes it. All three
-carry the `showme-quick` skill as their standard.
+`showme-audience` sits through it cold as the room and reports where it got lost or tuned
+out; `showme-reviewer` checks the whole deck as the audience will see it and fixes it. The
+writers carry the `showme-quick` skill as their standard.
 
 ## Execution contract
 
 - Slides are written only by `showme-builder` agents. When a step fails, report it and stop
   rather than writing slides yourself.
-- Agent names: use `showme-storyliner` / `showme-builder` / `showme-reviewer`, or the
-  plugin-namespaced `showme:showme-storyliner` etc. — whichever your Agent tool lists. If
+- Agent names: use `showme-storyliner` / `showme-builder` / `showme-audience` /
+  `showme-reviewer`, or the plugin-namespaced `showme:showme-storyliner` etc. — whichever your Agent tool lists. If
   neither is listed, tell the user the /showme agents are not installed (`./install.sh`, or
   `claude plugin install showme`), offer to run the quick `showme-quick` skill instead, and stop.
 - The directory is the memory: `STORYLINE.md`, `BRIEF.md`, `meta.json`, `parts/`.
@@ -105,13 +106,20 @@ NEIGHBOURS: before = s-3 "<claim>"; after = s-9 "<claim>"
 Afterwards, `ls DECK_DIR/parts/` and re-dispatch once for any batch file that is missing or
 whose builder reported a failed `--part` check.
 
-## Step 5 · Review
+## Step 5 · Audience trial
+
+Dispatch one `showme-audience` with `DECK_DIR`. It sits through the deck cold as the room in
+`BRIEF.md` and returns where it got lost, where it tuned out, and whether it could repeat the
+argument and the ask. Send every batch it marks `needs-rebuild` back to a `showme-builder`,
+with its findings for that batch verbatim under `FEEDBACK:`. One round.
+
+## Step 6 · Review
 
 Dispatch one `showme-reviewer` with `SKILL_DIR` and `DECK_DIR`. If it lists batches as
 `needs-rebuild`, send each back to a builder with the notes under `FEEDBACK:`, then review
 once more. Two rounds at most.
 
-## Step 6 · Hand over
+## Step 7 · Hand over
 
 Run the final gate yourself:
 

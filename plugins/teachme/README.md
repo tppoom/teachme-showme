@@ -10,7 +10,8 @@ claude plugin install teachme
 ```
 
 **Two ways to run it.** `/teachme` runs the full build: a planner, parallel chapter authors
-with fresh context, and a reviewer who reads it as the learner. `/teachme-quick` (or just
+with fresh context, a reader who goes through every chapter cold and sends weak ones back,
+and a reviewer. `/teachme-quick` (or just
 describe what you need) builds it in one session — faster, fewer tokens, right for short
 courses and explainers.
 
@@ -25,14 +26,19 @@ TeachMe is built the other way round:
 - **Sized to the request.** "Explain X" is 1–4 chapters; a full course only when you ask for one.
 - **Example first, then the idea.** Every chapter opens on a real case — numbers, a snippet,
   a situation — and names the rule once you've seen it work.
+- **Depth where it's hard.** The words go to the part you'd get stuck on — the mechanism, the
+  *why*, the step beginners get wrong — in full sentences. Setup, run logs and every-option
+  lists get a line or nothing.
 - **Pictures for mechanisms** — flows, sequences, timelines, comparisons, step-through code.
 - **No filler.** No "in this chapter we will", no restating, no objectives-recap-glossary
   ceremony unless it earns its place.
 
 ## What you get
 
-A single HTML file with a sidebar table of contents, progress saved in your browser, search,
-light/dark, offline reading and print styles. Inside the chapters: worked examples, diagrams,
+A single HTML file that reads like a well-made book: a contents page grouped into parts, one
+chapter on screen at a time with a clear way on to the next, a Thai-and-Latin reading font
+built in (it looks the same offline), progress saved in your browser, search, light/dark and
+print styles. Inside the chapters: worked examples, diagrams,
 step-through walkthroughs that highlight the code line under discussion, MathML formulas with
 symbol legends, vocabulary tables, flashcards, checklists, and optional quick checks that
 explain why each wrong answer is tempting.
