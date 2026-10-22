@@ -123,7 +123,15 @@ A caption that is not a source (scale, a note) uses `<p class="src nolabel">` �
 that only illustrates, say so there: `<p class="src nolabel">ตัวอย่างประกอบ ไม่ใช่ค่าที่วัดจริง</p>`.
 
 **Text placeholders** for facts only the presenter has — `[ชื่อผู้นำเสนอ]`, `[วันที่]` — go in
-square brackets, and every one is listed at hand-over. Images use `.ph`.
+square brackets, and every one is listed at hand-over. Images use `.ph`. Keep them off the
+slides that carry the argument: a title with a bracket is a detail, an evidence slide whose
+evidence is `[N] จาก [M]` is not finished. When the user gave you no data, build that slide on
+what you can stand behind — the mechanism, one concrete case, the cost of the status quo — and
+put "replace with your real count" in the notes.
+
+**Say every rule, number and condition the same way everywhere.** If slide 4 adds a rule,
+the ask carries it; the stop condition on slide 5 is word for word the one on slide 6. A
+decision-maker who catches the deck changing its own terms stops trusting the rest.
 
 ## Evidence that is actually evidence
 

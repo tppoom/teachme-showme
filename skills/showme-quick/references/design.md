@@ -125,6 +125,8 @@ ones it can see; the rest are yours to catch in the overview grid.
 | Text filling every slide to the bottom | One idea and air around it — whitespace is part of the composition |
 | A palette nobody chose (the tool's default purple/blue, cream with muted red) | Colours from the user's brand, their words, or the room — chosen and said out loud |
 | Generic stock-photo placeholders | A real image from the user, or an honest `.ph` that says what belongs there |
+| Slogan lines built as a pair: "It's not X — it's Y", "ไม่ใช่… แต่คือ…", "X คือ Y ที่…" | Say the thing once, plainly. One contrast in a deck can land; a pattern of them reads as generated |
+| Brackets on screen — `[N] of [M]`, `[ทีม]`, `[วันที่]` — on a deck about to be presented | Evidence that stands without the missing fact (a mechanism, one real anonymised case); facts only the presenter has go in the notes and the hand-over list |
 
 The fix is the same each time: decide from the content and the user's request, not from the
 template. If the user described a look — "like our website", "minimal", "playful", a colour,
